@@ -1,0 +1,13 @@
+[flake8]
+exclude =
+        .git,
+        __pycache__,
+        docs,
+        .pytest_cache,
+        .vscode,
+        test/results
+        setup.py
+        test/*
+        build/*
+max-complexity = 10
+ignore = E501
