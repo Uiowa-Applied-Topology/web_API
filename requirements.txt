@@ -12,3 +12,4 @@ flake8-docstrings
 flake8-html
 uvicorn[standard]
 fastapi
+rocketry

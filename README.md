@@ -54,7 +54,7 @@ Integration tests are expected for every program flow.
 
 ### Functional Requirements
 
-Functional requirements are phrased as use cases and can be found in [docs/use-cases](docs/use-cases).
+Functional requirements are phrased as use cases and can be found in [docs/use_cases](docs/use_cases).
 ```plantuml
 @startuml
 !theme crt-amber
@@ -139,44 +139,72 @@ All python files are expected to pass the configured flake8 without warnings thi
 
 # Design and Documentation
 
-**This is the most important section of the document. People talk about documentation as only well commented code. While well commented code is important having diagrams and real english sentences describing what you're trying to do is much more important**
 
 ## System
 
-_A block diagram for the entire system._
+### Block Diagram
+
+```mermaid
+
+classDiagram
+
+class tanglenomicon_data_api["Tanglenomicon API"]{
+    +fastAPI
+    +Rocketry
+}
+namespace Interfaces {
+    class age["Generation Endpoint"]{
+        <<interface>>
+    }
+
+    class aj["Job"]{
+        <<interface>>
+    }
+
+}
+
+
+namespace montesinos {
+    class mge["Montesinos Generation Endpoint"]{
+
+    }
+
+
+    class mj["Montesinos Job"]{
+    }
+
+}
+
+    class dc["DB Connector"]{
+    }
+
+    class es["State"]{
+        <<Enumeration>>
+    }
+
+    class jq["Job Queue"]{
+
+    }
+
+    class cs["Config Store"]{
+
+    }
+
+
+mge ..|> age
+mj ..|> aj
+aj ..> es
+cs "1"-- tanglenomicon_data_api
+
+jq "1" --  tanglenomicon_data_api
+mj "1..*" --  jq
+mge "1" --  tanglenomicon_data_api
+dc "1" --  jq
+
+```
+
 
 ## Units
 
-### Unit: Title
 
-#### Description
-_Describe the point of the unit_
-
-#### Diagrams
-
-_Include some diagrammatic description of the unit. A class diagram? A sequence diagram? A state machine?_
-
-#### Unit test description
-
-_List the unit tests for this unit_
-
-.
-.
-.
-
-### Unit n: Title
-
-#### Description
-_Describe the point of the unit_
-
-#### Diagrams
-
-_Include some diagrammatic description of the unit. A class diagram? A sequence diagram? A state machine?_
-
-#### Unit test description
-
-_List the unit tests for this unit_
-
-# Integration tests
-
-_List the integration tests for the system._
+Unit descriptions can be found in [docs/unit_description](docs/unit_description).
