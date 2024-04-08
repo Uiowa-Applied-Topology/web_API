@@ -13,3 +13,8 @@ flake8-html
 uvicorn[standard]
 fastapi
 rocketry
+motor
+passlib[bcrypt]
+python-jose[cryptography]
+python-multipart
+pydantic-settings
