@@ -9,10 +9,14 @@ system_python := if os_family() == "windows" { "python" } else { "python" }
 bootstrap:
     if test ! -e .venv; then {{ system_python }} -m venv .venv; fi
     {{ python }} -m pip install --upgrade pip wheel pip-tools
-    {{ python_dir }}/pip-sync
+    {{ python }} -m pip install -r requirements.txt
 
 run:
-    {{ python }} -m tanglenomicon_data_api -f ./misc/crypt/config.yaml
+    {{ python }} -m tanglenomicon_data_api -c ./misc/crypt/config.yaml
+
+flake:
+    {{ python }} -m flake8 --docstring-convention numpy --format=html --htmldir=test/results
+
 
 test:
     pytest
