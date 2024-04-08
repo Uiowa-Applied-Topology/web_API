@@ -14,6 +14,7 @@ classDiagram
 
     class jq["Job Queue"]{
         - List~Job~ job_queue
+        - Semephore semephore
         + db_connector db
         + mark_job_complete(job_id)
         + get_next_job(type)

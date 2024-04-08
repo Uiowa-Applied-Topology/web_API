@@ -150,7 +150,7 @@ classDiagram
 
 class tanglenomicon_data_api["Tanglenomicon API"]{
     +fastAPI
-    +Rocketry
+    +apscheduler
 }
 namespace Interfaces {
     class age["Generation Endpoint"]{
@@ -161,10 +161,30 @@ namespace Interfaces {
         <<interface>>
     }
 
+    class es["State"]{
+        <<Enumeration>>
+    }
 }
 
 
-namespace montesinos {
+namespace internal {
+
+    class dc["DB Connector"]{
+    }
+
+
+    class jq["Job Queue"]{
+
+    }
+
+    class cs["Config Store"]{
+
+    }
+    class sm["Security Model"]{
+
+    }
+}
+namespace Montesinos {
     class mge["Montesinos Generation Endpoint"]{
 
     }
@@ -175,20 +195,6 @@ namespace montesinos {
 
 }
 
-    class dc["DB Connector"]{
-    }
-
-    class es["State"]{
-        <<Enumeration>>
-    }
-
-    class jq["Job Queue"]{
-
-    }
-
-    class cs["Config Store"]{
-
-    }
 
 
 mge ..|> age
@@ -199,7 +205,10 @@ cs "1"-- tanglenomicon_data_api
 jq "1" --  tanglenomicon_data_api
 mj "1..*" --  jq
 mge "1" --  tanglenomicon_data_api
+sm "1" --  tanglenomicon_data_api
 dc "1" --  jq
+dc "1" --  sm
+
 
 ```
 
@@ -207,4 +216,4 @@ dc "1" --  jq
 ## Units
 
 
-Unit descriptions can be found in [docs/unit_description](docs/unit_description).
+Unit descriptions can be found in [docs/unit_description](./docs/unit_description).
