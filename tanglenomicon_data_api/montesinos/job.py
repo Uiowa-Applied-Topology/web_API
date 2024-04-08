@@ -5,14 +5,22 @@ The class describes the common interface all job types implement.
 """
 
 from datetime import datetime
-from ..interfaces.job import generation_job
-from ..interfaces.job_state import state_enum
+from ..interfaces.job import generation_job, generation_job_results
+from ..interfaces.job_state import Job_State_Enum
+from typing import List
 
 
-class job(generation_job):
-        id: str
-        timestamp: datetime
-        cur_state: state_enum
-        client_id: str
-        rat_lists: list(list(str))
+class Montesinos_Job_Results(generation_job_results):
+    mont_list: List[str]
 
+
+class Montesinos_Job(generation_job):
+    rat_lists: List[List[str]]
+    _results: Montesinos_Job_Results = None
+
+    def store(self):
+
+        ...
+
+    def update_results(self, res: Montesinos_Job_Results):
+        self._results = res
