@@ -16,7 +16,7 @@ class generation_job_results(BaseModel):
 class generation_job(BaseModel):
     id: str
     timestamp: datetime
-    cur_state: Job_State_Enum
+    cur_state: Job_State_Enum = Job_State_Enum.new
     client_id: str = None
     _results: generation_job_results
 

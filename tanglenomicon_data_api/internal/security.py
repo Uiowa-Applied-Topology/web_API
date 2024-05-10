@@ -43,9 +43,10 @@ def _verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 
-async def _get_user(collection, username: str):
-    if (user := await collection.find_one({"username": username})) is not None:
+async def _get_user(collection, username: str) -> UserInDB | None:
+    if (user := (await collection.find_one({"username": username}))) is not None:
         return UserInDB(**user)
+    return None
 
 
 async def _authenticate_user(db, username: str, password: str):

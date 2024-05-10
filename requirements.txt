@@ -1,5 +1,6 @@
 flake8
 flake8-black
+black
 scipy
 numpy
 pytest
@@ -12,9 +13,9 @@ flake8-docstrings
 flake8-html
 uvicorn[standard]
 fastapi
-rocketry
 motor
 passlib[bcrypt]
 python-jose[cryptography]
 python-multipart
 pydantic-settings
+dacite

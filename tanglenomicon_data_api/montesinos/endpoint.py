@@ -1,20 +1,13 @@
-from fastapi import Depends, APIRouter, HTTPException, status
+from fastapi import Depends, APIRouter
 from ..internal.security import auth_current_user, get_current_user, User
-from ..internal import db_connector as dbc
-from ..interfaces.job_state import Job_State_Enum
 from ..interfaces.confirm import confirm_job_receipt
-from datetime import datetime, timedelta, timezone
-from typing import Annotated, Union
-from pydantic import BaseModel
-import motor.motor_asyncio
 from . import job as mj
-from ..internal import job_queue
-import time
-import uuid
+from ..internal import job_queue, config
+from typing import Annotated
 
 router = APIRouter(
     prefix="/montesinos",
-    tags=["Tangles", "Algebraic", "Montesinos", "Generation"],
+    tags=["Montesinos"],
     dependencies=[Depends(auth_current_user)],
     responses={404: {"description": "Not found"}},
 )
@@ -24,7 +17,7 @@ async def report_job_results(
     job_results: mj.Montesinos_Job_Results,
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> confirm_job_receipt:
-    await job_queue.mark_job_complete(job_results,current_user)
+    await job_queue.mark_job_complete(job_results, current_user)
     results = confirm_job_receipt(id=job_results.id, accepted=True)
     return results
 
@@ -32,6 +25,9 @@ async def report_job_results(
 async def get_next_montesinos_job(
     current_user: Annotated[User, Depends(get_current_user)]
 ):
+    nmjc = job_queue.get_job_statistics(mj.Montesinos_Job)["new"]
+    if nmjc < config.config["job-queue"]["min-new-count"]:
+        await mj.get_jobs(config.config["job-queue"]["min-new-count"]-nmjc)
     job = await job_queue.get_next_job(mj.Montesinos_Job, current_user)
     return job
 
@@ -48,3 +44,8 @@ async def retrieve_montesinos_job(
     next_job: Annotated[mj.Montesinos_Job, Depends(get_next_montesinos_job)]
 ):
     return next_job
+
+
+@router.get("/queue/stats")
+async def retrieve_montesinos_job_queue_stats():
+    return job_queue.get_job_statistics(mj.Montesinos_Job)
