@@ -5,8 +5,7 @@ The class describes the common interface all job types implement.
 """
 
 from datetime import datetime, timezone
-from ..interfaces.job import generation_job, generation_job_results
-from ..interfaces.job_state import Job_State_Enum
+from ..interfaces.job import generation_job, generation_job_results, Job_State_Enum
 from ..internal import job_queue, config
 from . import orm
 from ..rational import orm as rat_orm
@@ -14,7 +13,6 @@ from threading import Semaphore
 from typing import List
 from dacite import from_dict
 from dataclasses import asdict
-import time
 import math
 import copy
 import uuid
@@ -37,6 +35,18 @@ semaphore: Semaphore = Semaphore()
 
 
 def _move_head(sten: orm.mont_stencil_db) -> orm.HeadState_Enum:
+    """_summary_
+
+    Parameters
+    ----------
+    sten : orm.mont_stencil_db
+        _description_
+
+    Returns
+    -------
+    orm.HeadState_Enum
+        _description_
+    """
     overflow = True
     for i, sten_entry in enumerate(sten.stencil_array):
         if overflow:
@@ -65,11 +75,27 @@ def _move_head(sten: orm.mont_stencil_db) -> orm.HeadState_Enum:
 
 
 class Montesinos_Job_Results(generation_job_results):
+    """_summary_
+
+    Parameters
+    ----------
+    generation_job_results : _type_
+        _description_
+    """
+
     mont_list: List[str]
     crossing_num: int = None
 
 
 class Montesinos_Job(generation_job):
+    """_summary_
+
+    Parameters
+    ----------
+    generation_job : _type_
+        _description_
+    """
+
     rat_lists: List[List[str]]
     _results: Montesinos_Job_Results = None
 
@@ -89,7 +115,7 @@ class Montesinos_Job(generation_job):
         )
         i = [j.job_id for j in sten.open_jobs].index(self.id)
         del sten.open_jobs[i]
-        if sten.state == orm.DBjobState_Enum.no_headroom and len(sten.open_jobs)==0:
+        if sten.state == orm.DBjobState_Enum.no_headroom and len(sten.open_jobs) == 0:
             sten.state = orm.DBjobState_Enum.complete
         await stencil_col.replace_one({"_id": sten._id}, asdict(sten))
         semaphore.release()
@@ -101,6 +127,22 @@ class Montesinos_Job(generation_job):
 async def _build_job(
     crossing_numbers: List[int], pages: List[int], id: str = None
 ) -> str:
+    """_summary_
+
+    Parameters
+    ----------
+    crossing_numbers : List[int]
+        _description_
+    pages : List[int]
+        _description_
+    id : str, optional
+        _description_, by default None
+
+    Returns
+    -------
+    str
+        _description_
+    """
     store_rat = orm._get_rational_collection()
     if not id:
         id = str(uuid.uuid4())
@@ -152,6 +194,13 @@ async def _build_job(
 
 
 async def get_jobs(count: int):
+    """_summary_
+
+    Parameters
+    ----------
+    count : int
+        _description_
+    """
     global semaphore
     stencil_col = orm._get_stencil_collection()
     semaphore.acquire()
@@ -177,6 +226,7 @@ async def get_jobs(count: int):
 
 
 async def startup_jobs():
+    """_summary_"""
     global semaphore
     store_sten = orm._get_stencil_collection()
     semaphore.acquire()

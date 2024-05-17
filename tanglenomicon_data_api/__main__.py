@@ -1,13 +1,11 @@
-from fastapi import Depends, FastAPI
+"""_summary_
+"""
 
 from .montesinos import endpoint as mont_e
 from .montesinos import job as mont_j
-from .interfaces.job_state import Job_State_Enum
 from .internal import db_connector, security, config, job_queue
-import time
-import uuid
-from uvicorn import Config as ucfg, Server as usrv
 from fastapi import FastAPI
+from uvicorn import Config as ucfg, Server as usrv
 import argparse
 import asyncio
 from asyncio import AbstractEventLoop
@@ -23,12 +21,8 @@ job_defs = [
 ]
 
 
-@api.get("/")
-async def root():
-    return {"message": "Hello Bigger Applications!"}
-
-
 def startup():
+    """Executes a collection of tasks at startup of the API."""
     global loop
 
     db_cfg = config.config["db-connection-info"]
@@ -47,6 +41,7 @@ def startup():
 
 
 def main():
+    """Executes the main task of the API."""
     global api
     global loop
 

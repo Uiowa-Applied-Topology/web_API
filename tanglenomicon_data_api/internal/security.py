@@ -1,3 +1,23 @@
+"""_summary_
+
+Raises
+------
+credentials_exception
+    _description_
+credentials_exception
+    _description_
+credentials_exception
+    _description_
+HTTPException
+    _description_
+credentials_exception
+    _description_
+credentials_exception
+    _description_
+HTTPException
+    _description_
+"""
+
 from datetime import datetime, timedelta, timezone
 from typing import Annotated, Union
 
@@ -14,20 +34,52 @@ COL_NAME = "auth"
 
 
 class Token(BaseModel):
+    """_summary_
+
+    Parameters
+    ----------
+    BaseModel : _type_
+        _description_
+    """
+
     access_token: str
     token_type: str
 
 
 class TokenData(BaseModel):
+    """_summary_
+
+    Parameters
+    ----------
+    BaseModel : _type_
+        _description_
+    """
+
     username: Union[str, None] = None
 
 
 class User(BaseModel):
+    """_summary_
+
+    Parameters
+    ----------
+    BaseModel : _type_
+        _description_
+    """
+
     username: str
     disabled: Union[bool, None] = None
 
 
 class UserInDB(User):
+    """_summary_
+
+    Parameters
+    ----------
+    User : _type_
+        _description_
+    """
+
     hashed_password: str
     token_expire: int
 
@@ -40,16 +92,60 @@ router = APIRouter()
 
 
 def _verify_password(plain_password, hashed_password):
+    """_summary_
+
+    Parameters
+    ----------
+    plain_password : _type_
+        _description_
+    hashed_password : bool
+        _description_
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
     return pwd_context.verify(plain_password, hashed_password)
 
 
 async def _get_user(collection, username: str) -> UserInDB | None:
+    """_summary_
+
+    Parameters
+    ----------
+    collection : _type_
+        _description_
+    username : str
+        _description_
+
+    Returns
+    -------
+    UserInDB | None
+        _description_
+    """
     if (user := (await collection.find_one({"username": username}))) is not None:
         return UserInDB(**user)
     return None
 
 
 async def _authenticate_user(db, username: str, password: str):
+    """_summary_
+
+    Parameters
+    ----------
+    db : _type_
+        _description_
+    username : str
+        _description_
+    password : str
+        _description_
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
     user = await _get_user(db, username)
     if not user:
         return False
@@ -59,10 +155,31 @@ async def _authenticate_user(db, username: str, password: str):
 
 
 def _get_collection():
+    """_summary_
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
     return dbc.db[COL_NAME]
 
 
 def _create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
+    """_summary_
+
+    Parameters
+    ----------
+    data : dict
+        _description_
+    expires_delta : Union[timedelta, None], optional
+        _description_, by default None
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
@@ -83,6 +200,29 @@ async def get_current_user(
         motor.motor_asyncio.AsyncIOMotorCollection, Depends(_get_collection)
     ],
 ):
+    """_summary_
+
+    Parameters
+    ----------
+    token : Annotated[str, Depends
+        _description_
+    collection : Annotated[ motor.motor_asyncio.AsyncIOMotorCollection, Depends
+        _description_
+
+    Returns
+    -------
+    _type_
+        _description_
+
+    Raises
+    ------
+    credentials_exception
+        _description_
+    credentials_exception
+        _description_
+    credentials_exception
+        _description_
+    """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -109,12 +249,48 @@ async def get_current_user(
 async def _get_current_active_user(
     current_user: Annotated[User, Depends(get_current_user)]
 ):
+    """_summary_
+
+    Parameters
+    ----------
+    current_user : Annotated[User, Depends
+        _description_
+
+    Returns
+    -------
+    _type_
+        _description_
+
+    Raises
+    ------
+    HTTPException
+        _description_
+    """
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 
 async def auth_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    """_summary_
+
+    Parameters
+    ----------
+    token : Annotated[str, Depends
+        _description_
+
+    Returns
+    -------
+    _type_
+        _description_
+
+    Raises
+    ------
+    credentials_exception
+        _description_
+    credentials_exception
+        _description_
+    """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -129,7 +305,7 @@ async def auth_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
+        # TODO: remove? token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
     return True
@@ -139,6 +315,18 @@ async def auth_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
 async def read_users_me(
     current_user: Annotated[User, Depends(_get_current_active_user)]
 ):
+    """_summary_
+
+    Parameters
+    ----------
+    current_user : Annotated[User, Depends
+        _description_
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
     return current_user
 
 
@@ -149,6 +337,25 @@ async def login_for_access_token(
         motor.motor_asyncio.AsyncIOMotorCollection, Depends(_get_collection)
     ],
 ) -> Token:
+    """_summary_
+
+    Parameters
+    ----------
+    form_data : Annotated[OAuth2PasswordRequestForm, Depends
+        _description_
+    collection : Annotated[ motor.motor_asyncio.AsyncIOMotorCollection, Depends
+        _description_
+
+    Returns
+    -------
+    Token
+        _description_
+
+    Raises
+    ------
+    HTTPException
+        _description_
+    """
     user = await _authenticate_user(collection, form_data.username, form_data.password)
     if not user:
         raise HTTPException(

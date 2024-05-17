@@ -1,15 +1,25 @@
-from ..interfaces.job import generation_job, generation_job_results
-from ..interfaces.job_state import Job_State_Enum
+"""_summary_
+
+Raises
+------
+HTTPException
+    _description_
+HTTPException
+    _description_
+HTTPException
+    _description_
+"""
+
+from ..interfaces.job import generation_job, generation_job_results, Job_State_Enum
 from ..internal.security import User
-from . import config, db_connector
+from . import config
 
 from fastapi import HTTPException
-from fastapi import Depends, APIRouter
+from fastapi import APIRouter
 
 from typing import Dict, Type, List
-from datetime import datetime, timedelta,timezone
+from datetime import datetime, timezone
 from threading import Semaphore
-import time
 import asyncio
 
 
@@ -26,6 +36,20 @@ semaphore: Semaphore = Semaphore()
 
 
 async def mark_job_complete(results: generation_job_results, current_user: User):
+    """_summary_
+
+    Parameters
+    ----------
+    results : generation_job_results
+        _description_
+    current_user : User
+        _description_
+
+    Raises
+    ------
+    HTTPException
+        _description_
+    """
     global _job_queue
     semaphore.acquire()
     if (
@@ -47,6 +71,25 @@ async def mark_job_complete(results: generation_job_results, current_user: User)
 async def get_next_job(
     job_type: Type[generation_job], current_user: User
 ) -> generation_job:
+    """_summary_
+
+    Parameters
+    ----------
+    job_type : Type[generation_job]
+        _description_
+    current_user : User
+        _description_
+
+    Returns
+    -------
+    generation_job
+        _description_
+
+    Raises
+    ------
+    HTTPException
+        _description_
+    """
     global _job_queue
     semaphore.acquire()
     items = [
@@ -65,6 +108,18 @@ async def get_next_job(
 
 
 def _check_time_delta(then: datetime) -> bool:
+    """_summary_
+
+    Parameters
+    ----------
+    then : datetime
+        _description_
+
+    Returns
+    -------
+    bool
+        _description_
+    """
     now = datetime.now(timezone.utc)
     diff = now - then
     if diff.total_seconds() >= config.config["job-queue"]["clocks"]["stale"]:
@@ -73,6 +128,7 @@ def _check_time_delta(then: datetime) -> bool:
 
 
 async def _clean_stale_jobs():
+    """_summary_"""
     global _job_queue
     semaphore.acquire()
     items: List[generation_job] = [
@@ -90,7 +146,9 @@ async def _clean_complete_jobs():
     global _job_queue
     semaphore.acquire()
     items: List[generation_job] = [
-        _job_queue[i] for i in _job_queue if _job_queue[i].cur_state == Job_State_Enum.complete
+        _job_queue[i]
+        for i in _job_queue
+        if _job_queue[i].cur_state == Job_State_Enum.complete
     ]
     for item in items:
         await item.store()
@@ -99,6 +157,18 @@ async def _clean_complete_jobs():
 
 
 async def enqueue_job(job: generation_job):
+    """_summary_
+
+    Parameters
+    ----------
+    job : generation_job
+        _description_
+
+    Raises
+    ------
+    HTTPException
+        _description_
+    """
     global _job_queue
     semaphore.acquire()
     if job.id not in _job_queue:
@@ -110,6 +180,18 @@ async def enqueue_job(job: generation_job):
 
 
 def get_count_new(job_type: Type[generation_job]):
+    """_summary_
+
+    Parameters
+    ----------
+    job_type : Type[generation_job]
+        _description_
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
     return len(
         [
             i
@@ -121,6 +203,18 @@ def get_count_new(job_type: Type[generation_job]):
 
 
 def get_count_complete(job_type: Type[generation_job]):
+    """_summary_
+
+    Parameters
+    ----------
+    job_type : Type[generation_job]
+        _description_
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
     return len(
         [
             i
@@ -132,6 +226,18 @@ def get_count_complete(job_type: Type[generation_job]):
 
 
 def get_count_pending(job_type: Type[generation_job]):
+    """_summary_
+
+    Parameters
+    ----------
+    job_type : Type[generation_job]
+        _description_
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
     return len(
         [
             i
@@ -143,6 +249,18 @@ def get_count_pending(job_type: Type[generation_job]):
 
 
 def get_job_statistics(job_type: Type[generation_job]):
+    """_summary_
+
+    Parameters
+    ----------
+    job_type : Type[generation_job]
+        _description_
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
     return {
         "queue_length": len(_job_queue),
         "new": get_count_new(job_type),
@@ -151,19 +269,27 @@ def get_job_statistics(job_type: Type[generation_job]):
     }
 
 
-# TODO: Move this to each
 @router.get("/stats")
 async def retrieve_job_statistics():
-    a = db_connector.db.auth.find_one({"username": "test_user"})
+    """_summary_
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
     return get_job_statistics(generation_job)
 
 
 async def task_clean_stale_jobs():
+    """_summary_"""
     while True:
         await asyncio.sleep(config.config["job-queue"]["clocks"]["stale"])
         await _clean_stale_jobs()
 
+
 async def task_clean_complete_jobs():
+    """_summary_"""
     while True:
         await asyncio.sleep(config.config["job-queue"]["clocks"]["complete"])
         await _clean_complete_jobs()
