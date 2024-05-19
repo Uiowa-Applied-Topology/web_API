@@ -1,24 +1,22 @@
-# Use case:
+# Use case:Write Record set
 
-Write Record set
-
-# Primary actor:
+## Primary actor:
 
 N/A
 
-# Goal:
+## Goal:
 
 Saves records to LTS.
 
-# Preconditions:
+## Preconditions:
 
 LTS has been initialized
 
-# Trigger:
+## Trigger:
 
 An upstream actor wants to set new records to LTS
 
-# Scenario:
+## Scenario:
 
 1. Actor initiates a usecase that produces records
 2. Requested records are written to LTS

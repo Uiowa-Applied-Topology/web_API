@@ -1,13 +1,11 @@
 
-# Unit
+# Unit: Config Store
 
-Config Store
-
-# Description
+## Description
 
 This unit reads the config data for the server from a yaml file.
 
-# Diagrams
+## Diagrams
 
 
 ```mermaid
@@ -21,6 +19,6 @@ class dc["Config Store"]{
 
 ```
 
-# Unit test description
+## Unit test description
 
 _List the unit tests for this unit_

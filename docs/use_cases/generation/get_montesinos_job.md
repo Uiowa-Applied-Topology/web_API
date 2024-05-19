@@ -1,26 +1,24 @@
-# Use case:
+# Use case:Get Montesinos Job
 
-Get Montesinos Job
-
-# Primary actor:
+## Primary actor:
 
 Client
 
-# Goal:
+## Goal:
 
 Passes a new job to a client.
 
-# Preconditions:
+## Preconditions:
 
 * Client and server are on the same network.
 * Client is on known runner list.
 
-# Trigger:
+## Trigger:
 
 Client asks for a new montesinos job.
 
 
-# Scenario:
+## Scenario:
 
 1) Client makes a `get` job request to the server
 2) Server verifies client ID

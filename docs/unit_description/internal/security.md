@@ -1,12 +1,10 @@
-# Unit
+# Unit: Security Model
 
-Security Model
-
-# Description
+## Description
 
 This class defines the secturity model for the tanglenomicon api. It's mostly wholsale lifted from [FastAPI docs](https://web.archive.org/web/20240324095137/https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/)
 
-# Diagrams
+## Diagrams
 
 ```mermaid
 
@@ -126,6 +124,6 @@ stateDiagram-v2
     staleChk --> [*]
 ```
 
-# Unit test description
+## Unit test description
 
 Unit has no stand alone functionality.

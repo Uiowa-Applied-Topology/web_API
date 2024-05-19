@@ -1,12 +1,10 @@
-# Unit
+# Unit: Job Queue
 
-Job Queue
-
-# Description
+## Description
 
 This class defines the job queue. This is used to hold the current job states for the server.
 
-# Diagrams
+## Diagrams
 
 ```mermaid
 
@@ -114,6 +112,6 @@ stateDiagram-v2
     staleChk --> [*]
 ```
 
-# Unit test description
+## Unit test description
 
 Unit has no stand alone functionality.

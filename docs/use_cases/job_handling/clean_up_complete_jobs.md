@@ -1,25 +1,23 @@
-# Use case:
+# Use case:Clean up complete jobs
 
-Clean up complete jobs
-
-# Primary actor:
+## Primary actor:
 
 Time
 
-# Goal:
+## Goal:
 
 Remove completed jobs from queue
 
-# Preconditions:
+## Preconditions:
 
 * Server is initialized
 * LTS is connected
 
-# Trigger:
+## Trigger:
 
 A timed event cleans the queue of completed jobs.
 
-# Scenario:
+## Scenario:
 
 1) Walks list of jobs
 2) Sends records to LTS

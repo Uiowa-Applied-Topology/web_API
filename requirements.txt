@@ -1,6 +1,6 @@
 flake8
+flake8
 flake8-black
-black
 scipy
 numpy
 pytest
@@ -19,3 +19,4 @@ python-jose[cryptography]
 python-multipart
 pydantic-settings
 dacite
+

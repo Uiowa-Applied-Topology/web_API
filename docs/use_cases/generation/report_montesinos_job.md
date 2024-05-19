@@ -1,26 +1,24 @@
-# Use case:
+# Use case:Report Montesinos Job
 
-Report Montesinos Job
-
-# Primary actor:
+## Primary actor:
 
 Client
 
-# Goal:
+## Goal:
 
 Receives a completed job from a client.
 
-# Preconditions:
+## Preconditions:
 
 * Client and server are on the same network.
 * Client is on known runner list.
 
-# Trigger:
+## Trigger:
 
 Client reports a complete montesinos job.
 
 
-# Scenario:
+## Scenario:
 
 1) Client makes a `put` to the server with job data
 2) Server verifies client ID

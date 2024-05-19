@@ -1,25 +1,23 @@
-# Use case:
+# Use case:Fill Job Queue
 
-Fill Job Queue
-
-# Primary actor:
+## Primary actor:
 
 Time
 
-# Goal:
+## Goal:
 
 Build jobs to fill queue
 
-# Preconditions:
+## Preconditions:
 
 * Server is initialized
 * LTS is connected
 
-# Trigger:
+## Trigger:
 
 A timed event refills queue with jobs.
 
-# Scenario:
+## Scenario:
 
 1) Determine how many jobs to build
 2) build n jobs

@@ -1,24 +1,22 @@
-# Use case:
+# Use case:Read Record set
 
-Read Record set
-
-# Primary actor:
+## Primary actor:
 
 N/A
 
-# Goal:
+## Goal:
 
 Gets records from LTS.
 
-# Preconditions:
+## Preconditions:
 
 LTS has been initialized
 
-# Trigger:
+## Trigger:
 
 An upstream actor wants to get records from LTS
 
-# Scenario:
+## Scenario:
 
 1. Actor initiates a usecase that requests records
 2. Requested records are read from LTS

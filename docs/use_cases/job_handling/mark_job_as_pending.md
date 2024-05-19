@@ -1,23 +1,21 @@
-# Use case:
+# Use case:Mark Job as pending
 
-Mark Job as pending
-
-# Primary actor:
+## Primary actor:
 
 N/A
 
-# Goal:
+## Goal:
 
 Sets state for a job to pending
 
-# Preconditions:
+## Preconditions:
 
 * Server is initialized
 
-# Trigger:
+## Trigger:
 
 An upstream actor requests a job be marked as `pending`
 
-# Scenario:
+## Scenario:
 
 1) Set job to `pending`

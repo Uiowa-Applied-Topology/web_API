@@ -1,23 +1,21 @@
-# Use case:
+# Use case:Mark Job as new
 
-Mark Job as new
-
-# Primary actor:
+## Primary actor:
 
 N/A
 
-# Goal:
+## Goal:
 
 Sets state for a job to new
 
-# Preconditions:
+## Preconditions:
 
 * Server is initialized
 
-# Trigger:
+## Trigger:
 
 An upstream actor requests a job be marked as `new`
 
-# Scenario:
+## Scenario:
 
 1) Set job to `new`

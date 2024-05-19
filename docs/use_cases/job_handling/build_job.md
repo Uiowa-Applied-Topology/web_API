@@ -1,26 +1,24 @@
-# Use case:
+# Use case:Build Job
 
-Build Job
-
-# Primary actor:
+## Primary actor:
 
 N/A
 
-# Goal:
+## Goal:
 
 Construct a job to be distributed
 
-# Preconditions:
+## Preconditions:
 
 * Server is initialized
 * LTS is connected
 
-# Trigger:
+## Trigger:
 
 An upstream actor requests the initialization of a new job.
 
 
-# Scenario:
+## Scenario:
 
 1) Reads record sets
 2) Formats job for distribution

@@ -1,13 +1,11 @@
 
-# Unit
+# Unit: Database connector
 
-Database connector
-
-# Description
+## Description
 
 This unit provides an abstract database interface. Motor handles the "day to day" db operations.
 
-# Diagrams
+## Diagrams
 
 
 ```mermaid
@@ -20,6 +18,6 @@ class dc["DB Connector"]{
 
 ```
 
-# Unit test description
+## Unit test description
 
 _List the unit tests for this unit_

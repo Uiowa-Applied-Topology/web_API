@@ -1,24 +1,22 @@
-# Use case:
+# Use case:Mark Progress
 
-Mark Progress
-
-# Primary actor:
+## Primary actor:
 
 N/A
 
-# Goal:
+## Goal:
 
 Update progress of a job set.
 
-# Preconditions:
+## Preconditions:
 
 LTS has been initialized
 
-# Trigger:
+## Trigger:
 
 An upstream actor wants to update progress of a job set
 
-# Scenario:
+## Scenario:
 
 1. Actor initiates a usecase that updates progress
 2. Progress is updated to LTS
