@@ -1,11 +1,7 @@
-"""The Job interface.
-
-The class describes the common interface all job types implement.
-
-"""
+"""An implementation of the job interface for Montesinos jobs."""
 
 from datetime import datetime, timezone
-from ..interfaces.job import generation_job, generation_job_results, Job_State_Enum
+from ..interfaces.job import GenerationJob, GenerationJobResults, JobStateEnum
 from ..internal import job_queue, config
 from . import orm
 from ..rational import orm as rat_orm
@@ -19,14 +15,14 @@ import uuid
 
 OPEN_STEN_FILTER = {
     "$and": [
-        {"state": {"$ne": orm.DBjobState_Enum.complete}},
-        {"state": {"$ne": orm.DBjobState_Enum.no_headroom}},
+        {"state": {"$ne": orm.StencilStateEnum.complete}},
+        {"state": {"$ne": orm.StencilStateEnum.no_headroom}},
     ]
 }
 STARTED_STEN_FILTER = {
     "$and": [
-        {"state": {"$ne": orm.DBjobState_Enum.complete}},
-        {"state": {"$ne": orm.DBjobState_Enum.new}},
+        {"state": {"$ne": orm.StencilStateEnum.complete}},
+        {"state": {"$ne": orm.StencilStateEnum.new}},
     ]
 }
 
@@ -34,23 +30,24 @@ STARTED_STEN_FILTER = {
 semaphore: Semaphore = Semaphore()
 
 
-def _move_head(sten: orm.mont_stencil_db) -> orm.HeadState_Enum:
-    """_summary_
+def _move_head(stencildb: orm.StencilDB) -> orm.StencilHeadStateEnum:
+    """Move the head of the Stencil forward by a page.
 
     Parameters
     ----------
     sten : orm.mont_stencil_db
-        _description_
+        A stencil from the DB.
 
     Returns
     -------
     orm.HeadState_Enum
-        _description_
+        Returns the current state of the stencil head. Headroom if not the last
+        page was just completed or No headroom otherwise.
     """
     overflow = True
-    for i, sten_entry in enumerate(sten.stencil_array):
+    for i, sten_entry in enumerate(stencildb.stencil_array):
         if overflow:
-            sten.head[i] += 1
+            stencildb.head[i] += 1
             overflow = False
         if (
             max(
@@ -61,98 +58,46 @@ def _move_head(sten: orm.mont_stencil_db) -> orm.HeadState_Enum:
                     - config.config["tangle-classes"]["montesinos"]["page-exp"]
                 ),
             )
-            < sten.head[i]
+            < stencildb.head[i]
         ):
-            sten.head[i] = 0
+            stencildb.head[i] = 0
             overflow = True
         else:
             break
     if overflow:
-        for i, sten_entry in enumerate(sten.stencil_array):
-            sten.head[i] = sten_entry
-        return orm.HeadState_Enum.no_headroom
-    return orm.HeadState_Enum.headroom
+        for i, sten_entry in enumerate(stencildb.stencil_array):
+            stencildb.head[i] = sten_entry
+        return orm.StencilHeadStateEnum.no_headroom
+    return orm.StencilHeadStateEnum.headroom
 
 
-class Montesinos_Job_Results(generation_job_results):
-    """_summary_
-
-    Parameters
-    ----------
-    generation_job_results : _type_
-        _description_
-    """
-
-    mont_list: List[str]
-    crossing_num: int = None
-
-
-class Montesinos_Job(generation_job):
-    """_summary_
+async def _build_job(stencil: List[int], pages: List[int], job_id: str = None) -> str:
+    """Build and enqueue a new Montesinos job.
 
     Parameters
     ----------
-    generation_job : _type_
-        _description_
-    """
-
-    rat_lists: List[List[str]]
-    _results: Montesinos_Job_Results = None
-
-    async def store(self):
-        global semaphore
-        store = orm._get_storage_collection()
-        stencil_col = orm._get_stencil_collection()
-        tangles_2_store = [
-            {"_id": tang, "crossing_num": self._results.crossing_num}
-            for tang in self._results.mont_list
-        ]
-        semaphore.acquire()
-        await store.insert_many(tangles_2_store)
-        sten = from_dict(
-            data_class=orm.mont_stencil_db,
-            data=(await stencil_col.find_one({"open_jobs.job_id": self.id})),
-        )
-        i = [j.job_id for j in sten.open_jobs].index(self.id)
-        del sten.open_jobs[i]
-        if sten.state == orm.DBjobState_Enum.no_headroom and len(sten.open_jobs) == 0:
-            sten.state = orm.DBjobState_Enum.complete
-        await stencil_col.replace_one({"_id": sten._id}, asdict(sten))
-        semaphore.release()
-
-    def update_results(self, res: Montesinos_Job_Results):
-        self._results = res
-
-
-async def _build_job(
-    crossing_numbers: List[int], pages: List[int], id: str = None
-) -> str:
-    """_summary_
-
-    Parameters
-    ----------
-    crossing_numbers : List[int]
-        _description_
+    stencil : List[int]
+        The stencil to fill in.
     pages : List[int]
-        _description_
-    id : str, optional
-        _description_, by default None
+        The rational pages to retrieve.
+    job_id : str, optional
+        The id to use for the job, by default None
 
     Returns
     -------
     str
-        _description_
+        The id for the built and enqueued job.
     """
-    store_rat = orm._get_rational_collection()
-    if not id:
-        id = str(uuid.uuid4())
-    job = Montesinos_Job(
-        cur_state=Job_State_Enum.new,
+    rational_col = orm._get_rational_collection()
+    if not job_id:
+        job_id = str(uuid.uuid4())
+    job = MontesinosJob(
+        cur_state=JobStateEnum.new,
         timestamp=datetime.now(timezone.utc),
-        id=id,
+        job_id=job_id,
         rat_lists=list(),
     )
-    for cn, page in zip(crossing_numbers, pages):
+    for cn, page in zip(stencil, pages):
         lis = []
         pipeline = [
             {"$match": {"$and": [{"crossing_num": cn}, {"in_unit_interval": True}]}},
@@ -181,63 +126,111 @@ async def _build_job(
                 }
             },
         ]
-        async for response in store_rat.aggregate(pipeline):
+        async for response in rational_col.aggregate(pipeline):
             for rat_tang in response["data"]:
-                rat_tang = from_dict(data_class=rat_orm.rational_tang_db, data=rat_tang)
+                rat_tang = from_dict(data_class=rat_orm.RationalTangDB, data=rat_tang)
                 lis.append(rat_tang._id)
                 ...
             ...
 
         job.rat_lists.append(lis)
     await job_queue.enqueue_job(job)
-    return job.id
+    # @@@IMPROVEMENT: this need error handling.
+    return job.job_id
 
 
-async def get_jobs(count: int):
-    """_summary_
+class MontesinosJobResults(GenerationJobResults):
+    """The implementation of job results for Montesinos jobs."""
+
+    mont_list: List[str]
+    crossing_num: int = None
+
+
+class MontesinosJob(GenerationJob):
+    """The implementation of job for Montesinos tangles."""
+
+    rat_lists: List[List[str]]
+    _results: MontesinosJobResults = None
+
+    async def store(self):
+        """Store the current job into the Montesinos tangle collection."""
+        global semaphore
+        montesinos_col = orm._get_storage_collection()
+        stencil_col = orm._get_stencil_collection()
+        tangles_2_store = [
+            {"_id": tang, "crossing_num": self._results.crossing_num}
+            for tang in self._results.mont_list
+        ]
+        semaphore.acquire()
+        await montesinos_col.insert_many(tangles_2_store)
+        stencildb = from_dict(
+            data_class=orm.StencilDB,
+            data=(await stencil_col.find_one({"open_jobs.job_id": self.job_id})),
+        )
+        i = [j.job_id for j in stencildb.open_jobs].index(self.job_id)
+        del stencildb.open_jobs[i]
+        if (
+            stencildb.state == orm.StencilStateEnum.no_headroom
+            and len(stencildb.open_jobs) == 0
+        ):
+            stencildb.state = orm.StencilStateEnum.complete
+        await stencil_col.replace_one({"_id": stencildb._id}, asdict(stencildb))
+        semaphore.release()
+
+    def update_results(self, res: MontesinosJobResults):
+        """Update the job with the reported results."""
+        self._results = res
+
+
+async def get_jobs(count: int = 1):
+    """Get and build a specified number of jobs.
 
     Parameters
     ----------
-    count : int
-        _description_
+    count : int, optional
+        The number of jobs to get and build, by default 1
     """
     global semaphore
     stencil_col = orm._get_stencil_collection()
     semaphore.acquire()
-    sten = from_dict(
-        data_class=orm.mont_stencil_db,
+    stencildb = from_dict(
+        data_class=orm.StencilDB,
         data=(await stencil_col.find_one(OPEN_STEN_FILTER)),
     )
-    sten.state = orm.DBjobState_Enum.started
-    while count > 0 and sten:
-        job_id = await _build_job(sten.stencil_array, sten.head)
-        sten.open_jobs.append({"job_id": job_id, "cursor": copy.deepcopy(sten.head)})
+    stencildb.state = orm.StencilStateEnum.started
+    while count > 0 and stencildb:
+        job_id = await _build_job(stencildb.stencil_array, stencildb.head)
+        stencildb.open_jobs.append(
+            {"job_id": job_id, "cursor": copy.deepcopy(stencildb.head)}
+        )
         count -= 1
-        if _move_head(sten) == orm.HeadState_Enum.no_headroom:
-            sten.state = orm.DBjobState_Enum.no_headroom
-            stencil_col.replace_one({"_id": sten._id}, asdict(sten))
-            sten = from_dict(
-                data_class=orm.mont_stencil_db,
+        if _move_head(stencildb) == orm.StencilHeadStateEnum.no_headroom:
+            stencildb.state = orm.StencilStateEnum.no_headroom
+            stencil_col.replace_one({"_id": stencildb._id}, asdict(stencildb))
+            stencildb = from_dict(
+                data_class=orm.StencilDB,
                 data=(await stencil_col.find_one(OPEN_STEN_FILTER)),
             )
-            sten.state = orm.DBjobState_Enum.started
-    stencil_col.replace_one({"_id": sten._id}, asdict(sten))
+            stencildb.state = orm.StencilStateEnum.started
+    stencil_col.replace_one({"_id": stencildb._id}, asdict(stencildb))
     semaphore.release()
 
 
-async def startup_jobs():
-    """_summary_"""
+async def startup_task():
+    """Task to run at startup to initialize Montesinos jobs."""
     global semaphore
-    store_sten = orm._get_stencil_collection()
+    stencil_col = orm._get_stencil_collection()
     semaphore.acquire()
 
-    async for sten in store_sten.find(STARTED_STEN_FILTER):
-        sten = from_dict(data_class=orm.mont_stencil_db, data=sten)
+    async for stencildb in stencil_col.find(STARTED_STEN_FILTER):
+        stencildb = from_dict(data_class=orm.StencilDB, data=stencildb)
 
-        for open_item in sten.open_jobs:
-            await _build_job(sten.stencil_array, open_item.cursor, id=open_item.job_id)
+        for open_item in stencildb.open_jobs:
+            await _build_job(
+                stencildb.stencil_array, open_item.cursor, job_id=open_item.job_id
+            )
             ...
     semaphore.release()
-    nmjc = job_queue.get_job_statistics(Montesinos_Job)["new"]
-    if nmjc < config.config["job-queue"]["min-new-count"]:
-        await get_jobs(config.config["job-queue"]["min-new-count"] - nmjc)
+    new_mont_j_cnt = job_queue.get_job_statistics(MontesinosJob)["new"]
+    if new_mont_j_cnt < config.config["job-queue"]["min-new-count"]:
+        await get_jobs(config.config["job-queue"]["min-new-count"] - new_mont_j_cnt)

@@ -1,97 +1,69 @@
-"""The Job interface.
-
-The class describes the common interface all job types implement.
-
-"""
+"""The Job interfaces."""
 
 from datetime import datetime
 from pydantic import BaseModel
 from enum import Enum
 
 
-class Job_State_Enum(str, Enum):
-    """_summary_
-
-    Parameters
-    ----------
-    str : _type_
-        _description_
-    Enum : _type_
-        _description_
-    """
+class JobStateEnum(str, Enum):
+    """The enum defines the states a job can take."""
 
     new = "new"
     pending = "pending"
     complete = "complete"
 
 
-class generation_job_results(BaseModel):
-    """_summary_
+class GenerationJobResults(BaseModel):
+    """The class describes the common interface all jobResults types implement."""
 
-    Parameters
-    ----------
-    BaseModel : _type_
-        _description_
-    """
-
-    id: str
+    job_id: str
 
 
-class generation_job(BaseModel):
-    """_summary_
+class ConfirmJobReceipt(GenerationJobResults):
+    """The class describes the response type for jobs reported by clients."""
 
-    Parameters
-    ----------
-    BaseModel : _type_
-        _description_
+    accepted: bool = False
+
+
+class GenerationJob(BaseModel):
+    """The class describes the common interface all job types implement.
 
     Raises
     ------
     NotImplementedError
-        _description_
-    NotImplementedError
-        _description_
+        Classes implementing the GenerationJob should define the interface
+        functions. If the functions are not present exception should be thrown.
     """
 
-    id: str
+    job_id: str
     timestamp: datetime
-    cur_state: Job_State_Enum = Job_State_Enum.new
+    cur_state: JobStateEnum = JobStateEnum.new
     client_id: str = None
-    _results: generation_job_results
+    _results: GenerationJobResults
 
     def store(self):
-        """_summary_
+        """Interface for functions to store job results.
 
         Raises
         ------
         NotImplementedError
-            _description_
+            Classes implementing the GenerationJob should define the interface
+            functions. If the functions are not present exception should be thrown.
         """
         raise NotImplementedError
 
-    def update_results(self, res: generation_job_results):
-        """_summary_
+    def update_results(self, res: GenerationJobResults):
+        """Interface for functions to update job with results.
 
         Parameters
         ----------
         res : generation_job_results
-            _description_
+            The results to store with the job.
 
         Raises
         ------
         NotImplementedError
-            _description_
+            Classes implementing the GenerationJob should define the interface
+            functions. If the functions are not present exception should be thrown.
         """
         raise NotImplementedError
-
-
-class confirm_job_receipt(generation_job_results):
-    """_summary_
-
-    Parameters
-    ----------
-    generation_job_results : _type_
-        _description_
-    """
-
-    accepted: bool = False

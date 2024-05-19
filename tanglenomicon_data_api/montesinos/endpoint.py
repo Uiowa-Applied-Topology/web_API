@@ -1,8 +1,8 @@
-"""_summary_
-"""
-from fastapi import Depends, APIRouter
+"""Defines the public API endpoints to work/report on montesinos tangles."""
+
+from fastapi import Depends, APIRouter, HTTPException
 from ..internal.security import auth_current_user, get_current_user, User
-from ..interfaces.confirm import confirm_job_receipt
+from ..interfaces.job import ConfirmJobReceipt
 from . import job as mj
 from ..internal import job_queue, config
 from typing import Annotated
@@ -15,96 +15,120 @@ router = APIRouter(
 )
 
 
-async def report_job_results(
-    job_results: mj.Montesinos_Job_Results,
+################################################################################
+# Helper Functions
+################################################################################
+
+
+async def _report_job_results(
+    job_results: mj.MontesinosJobResults,
     current_user: Annotated[User, Depends(get_current_user)],
-) -> confirm_job_receipt:
-    """_summary_
+) -> ConfirmJobReceipt:
+    """Return a confirmation or denial for job results.
 
     Parameters
     ----------
     job_results : mj.Montesinos_Job_Results
-        _description_
+        The job results reported by a client.
     current_user : Annotated[User, Depends
-        _description_
+        The user reporting the results.
 
     Returns
     -------
     confirm_job_receipt
-        _description_
+        Either a confirmation or denial for a reported job result.
+
+    Raises
+    ------
+    HTTPException
+        Raise a 404 if the job isn't in the queue.
     """
-    await job_queue.mark_job_complete(job_results, current_user)
-    results = confirm_job_receipt(id=job_results.id, accepted=True)
+    if not (await job_queue.mark_job_complete(job_results, current_user)):
+        raise HTTPException(
+            status_code=404, detail="Job not in queue or Job not in pending."
+        )
+    results = ConfirmJobReceipt(job_id=job_results.job_id, accepted=True)
     return results
 
 
-async def get_next_montesinos_job(
+async def _get_next_montesinos_job(
     current_user: Annotated[User, Depends(get_current_user)]
-):
-    """_summary_
+) -> mj.MontesinosJob:
+    """Return the next montesinos job from the job queue.
 
     Parameters
     ----------
     current_user : Annotated[User, Depends
-        _description_
+        The verified user requesting a job.
 
     Returns
     -------
-    _type_
-        _description_
+    mj.Montesinos_Job
+        The next Montesinos Job
+
+    Raises
+    ------
+    HTTPException
+        If no job found raise 404.
     """
-    nmjc = job_queue.get_job_statistics(mj.Montesinos_Job)["new"]
-    if nmjc < config.config["job-queue"]["min-new-count"]:
-        await mj.get_jobs(config.config["job-queue"]["min-new-count"]-nmjc)
-    job = await job_queue.get_next_job(mj.Montesinos_Job, current_user)
+    new_mont_j_cnt = job_queue.get_job_statistics(mj.MontesinosJob)["new"]
+    if new_mont_j_cnt < config.config["job-queue"]["min-new-count"]:
+        await mj.get_jobs(config.config["job-queue"]["min-new-count"] - new_mont_j_cnt)
+    job = await job_queue.get_next_job(mj.MontesinosJob, current_user)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found.")
     return job
 
 
 @router.post("/job/report")
 async def report_montesinos_job(
-    response: Annotated[confirm_job_receipt, Depends(report_job_results)],
-) -> confirm_job_receipt:
-    """_summary_
+    response: Annotated[ConfirmJobReceipt, Depends(_report_job_results)],
+) -> ConfirmJobReceipt:
+    """Return the job from a client.
 
     Parameters
     ----------
     response : Annotated[confirm_job_receipt, Depends
-        _description_
+        The confirmation state of the reported job.
 
     Returns
     -------
     confirm_job_receipt
-        _description_
+        The confirmation state of the reported job.
     """
     return response
 
 
-@router.get("/job/retrieve", response_model=mj.Montesinos_Job)
+@router.get("/job/retrieve", response_model=mj.MontesinosJob)
 async def retrieve_montesinos_job(
-    next_job: Annotated[mj.Montesinos_Job, Depends(get_next_montesinos_job)]
+    next_job: Annotated[mj.MontesinosJob, Depends(_get_next_montesinos_job)]
 ):
-    """_summary_
+    """Return the next montesinos job.
 
     Parameters
     ----------
     next_job : Annotated[mj.Montesinos_Job, Depends
-        _description_
+        The next Montesinos Job.
 
     Returns
     -------
-    _type_
-        _description_
+    Montesinos_Job
+        The next Montesinos Job.
     """
     return next_job
 
 
 @router.get("/queue/stats")
-async def retrieve_montesinos_job_queue_stats():
-    """_summary_
+async def retrieve_montesinos_job_queue_stats() -> dict:
+    """Return job queue statistics for montesinos jobs.
 
     Returns
     -------
-    _type_
-        _description_
+    dict
+        Job queue statistics for montesinos jobs. Broken into:
+        - Total
+        - New
+        - Pending
+        - Complete
     """
-    return job_queue.get_job_statistics(mj.Montesinos_Job)
+    return job_queue.get_job_statistics(mj.MontesinosJob)

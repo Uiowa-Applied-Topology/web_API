@@ -4,11 +4,9 @@ exclude =
         __pycache__,
         docs,
         .pytest_cache,
-        .vscode,
-        test/results
-        setup.py
-        test/*
-        build/*
+        setup.py,
+        test/*,
+        build/*,
         .venv/*
 max-line-length = 88
 max-complexity = 10

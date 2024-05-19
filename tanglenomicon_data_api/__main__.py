@@ -1,11 +1,10 @@
-"""_summary_
-"""
+"""The __main__ file/entry point for tanglenomicon_data_api."""
 
 from .montesinos import endpoint as mont_e
 from .montesinos import job as mont_j
 from .internal import db_connector, security, config, job_queue
 from fastapi import FastAPI
-from uvicorn import Config as ucfg, Server as usrv
+from uvicorn import Config as UCfg, Server as USrv
 import argparse
 import asyncio
 from asyncio import AbstractEventLoop
@@ -15,7 +14,7 @@ loop: AbstractEventLoop = asyncio.new_event_loop()
 api: FastAPI = FastAPI()
 routers = [security, mont_e, job_queue]
 job_defs = [
-    mont_j.startup_jobs(),
+    mont_j.startup_task(),
     job_queue.task_clean_complete_jobs(),
     job_queue.task_clean_stale_jobs(),
 ]
@@ -45,7 +44,7 @@ def main():
     global api
     global loop
 
-    loop.run_until_complete(usrv(ucfg(app=api, loop=loop)).serve())
+    loop.run_until_complete(USrv(UCfg(app=api, loop=loop)).serve())
 
 
 if __name__ == "__main__":

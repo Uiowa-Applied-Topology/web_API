@@ -1,9 +1,9 @@
-"""_summary_
+"""DB Connector handles the internal mongodb initialization.
 
 Raises
 ------
 NameError
-    _description_
+    Connection error occurred.
 """
 
 import motor.motor_asyncio
@@ -15,25 +15,25 @@ db: dict[str, motor.motor_asyncio.AsyncIOMotorDatabase] = None
 
 
 def init_client(url: str, port: int, username: str, password: str, database_name: str):
-    """_summary_
+    """Initialize the db for the server.
 
     Parameters
     ----------
     url : str
-        _description_
+        Base url for the db connection.
     port : int
-        _description_
+        Port for the db connection.
     username : str
-        _description_
-    password : str
-        _description_
+        DB connection username
+    password : strs
+        DB connection password.
     database_name : str
-        _description_
+        Name of database at url to connect to.
 
     Raises
     ------
     NameError
-        _description_
+        Connection error occurred.
     """
     global client
     global db
@@ -47,5 +47,5 @@ def init_client(url: str, port: int, username: str, password: str, database_name
     else:
         raise NameError(
             "db connection error"
-        )  # @@@FIXME needs to be updated to exception object
+        )  # @@@IMPROVEMENT: needs to be updated to exception object
     ...

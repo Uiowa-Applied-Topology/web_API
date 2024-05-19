@@ -1,21 +1,11 @@
-"""_summary_
+"""Job Queue handles the tangle generation job "queue"."""
 
-Raises
-------
-HTTPException
-    _description_
-HTTPException
-    _description_
-HTTPException
-    _description_
-"""
-
-from ..interfaces.job import generation_job, generation_job_results, Job_State_Enum
+from ..interfaces.job import GenerationJob, GenerationJobResults, JobStateEnum
 from ..internal.security import User
 from . import config
 
-from fastapi import HTTPException
-from fastapi import APIRouter
+from typing import Annotated
+from fastapi import Depends, APIRouter
 
 from typing import Dict, Type, List
 from datetime import datetime, timezone
@@ -30,95 +20,108 @@ router = APIRouter(
 )
 
 
-_job_queue: Dict[str, generation_job] = dict()
+_job_queue: Dict[str, GenerationJob] = dict()
 
 semaphore: Semaphore = Semaphore()
 
 
-async def mark_job_complete(results: generation_job_results, current_user: User):
-    """_summary_
+def _get_count(job_type: Type[GenerationJob] = GenerationJob) -> int:
+    """Get the number of jobs from the queue.
 
     Parameters
     ----------
-    results : generation_job_results
-        _description_
-    current_user : User
-        _description_
-
-    Raises
-    ------
-    HTTPException
-        _description_
-    """
-    global _job_queue
-    semaphore.acquire()
-    if (
-        results.id in _job_queue
-        and _job_queue[results.id].cur_state == Job_State_Enum.pending
-        and _job_queue[results.id].client_id == current_user.username
-    ):
-        job: generation_job = _job_queue[results.id]
-        job.update_results(results)
-        job.cur_state = Job_State_Enum.complete
-        semaphore.release()
-        return
-    semaphore.release()
-    raise HTTPException(
-        status_code=404, detail="Job not in queue or Job not in pending."
-    )
-
-
-async def get_next_job(
-    job_type: Type[generation_job], current_user: User
-) -> generation_job:
-    """_summary_
-
-    Parameters
-    ----------
-    job_type : Type[generation_job]
-        _description_
-    current_user : User
-        _description_
+    job_type : Type[generation_job], optional
+        The type of job to find, by default GenerationJob.
 
     Returns
     -------
-    generation_job
-        _description_
-
-    Raises
-    ------
-    HTTPException
-        _description_
+    int
+        The count.
     """
-    global _job_queue
-    semaphore.acquire()
-    items = [
-        i
-        for i in _job_queue
-        if isinstance(_job_queue[i], job_type)
-        and _job_queue[i].cur_state == Job_State_Enum.new
-    ]
-    if len(items) > 0:
-        _job_queue[items[0]].cur_state = Job_State_Enum.pending
-        _job_queue[items[0]].client_id = current_user.username
-        semaphore.release()
-        return _job_queue[items[0]]
-    semaphore.release()
-    raise HTTPException(status_code=404, detail="Job not found.")
+    return len([i for i in _job_queue if isinstance(_job_queue[i], job_type)])
 
 
-def _check_time_delta(then: datetime) -> bool:
-    """_summary_
+def _get_count_new(job_type: Type[GenerationJob] = GenerationJob) -> int:
+    """Get the number of jobs from the queue in the 'new' state.
+
+    Parameters
+    ----------
+    job_type : Type[generation_job], optional
+        The type of job to find, by default GenerationJob.
+
+    Returns
+    -------
+    int
+        The count.
+    """
+    return len(
+        [
+            i
+            for i in _job_queue
+            if isinstance(_job_queue[i], job_type)
+            and _job_queue[i].cur_state == JobStateEnum.new
+        ]
+    )
+
+
+def _get_count_complete(job_type: Type[GenerationJob] = GenerationJob) -> int:
+    """Get the number of jobs from the queue in the 'complete' state.
+
+    Parameters
+    ----------
+    job_type : Type[generation_job], optional
+        The type of job to find, by default GenerationJob.
+
+    Returns
+    -------
+    int
+        The count.
+    """
+    return len(
+        [
+            i
+            for i in _job_queue
+            if isinstance(_job_queue[i], job_type)
+            and _job_queue[i].cur_state == JobStateEnum.complete
+        ]
+    )
+
+
+def _get_count_pending(job_type: Type[GenerationJob] = GenerationJob) -> int:
+    """Get the number of jobs from the queue in the 'pending' state.
+
+    Parameters
+    ----------
+    job_type : Type[generation_job], optional
+        The type of job to find, by default GenerationJob.
+
+    Returns
+    -------
+    int
+        The count.
+    """
+    return len(
+        [
+            i
+            for i in _job_queue
+            if isinstance(_job_queue[i], job_type)
+            and _job_queue[i].cur_state == JobStateEnum.pending
+        ]
+    )
+
+
+def _is_above_time_delta(then: datetime) -> bool:
+    """Check if the time between now and then is below or above threshold.
 
     Parameters
     ----------
     then : datetime
-        _description_
+        The timestamp from "then".
 
     Returns
     -------
     bool
-        _description_
+        ``True`` if above threshold ``False`` otherwise.
     """
     now = datetime.now(timezone.utc)
     diff = now - then
@@ -128,168 +131,173 @@ def _check_time_delta(then: datetime) -> bool:
 
 
 async def _clean_stale_jobs():
-    """_summary_"""
+    """Clean job queue of stale jobs."""
     global _job_queue
     semaphore.acquire()
-    items: List[generation_job] = [
+    items: List[GenerationJob] = [
         _job_queue[i]
         for i in _job_queue
-        if (_check_time_delta(_job_queue[i].timestamp))
-        and (_job_queue[i].cur_state != Job_State_Enum.complete)
+        if (_is_above_time_delta(_job_queue[i].timestamp))
+        and (_job_queue[i].cur_state != JobStateEnum.complete)
     ]
     for item in items:
-        item.cur_state = Job_State_Enum.new
+        item.cur_state = JobStateEnum.new
     semaphore.release()
 
 
 async def _clean_complete_jobs():
+    """Store complete jobs into DB."""
     global _job_queue
     semaphore.acquire()
-    items: List[generation_job] = [
+    items: List[GenerationJob] = [
         _job_queue[i]
         for i in _job_queue
-        if _job_queue[i].cur_state == Job_State_Enum.complete
+        if _job_queue[i].cur_state == JobStateEnum.complete
     ]
     for item in items:
         await item.store()
-        del _job_queue[item.id]
+        del _job_queue[item.job_id]
     semaphore.release()
 
 
-async def enqueue_job(job: generation_job):
-    """_summary_
+async def mark_job_complete(results: GenerationJobResults, current_user: User) -> bool:
+    """Mark job in queue as complete.
+
+    Parameters
+    ----------
+    results : GenerationJobResults
+        The reported results from the user.
+    current_user : User
+        The user submitting the results.
+
+    Returns
+    -------
+    bool
+        ``True`` if successfully marked complete ``False`` otherwise.
+    """
+    global _job_queue
+    marked = False
+    semaphore.acquire()
+    if (
+        results.job_id in _job_queue
+        and _job_queue[results.job_id].cur_state == JobStateEnum.pending
+        and _job_queue[results.job_id].client_id == current_user.username
+    ):
+        job: GenerationJob = _job_queue[results.job_id]
+        job.update_results(results)
+        job.cur_state = JobStateEnum.complete
+        marked = True
+    # @@@IMPROVEMENT: should add logging here.
+    semaphore.release()
+    return marked
+
+
+async def get_next_job(
+    job_type: Type[GenerationJob], current_user: User
+) -> GenerationJob | None:
+    """Get the next job to complete from the job queue.
+
+    Parameters
+    ----------
+    job_type : Type[generation_job]
+        The type of job to find in the queue.
+    current_user : User
+        The user requesting the job.
+
+    Returns
+    -------
+    GenerationJob | None
+        The job to feed the user or None if none exist.
+    """
+    global _job_queue
+    job = None
+    semaphore.acquire()
+    items = [
+        i
+        for i in _job_queue
+        if isinstance(_job_queue[i], job_type)
+        and _job_queue[i].cur_state == JobStateEnum.new
+    ]
+    if len(items) > 0:
+        _job_queue[items[0]].cur_state = JobStateEnum.pending
+        _job_queue[items[0]].client_id = current_user.username
+        job = _job_queue[items[0]]
+    semaphore.release()
+    return job
+
+
+async def enqueue_job(job: GenerationJob) -> bool:
+    """Add a job to the queue.
 
     Parameters
     ----------
     job : generation_job
-        _description_
+        The job to add to the queue.
 
-    Raises
-    ------
-    HTTPException
-        _description_
+    Returns
+    -------
+    bool
+        ``True`` if job is enqueued ``False`` otherwise.
     """
     global _job_queue
+    enqueued = False
     semaphore.acquire()
-    if job.id not in _job_queue:
-        _job_queue[job.id] = job
-        semaphore.release()
-        return
+    if job.job_id not in _job_queue:
+        _job_queue[job.job_id] = job
+        enqueued = True
     semaphore.release()
-    raise HTTPException(status_code=500, detail="job enqueue error.")
+    return enqueued
 
 
-def get_count_new(job_type: Type[generation_job]):
-    """_summary_
-
-    Parameters
-    ----------
-    job_type : Type[generation_job]
-        _description_
-
-    Returns
-    -------
-    _type_
-        _description_
-    """
-    return len(
-        [
-            i
-            for i in _job_queue
-            if isinstance(_job_queue[i], job_type)
-            and _job_queue[i].cur_state == Job_State_Enum.new
-        ]
-    )
-
-
-def get_count_complete(job_type: Type[generation_job]):
-    """_summary_
+def get_job_statistics(job_type: Type[GenerationJob] = GenerationJob) -> dict:
+    """Get all job statistics.
 
     Parameters
     ----------
-    job_type : Type[generation_job]
-        _description_
+    job_type : Type[GenerationJob], optional
+        The type of job to find, by default GenerationJob.
 
     Returns
     -------
-    _type_
-        _description_
-    """
-    return len(
-        [
-            i
-            for i in _job_queue
-            if isinstance(_job_queue[i], job_type)
-            and _job_queue[i].cur_state == Job_State_Enum.complete
-        ]
-    )
-
-
-def get_count_pending(job_type: Type[generation_job]):
-    """_summary_
-
-    Parameters
-    ----------
-    job_type : Type[generation_job]
-        _description_
-
-    Returns
-    -------
-    _type_
-        _description_
-    """
-    return len(
-        [
-            i
-            for i in _job_queue
-            if isinstance(_job_queue[i], job_type)
-            and _job_queue[i].cur_state == Job_State_Enum.pending
-        ]
-    )
-
-
-def get_job_statistics(job_type: Type[generation_job]):
-    """_summary_
-
-    Parameters
-    ----------
-    job_type : Type[generation_job]
-        _description_
-
-    Returns
-    -------
-    _type_
-        _description_
+    dict
+        The queue statistics for the type.
     """
     return {
-        "queue_length": len(_job_queue),
-        "new": get_count_new(job_type),
-        "pending": get_count_pending(job_type),
-        "complete": get_count_complete(job_type),
+        "queue_length": _get_count(job_type),
+        "new": _get_count_new(job_type),
+        "pending": _get_count_pending(job_type),
+        "complete": _get_count_complete(job_type),
     }
 
 
-@router.get("/stats")
-async def retrieve_job_statistics():
-    """_summary_
-
-    Returns
-    -------
-    _type_
-        _description_
-    """
-    return get_job_statistics(generation_job)
-
-
 async def task_clean_stale_jobs():
-    """_summary_"""
+    """Task that periodically cleans stale jobs from the queue."""
     while True:
         await asyncio.sleep(config.config["job-queue"]["clocks"]["stale"])
         await _clean_stale_jobs()
 
 
 async def task_clean_complete_jobs():
-    """_summary_"""
+    """Task that periodically stores complete jobs in the queue."""
     while True:
         await asyncio.sleep(config.config["job-queue"]["clocks"]["complete"])
         await _clean_complete_jobs()
+
+
+@router.get("/stats")
+async def retrieve_job_statistics(
+    stats: Annotated[dict, Depends(get_job_statistics)]
+) -> dict:
+    """Request for queue statistics.
+
+    Parameters
+    ----------
+    stats : Annotated[dict, Depends
+        The statistics.
+
+    Returns
+    -------
+    dict
+        The statistics.
+    """
+    return stats

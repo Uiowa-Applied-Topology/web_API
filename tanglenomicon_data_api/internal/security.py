@@ -1,21 +1,14 @@
-"""_summary_
+"""Security submodule handles authenticating users.
+
+This has been mostly lifted from [here](https://web.archive.org/web/20240505104734/https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/) <!-- # noqa: E501 -->
+
 
 Raises
 ------
 credentials_exception
-    _description_
-credentials_exception
-    _description_
-credentials_exception
-    _description_
+    Credentials are invalid.
 HTTPException
-    _description_
-credentials_exception
-    _description_
-credentials_exception
-    _description_
-HTTPException
-    _description_
+    Various HTTP error codes.
 """
 
 from datetime import datetime, timedelta, timezone
@@ -26,7 +19,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
-import motor.motor_asyncio
+from motor.motor_asyncio import AsyncIOMotorCollection
 from . import db_connector as dbc
 from . import config
 
@@ -34,12 +27,12 @@ COL_NAME = "auth"
 
 
 class Token(BaseModel):
-    """_summary_
+    """The jwt token class.
 
     Parameters
     ----------
-    BaseModel : _type_
-        _description_
+    BaseModel : BaseModel
+        Usage docs: https://docs.pydantic.dev/2.7/concepts/models/
     """
 
     access_token: str
@@ -47,24 +40,24 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    """_summary_
+    """The jwt Token data class.
 
     Parameters
     ----------
-    BaseModel : _type_
-        _description_
+    BaseModel : BaseModel
+        Usage docs: https://docs.pydantic.dev/2.7/concepts/models/
     """
 
     username: Union[str, None] = None
 
 
 class User(BaseModel):
-    """_summary_
+    """User class outline.
 
     Parameters
     ----------
-    BaseModel : _type_
-        _description_
+    BaseModel : BaseModel
+        Usage docs: https://docs.pydantic.dev/2.7/concepts/models/
     """
 
     username: str
@@ -72,12 +65,12 @@ class User(BaseModel):
 
 
 class UserInDB(User):
-    """_summary_
+    """The ORM definition for user from the database.
 
     Parameters
     ----------
-    User : _type_
-        _description_
+    User : User
+        Implementation of User.
     """
 
     hashed_password: str
@@ -90,63 +83,104 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 router = APIRouter()
 
+credentials_exception = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Could not validate credentials",
+    headers={"WWW-Authenticate": "Bearer"},
+)
 
-def _verify_password(plain_password, hashed_password):
-    """_summary_
+
+def _decode_token(token: str) -> TokenData:
+    """Return a decoded jwt token.
 
     Parameters
     ----------
-    plain_password : _type_
-        _description_
-    hashed_password : bool
-        _description_
+    token : str
+        A token supplied by the user.
 
     Returns
     -------
-    _type_
-        _description_
+    TokenData
+        The decoded token data.
+
+    Raises
+    ------
+    credentials_exception
+        An error occurred when authenticating user.
+    """
+    try:
+        payload = jwt.decode(
+            token,
+            config.config["auth"]["secret_key"],
+            algorithms=[config.config["auth"]["algorithm"]],
+        )
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+        token_data = TokenData(username=username)
+    except JWTError:
+        raise credentials_exception
+    return token_data
+
+
+def _verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Return a ``True``/``False`` based on if password matches hash.
+
+    Parameters
+    ----------
+    plain_password : str
+        The plain password sent by the user.
+    hashed_password : str
+        The stored password hash for the user.
+
+    Returns
+    -------
+    Bool
+        ``True`` if the password matched the hash, else ``False``.
     """
     return pwd_context.verify(plain_password, hashed_password)
 
 
-async def _get_user(collection, username: str) -> UserInDB | None:
-    """_summary_
+async def _get_user(auth_col: AsyncIOMotorCollection, username: str) -> UserInDB | None:
+    """Find and return the user from the auth collection or None.
 
     Parameters
     ----------
-    collection : _type_
-        _description_
+    auth_col : AsyncIOMotorCollection
+        The mongodb auth collection.
     username : str
-        _description_
+        The user to find in the collection.
 
     Returns
     -------
     UserInDB | None
-        _description_
+        A user object from the auth collection or None.
     """
-    if (user := (await collection.find_one({"username": username}))) is not None:
+    if (user := (await auth_col.find_one({"username": username}))) is not None:
         return UserInDB(**user)
     return None
 
 
-async def _authenticate_user(db, username: str, password: str):
-    """_summary_
+async def _authenticate_user(
+    auth_col: AsyncIOMotorCollection, username: str, password: str
+) -> UserInDB | bool:
+    """Return ``True``/``False`` based on if user exists and password matches.
 
     Parameters
     ----------
-    db : _type_
-        _description_
+    auth_col : AsyncIOMotorCollection
+        The mongodb auth collection.
     username : str
-        _description_
+        The user to find in the collection.
     password : str
-        _description_
+        The password supplied by the user.
 
     Returns
     -------
-    _type_
-        _description_
+    UserInDB | None
+        A user object from the auth collection or False if fail.
     """
-    user = await _get_user(db, username)
+    user = await _get_user(auth_col, username)
     if not user:
         return False
     if not _verify_password(password, user.hashed_password):
@@ -154,31 +188,33 @@ async def _authenticate_user(db, username: str, password: str):
     return user
 
 
-def _get_collection():
-    """_summary_
+def _get_collection() -> AsyncIOMotorCollection:
+    """Return a reference to the mongodb auth collection.
 
     Returns
     -------
-    _type_
-        _description_
+    AsyncIOMotorCollection
+        A reference to the auth collection.
     """
     return dbc.db[COL_NAME]
 
 
-def _create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
-    """_summary_
+def _create_access_token(
+    data: dict, expires_delta: Union[timedelta, None] = None
+) -> str:
+    """Return an access jwt token.
 
     Parameters
     ----------
     data : dict
-        _description_
+        The data to encode into a token.
     expires_delta : Union[timedelta, None], optional
-        _description_, by default None
+        The timedelta to expire the token, by default None
 
     Returns
     -------
-    _type_
-        _description_
+    str
+        A jwt token.
     """
     to_encode = data.copy()
     if expires_delta:
@@ -194,53 +230,54 @@ def _create_access_token(data: dict, expires_delta: Union[timedelta, None] = Non
     return encoded_jwt
 
 
-async def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
-    collection: Annotated[
-        motor.motor_asyncio.AsyncIOMotorCollection, Depends(_get_collection)
-    ],
-):
-    """_summary_
+async def auth_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> bool:
+    """Return ``True``/``False`` based on if the supplied token is valid.
 
     Parameters
     ----------
     token : Annotated[str, Depends
-        _description_
-    collection : Annotated[ motor.motor_asyncio.AsyncIOMotorCollection, Depends
-        _description_
+        The token supplied by the user.
 
     Returns
     -------
-    _type_
-        _description_
+    bool
+        ``True``/``False`` if user is authenticated.
 
     Raises
     ------
     credentials_exception
-        _description_
-    credentials_exception
-        _description_
-    credentials_exception
-        _description_
+        An error occurred when authenticating user.
     """
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(
-            token,
-            config.config["auth"]["secret_key"],
-            algorithms=[config.config["auth"]["algorithm"]],
-        )
-        username: str = payload.get("sub")
-        if username is None:
-            raise credentials_exception
-        token_data = TokenData(username=username)
-    except JWTError:
-        raise credentials_exception
-    user = await _get_user(collection, username=token_data.username)
+    if _decode_token(token):
+        return True
+    return False
+
+
+async def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    auth_col: Annotated[AsyncIOMotorCollection, Depends(_get_collection)],
+) -> UserInDB:
+    """Retrieve a user from the auth collection given a token.
+
+    Parameters
+    ----------
+    token : Annotated[str, Depends
+        A jwt token supplied by the user.
+    auth_col : Annotated[AsyncIOMotorCollection, Depends
+        A reference to an auth collection.
+
+    Returns
+    -------
+    UserInDB
+        A user from the auth collection.
+
+    Raises
+    ------
+    credentials_exception
+        An error occurred when authenticating user.
+    """
+    token_data = _decode_token(token)
+    user = await _get_user(auth_col, username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
@@ -248,84 +285,44 @@ async def get_current_user(
 
 async def _get_current_active_user(
     current_user: Annotated[User, Depends(get_current_user)]
-):
-    """_summary_
+) -> User:
+    """Return data for current active user.
 
     Parameters
     ----------
     current_user : Annotated[User, Depends
-        _description_
+        The current user.
 
     Returns
     -------
-    _type_
-        _description_
+    User
+        The current user.
 
     Raises
     ------
     HTTPException
-        _description_
+        An http error if user is disabled.
     """
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 
-async def auth_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-    """_summary_
-
-    Parameters
-    ----------
-    token : Annotated[str, Depends
-        _description_
-
-    Returns
-    -------
-    _type_
-        _description_
-
-    Raises
-    ------
-    credentials_exception
-        _description_
-    credentials_exception
-        _description_
-    """
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(
-            token,
-            config.config["auth"]["secret_key"],
-            algorithms=[config.config["auth"]["algorithm"]],
-        )
-        username: str = payload.get("sub")
-        if username is None:
-            raise credentials_exception
-        # TODO: remove? token_data = TokenData(username=username)
-    except JWTError:
-        raise credentials_exception
-    return True
-
-
 @router.get("/users/me/", response_model=User)
 async def read_users_me(
     current_user: Annotated[User, Depends(_get_current_active_user)]
 ):
-    """_summary_
+    """Endpoint to return the current active user.
 
     Parameters
     ----------
     current_user : Annotated[User, Depends
-        _description_
+        The current user retrieved from the get current user function.
 
     Returns
     -------
-    _type_
-        _description_
+    User
+        The current user's information.
     """
     return current_user
 
@@ -333,30 +330,28 @@ async def read_users_me(
 @router.post("/token")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    collection: Annotated[
-        motor.motor_asyncio.AsyncIOMotorCollection, Depends(_get_collection)
-    ],
+    auth_col: Annotated[AsyncIOMotorCollection, Depends(_get_collection)],
 ) -> Token:
-    """_summary_
+    """Generate a token for the current user.
 
     Parameters
     ----------
     form_data : Annotated[OAuth2PasswordRequestForm, Depends
-        _description_
-    collection : Annotated[ motor.motor_asyncio.AsyncIOMotorCollection, Depends
-        _description_
+        The data submitted by the user.
+    auth_col : Annotated[AsyncIOMotorCollection, Depends
+        The mongodb auth collection.
 
     Returns
     -------
     Token
-        _description_
+        The generated token.
 
     Raises
     ------
     HTTPException
-        _description_
+        Raised if user is not authenticated.
     """
-    user = await _authenticate_user(collection, form_data.username, form_data.password)
+    user = await _authenticate_user(auth_col, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
