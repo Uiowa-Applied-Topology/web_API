@@ -29,6 +29,18 @@ setup(
         "Operating System :: OS Independent",
         "Framework :: IPython",
     ],
-    python_requires='>=3',
-    install_requires=[]
+    python_requires=">=3.10",
+    install_requires=[
+        "scipy",
+        "numpy",
+        "pyyaml",
+        "uvicorn[standard]",
+        "fastapi",
+        "motor",
+        "passlib[bcrypt]",
+        "python-jose[cryptography]",
+        "python-multipart",
+        "pydantic-settings",
+        "dacite",
+    ],
 )
