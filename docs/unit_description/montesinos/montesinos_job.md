@@ -19,9 +19,6 @@ namespace Interfaces {
     class aj["Job"]{
         <<interface>>
     }
-    class ajr["Job Results"]{
-        <<interface>>
-    }
 
 }
 
@@ -29,19 +26,13 @@ namespace Interfaces {
 namespace montesinos {
 
     class mj["Montesinos Job"]{
-        + List~List~string~~ rat_list
-        - mont_results job_res
-    }
-    class mjr["Montesinos Job Results"]{
-        + List~string~ mont_list
+        + List~List~string~~ twist_vector_set
     }
 
 }
 
 
 mj ..|> aj
-mjr ..|> ajr
-mj --|> mjr
 
 ```
 
