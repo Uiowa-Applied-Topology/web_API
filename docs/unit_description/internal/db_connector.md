@@ -5,7 +5,7 @@ Database connector
 
 # Description
 
-This unit provides an abstract read/write interface.
+This unit provides an abstract database interface. Motor handles the "day to day" db operations.
 
 # Diagrams
 
@@ -15,9 +15,7 @@ This unit provides an abstract read/write interface.
 classDiagram
 
 class dc["DB Connector"]{
-    + Connection con_details
-    + read(param)
-    + write(param)
+    + init()
 }
 
 ```
@@ -25,4 +23,3 @@ class dc["DB Connector"]{
 # Unit test description
 
 _List the unit tests for this unit_
-s

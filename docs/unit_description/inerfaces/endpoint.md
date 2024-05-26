@@ -26,4 +26,4 @@ namespace Interfaces {
 
 # Unit test description
 
-_List the unit tests for this unit_
+Object defines an abstract interface no unit testing.

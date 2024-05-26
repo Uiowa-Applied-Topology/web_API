@@ -9,5 +9,6 @@ exclude =
         setup.py
         test/*
         build/*
+        .venv/*
 max-complexity = 10
 ignore = E501

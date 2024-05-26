@@ -1,10 +1,10 @@
 # Unit
 
-Job Queue
+Security Model
 
 # Description
 
-This class defines the job queue. This is used to hold the current job states for the server.
+This class defines the secturity model for the tanglenomicon api. It's mostly wholsale lifted from [FastAPI docs](https://web.archive.org/web/20240324095137/https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/)
 
 # Diagrams
 
@@ -12,14 +12,27 @@ This class defines the job queue. This is used to hold the current job states fo
 
 classDiagram
 
-    class jq["Job Queue"]{
-        - List~Job~ job_queue
-        + db_connector db
-        + mark_job_complete(job_id)
-        + get_next_job(type)
-        + clean_stale_jobs()
-        + clean_complete_jobs()
-        + add_new_jobs(job)
+    class tk["Token"]{ }
+    class tkd["Token Data"]{ }
+    class user["User"]{ }
+    class user_db["User In DB"]{ }
+    class user_db["User In DB"]{ }
+    class security_model["Security Model"]{
+
+        - CryptContext pwd_context
+        - OAuth2PasswordBearer oauth2_scheme
+        - APIRouter router
+        - verify_password()
+        - get_password_hash()
+        - get_user()
+        + authenticate_user()
+        + get_collection()
+        + create_access_token()
+        + auth_current_user()
+        + get_current_user()
+        + get_current_active_user()
+        + read_users_me()
+        + login_for_access_token()
     }
 ```
 
