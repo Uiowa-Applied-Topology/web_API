@@ -1,8 +1,11 @@
 ```{include} ../README.md
 ```
 
+
+# API Reference
+
 ```{toctree}
-:hidden:
+:titlesonly:
 apidocs/index.rst
 ```
 

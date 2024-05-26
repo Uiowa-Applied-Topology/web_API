@@ -5,12 +5,8 @@ from enum import Enum
 from dataclasses import dataclass
 from bson import ObjectId
 from ..internal import db_connector as dbc
+from ..internal import config_store as cfg
 from motor.motor_asyncio import AsyncIOMotorCollection
-
-
-STENCIL_COL_NAME = "mont_stencils"
-STORAGE_COL_NAME = "montesinos"
-RATIONAL_COL_NAME = "rational"
 
 
 def _get_stencil_collection() -> AsyncIOMotorCollection:
@@ -21,7 +17,9 @@ def _get_stencil_collection() -> AsyncIOMotorCollection:
     AsyncIOMotorCollection
         The Montesinos stencils collection.
     """
-    return dbc.db[STENCIL_COL_NAME]
+    return dbc.db[
+        cfg.cfg_dict["tangle-classes"]["montesinos"]["montesinos_stencil_col_name"]
+    ]
 
 
 def _get_storage_collection() -> AsyncIOMotorCollection:
@@ -32,7 +30,9 @@ def _get_storage_collection() -> AsyncIOMotorCollection:
     AsyncIOMotorCollection
         The Montesinos tangles collection.
     """
-    return dbc.db[STORAGE_COL_NAME]
+    return dbc.db[
+        cfg.cfg_dict["tangle-classes"]["montesinos"]["montesinos_storage_col_name"]
+    ]
 
 
 def _get_rational_collection() -> AsyncIOMotorCollection:
@@ -43,7 +43,7 @@ def _get_rational_collection() -> AsyncIOMotorCollection:
     AsyncIOMotorCollection
         The rational tangles collection.
     """
-    return dbc.db[RATIONAL_COL_NAME]
+    return dbc.db[cfg.cfg_dict["tangle-classes"]["rational"]["rational_col_name"]]
 
 
 class StencilHeadStateEnum(str, Enum):

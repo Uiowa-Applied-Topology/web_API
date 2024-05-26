@@ -2,7 +2,7 @@
 
 from .montesinos import endpoint as mont_e
 from .montesinos import job as mont_j
-from .internal import db_connector, security, config, job_queue
+from .internal import config_store, db_connector, security, job_queue
 from fastapi import FastAPI
 from uvicorn import Config as UCfg, Server as USrv
 import argparse
@@ -24,7 +24,7 @@ def startup():
     """Executes a collection of tasks at startup of the API."""
     global loop
 
-    db_cfg = config.config["db-connection-info"]
+    db_cfg = config_store.cfg_dict["db-connection-info"]
     db_connector.init_client(
         db_cfg["domain"],
         db_cfg["port"],
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--cfg")
     args = parser.parse_args()
-    config.load(args.cfg)
+    config_store.load(args.cfg)
 
     startup()
 

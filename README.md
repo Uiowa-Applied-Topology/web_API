@@ -100,7 +100,7 @@ flowchart LR
 Functional requirements are phrased in the following use cases
 
 ```{toctree}
-:maxdepth: 1
+:titlesonly:
 use_cases/index.md
 ```
 
@@ -191,6 +191,6 @@ flowchart LR
 Unit descriptions are as follows:
 
 ```{toctree}
-:maxdepth: 1
+:titlesonly:
 unit_description/index.md
 ```

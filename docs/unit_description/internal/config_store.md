@@ -21,4 +21,33 @@ class dc["Config Store"]{
 
 ## Unit test description
 
-_List the unit tests for this unit_
+These tests will be run manually.
+
+
+### Load Config
+
+#### Positive Tests
+
+Test that a config can be loaded.
+
+##### Inputs:
+
+-   Valid config
+
+##### Expected Output:
+
+Config loaded.
+
+#### Negative Tests
+
+##### Invalid config
+
+Tests the behavior when invalid config are passed.
+
+###### Inputs:
+
+-   Invalid config
+
+###### Expected Output:
+
+An exception is raised.

@@ -2,7 +2,7 @@
 
 from datetime import datetime, timezone
 from ..interfaces.job import GenerationJob, GenerationJobResults, JobStateEnum
-from ..internal import job_queue, config
+from ..internal import config_store, job_queue
 from . import orm
 from ..rational import orm as rat_orm
 from threading import Semaphore
@@ -55,7 +55,7 @@ def _move_head(stencildb: orm.StencilDB) -> orm.StencilHeadStateEnum:
                 (
                     sten_entry
                     - 2
-                    - config.config["tangle-classes"]["montesinos"]["page-exp"]
+                    - config_store.cfg_dict["tangle-classes"]["montesinos"]["page-exp"]
                 ),
             )
             < stencildb.head[i]
@@ -106,20 +106,24 @@ async def _build_job(stencil: List[int], pages: List[int], job_id: str = None) -
                     "metadata": [{"$count": "totalCount"}],
                     "data": [
                         {
-                            "$skip": page
-                            * math.pow(
-                                2,
-                                config.config["tangle-classes"]["montesinos"][
-                                    "page-exp"
-                                ],
+                            "$skip": int(
+                                page
+                                * math.pow(
+                                    2,
+                                    config_store.cfg_dict["tangle-classes"][
+                                        "montesinos"
+                                    ]["page-exp"],
+                                )
                             )
                         },
                         {
-                            "$limit": math.pow(
-                                2,
-                                config.config["tangle-classes"]["montesinos"][
-                                    "page-exp"
-                                ],
+                            "$limit": int(
+                                math.pow(
+                                    2,
+                                    config_store.cfg_dict["tangle-classes"][
+                                        "montesinos"
+                                    ]["page-exp"],
+                                )
                             )
                         },
                     ],
@@ -127,10 +131,16 @@ async def _build_job(stencil: List[int], pages: List[int], job_id: str = None) -
             },
         ]
         async for response in rational_col.aggregate(pipeline):
-            for rat_tang in response["data"]:
-                rat_tang = from_dict(data_class=rat_orm.RationalTangDB, data=rat_tang)
-                lis.append(rat_tang._id)
-                ...
+            if response["metadata"][0]["totalCount"] == 0:
+                raise NameError(
+                    "Rational list is empty."
+                )  # @@@IMPROVEMENT: needs to be updated to exception object
+            lis.extend(
+                [
+                    from_dict(data_class=rat_orm.RationalTangDB, data=rat_tang)._id
+                    for rat_tang in response["data"]
+                ]
+            )
             ...
 
         job.rat_lists.append(lis)
@@ -193,27 +203,37 @@ async def get_jobs(count: int = 1):
     global semaphore
     stencil_col = orm._get_stencil_collection()
     semaphore.acquire()
-    stencildb = from_dict(
-        data_class=orm.StencilDB,
-        data=(await stencil_col.find_one(OPEN_STEN_FILTER)),
-    )
-    stencildb.state = orm.StencilStateEnum.started
-    while count > 0 and stencildb:
-        job_id = await _build_job(stencildb.stencil_array, stencildb.head)
-        stencildb.open_jobs.append(
-            {"job_id": job_id, "cursor": copy.deepcopy(stencildb.head)}
-        )
-        count -= 1
-        if _move_head(stencildb) == orm.StencilHeadStateEnum.no_headroom:
-            stencildb.state = orm.StencilStateEnum.no_headroom
-            stencil_col.replace_one({"_id": stencildb._id}, asdict(stencildb))
-            stencildb = from_dict(
+    try:
+        stencildb = await stencil_col.find_one(OPEN_STEN_FILTER)
+        if stencildb:
+            stencil = from_dict(
                 data_class=orm.StencilDB,
-                data=(await stencil_col.find_one(OPEN_STEN_FILTER)),
+                data=stencildb,
             )
-            stencildb.state = orm.StencilStateEnum.started
-    stencil_col.replace_one({"_id": stencildb._id}, asdict(stencildb))
-    semaphore.release()
+            stencil.state = orm.StencilStateEnum.started
+            while count > 0 and stencil:
+                job_id = await _build_job(stencil.stencil_array, stencil.head)
+                stencil.open_jobs.append(
+                    {"job_id": job_id, "cursor": copy.deepcopy(stencil.head)}
+                )
+                count -= 1
+                if _move_head(stencil) == orm.StencilHeadStateEnum.no_headroom:
+                    stencil.state = orm.StencilStateEnum.no_headroom
+                    await stencil_col.replace_one({"_id": stencil._id}, asdict(stencil))
+                    if stencildb := await stencil_col.find_one(OPEN_STEN_FILTER):
+                        stencil = from_dict(
+                            data_class=orm.StencilDB,
+                            data=stencildb,
+                        )
+                        stencil.state = orm.StencilStateEnum.started
+                    else:
+                        break
+            await stencil_col.replace_one({"_id": stencil._id}, asdict(stencil))
+        semaphore.release()
+    except Exception:
+        semaphore.release()
+        # @@@IMPROVEMENT: Add logging.
+        ...
 
 
 async def startup_task():
@@ -232,5 +252,7 @@ async def startup_task():
             ...
     semaphore.release()
     new_mont_j_cnt = job_queue.get_job_statistics(MontesinosJob)["new"]
-    if new_mont_j_cnt < config.config["job-queue"]["min-new-count"]:
-        await get_jobs(config.config["job-queue"]["min-new-count"] - new_mont_j_cnt)
+    if new_mont_j_cnt < config_store.cfg_dict["job-queue"]["min-new-count"]:
+        await get_jobs(
+            config_store.cfg_dict["job-queue"]["min-new-count"] - new_mont_j_cnt
+        )

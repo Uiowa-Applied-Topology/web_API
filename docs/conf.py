@@ -26,7 +26,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
-    "sphinx.ext.mathjax",
+    # "sphinx.ext.mathjax",
     "myst_parser",
     "sphinxcontrib.mermaid",
     "autodoc2",
@@ -71,8 +71,8 @@ nitpicky = False
 myst_fence_as_directive = ["mermaid"]
 
 myst_enable_extensions = [
-    "dollarmath",
-    "amsmath",
+    # "dollarmath",
+    # "amsmath",
     "deflist",
     "fieldlist",
     "html_admonition",
@@ -113,7 +113,7 @@ myst_url_schemes = {
 myst_number_code_blocks = ["typescript"]
 myst_heading_anchors = 2
 myst_footnote_transition = True
-myst_dmath_double_inline = True
+# myst_dmath_double_inline = True
 myst_enable_checkboxes = True
 myst_substitutions = {
     "role": "[role](#syntax/roles)",

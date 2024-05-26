@@ -2,7 +2,7 @@
 
 from ..interfaces.job import GenerationJob, GenerationJobResults, JobStateEnum
 from ..internal.security import User
-from . import config
+from . import config_store
 
 from typing import Annotated
 from fastapi import Depends, APIRouter
@@ -125,7 +125,7 @@ def _is_above_time_delta(then: datetime) -> bool:
     """
     now = datetime.now(timezone.utc)
     diff = now - then
-    if diff.total_seconds() >= config.config["job-queue"]["clocks"]["stale"]:
+    if diff.total_seconds() >= config_store.cfg_dict["job-queue"]["clocks"]["stale"]:
         return True
     return False
 
@@ -155,8 +155,11 @@ async def _clean_complete_jobs():
         if _job_queue[i].cur_state == JobStateEnum.complete
     ]
     for item in items:
-        await item.store()
-        del _job_queue[item.job_id]
+        try:
+            await item.store()
+            del _job_queue[item.job_id]
+        except Exception:
+            semaphore.release()
     semaphore.release()
 
 
@@ -273,14 +276,14 @@ def get_job_statistics(job_type: Type[GenerationJob] = GenerationJob) -> dict:
 async def task_clean_stale_jobs():
     """Task that periodically cleans stale jobs from the queue."""
     while True:
-        await asyncio.sleep(config.config["job-queue"]["clocks"]["stale"])
+        await asyncio.sleep(config_store.cfg_dict["job-queue"]["clocks"]["stale"])
         await _clean_stale_jobs()
 
 
 async def task_clean_complete_jobs():
     """Task that periodically stores complete jobs in the queue."""
     while True:
-        await asyncio.sleep(config.config["job-queue"]["clocks"]["complete"])
+        await asyncio.sleep(config_store.cfg_dict["job-queue"]["clocks"]["complete"])
         await _clean_complete_jobs()
 
 

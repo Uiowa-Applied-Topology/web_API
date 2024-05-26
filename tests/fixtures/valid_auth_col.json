@@ -1,0 +1,8 @@
+[
+    {
+        "hashed_password": "$2b$12$xFJt2V5UUjl3JWOmyF06ruZzmKXqVIlooksjwZCs6EE5UoPCtfkty",
+        "username": "a username",
+        "token_expire": 10080,
+        "disabled": false
+    }
+]

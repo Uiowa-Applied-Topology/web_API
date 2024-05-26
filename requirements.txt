@@ -7,6 +7,8 @@ flake8-variables-names
 flake8-fastapi
 flake8-eradicate
 pytest
+mongomock-motor
+anyio
 pytest-flake8
 pytest-html
 pytest-metadata
@@ -35,3 +37,4 @@ python-multipart
 pydantic-settings
 dacite
 pygount
+# pytest-mock-resources[mongo]

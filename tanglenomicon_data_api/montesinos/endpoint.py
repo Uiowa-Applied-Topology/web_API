@@ -4,7 +4,7 @@ from fastapi import Depends, APIRouter, HTTPException
 from ..internal.security import auth_current_user, get_current_user, User
 from ..interfaces.job import ConfirmJobReceipt
 from . import job as mj
-from ..internal import job_queue, config
+from ..internal import config_store, job_queue
 from typing import Annotated
 
 router = APIRouter(
@@ -72,8 +72,10 @@ async def _get_next_montesinos_job(
         If no job found raise 404.
     """
     new_mont_j_cnt = job_queue.get_job_statistics(mj.MontesinosJob)["new"]
-    if new_mont_j_cnt < config.config["job-queue"]["min-new-count"]:
-        await mj.get_jobs(config.config["job-queue"]["min-new-count"] - new_mont_j_cnt)
+    if new_mont_j_cnt < config_store.cfg_dict["job-queue"]["min-new-count"]:
+        await mj.get_jobs(
+            config_store.cfg_dict["job-queue"]["min-new-count"] - new_mont_j_cnt
+        )
     job = await job_queue.get_next_job(mj.MontesinosJob, current_user)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found.")

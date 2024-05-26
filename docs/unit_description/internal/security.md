@@ -37,6 +37,7 @@ classDiagram
 ## Function flow
 
 ### clean_stale_jobs
+
 ```mermaid
 
 
@@ -57,6 +58,7 @@ stateDiagram-v2
 ```
 
 ### clean_complete_jobs
+
 ```mermaid
 
 
@@ -75,6 +77,7 @@ stateDiagram-v2
     }
     for   --> [*]
 ```
+
 ### add_new_jobs
 
 ```mermaid
@@ -92,8 +95,8 @@ stateDiagram-v2
     setNew --> staleChk
 ```
 
-
 ### mark_job_complete
+
 ```mermaid
 
 
@@ -112,8 +115,8 @@ stateDiagram-v2
     setNew --> [*]
 ```
 
-
 ### get_next_job
+
 ```mermaid
 
 
@@ -126,4 +129,5 @@ stateDiagram-v2
 
 ## Unit test description
 
-Unit has no stand alone functionality.
+These tests will be run manually. Since this is lifted from the fastAPI guide
+we trust it, this is perhaps a dubious thing to do.

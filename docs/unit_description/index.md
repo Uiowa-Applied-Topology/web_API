@@ -1,7 +1,8 @@
 
+# Unit Descriptions
 ```{toctree}
 :glob:
-:maxdepth: 1
+:titlesonly:
 interfaces/*
 internal/*
 montesinos/*

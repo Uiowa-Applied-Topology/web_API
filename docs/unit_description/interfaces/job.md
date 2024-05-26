@@ -21,7 +21,7 @@ namespace Interfaces {
         complete = 2
     }
 
-    class aj["Job"]{
+    class aj["Generation Job"]{
         <<interface>>
         + string id
         + time last_modified
@@ -40,12 +40,21 @@ namespace Interfaces {
         <<interface>>
         + bool accepted
     }
+    class sm["Job"]{
+        <<module>>
+        + get_jobs()
+        + startup_task()
+    }
 
 }
 
 aj --> js
 aj --> ajr
 cr ..> ajr
+sm -- aj
+sm -- ajr
+sm -- cr
+sm -- js
 ```
 
 ## Unit test description

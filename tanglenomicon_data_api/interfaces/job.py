@@ -41,7 +41,7 @@ class GenerationJob(BaseModel):
     client_id: str = None
     _results: GenerationJobResults
 
-    def store(self):
+    async def store(self):
         """Interface for functions to store job results.
 
         Raises

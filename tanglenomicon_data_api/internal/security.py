@@ -21,9 +21,7 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from motor.motor_asyncio import AsyncIOMotorCollection
 from . import db_connector as dbc
-from . import config
-
-COL_NAME = "auth"
+from . import config_store
 
 
 class Token(BaseModel):
@@ -111,8 +109,8 @@ def _decode_token(token: str) -> TokenData:
     try:
         payload = jwt.decode(
             token,
-            config.config["auth"]["secret_key"],
-            algorithms=[config.config["auth"]["algorithm"]],
+            config_store.cfg_dict["auth"]["secret_key"],
+            algorithms=[config_store.cfg_dict["auth"]["algorithm"]],
         )
         username: str = payload.get("sub")
         if username is None:
@@ -196,7 +194,7 @@ def _get_collection() -> AsyncIOMotorCollection:
     AsyncIOMotorCollection
         A reference to the auth collection.
     """
-    return dbc.db[COL_NAME]
+    return dbc.db[config_store.cfg_dict["auth"]["auth-col-name"]]
 
 
 def _create_access_token(
@@ -224,8 +222,8 @@ def _create_access_token(
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(
         to_encode,
-        config.config["auth"]["secret_key"],
-        algorithm=config.config["auth"]["algorithm"],
+        config_store.cfg_dict["auth"]["secret_key"],
+        algorithm=config_store.cfg_dict["auth"]["algorithm"],
     )
     return encoded_jwt
 
