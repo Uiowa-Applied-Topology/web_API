@@ -21,7 +21,7 @@ namespace Interfaces {
 }
 
 
-namespace Montesinos {
+namespace montesinos {
     class mge["Montesinos Generation Endpoint"]{
 
     }

@@ -4,7 +4,7 @@ Tanglenomicon API
 
 # Description
 
-This is the base module for the api. It contains the definition for apscheduler and fastAPI.
+This is the base module for the api. It contains the definition for rocketry and fastAPI.
 
 # Diagrams
 
@@ -15,7 +15,7 @@ classDiagram
 
 class tanglenomicon_data_api["Tanglenomicon API"]{
     +fastAPI
-    +apscheduler
+    +Rocketry
 }
 ```
 

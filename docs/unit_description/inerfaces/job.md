@@ -16,40 +16,18 @@ classDiagram
 
 namespace Interfaces {
 
-    class js["Job States"]{
-        <<Enum>>
-        new = 0
-        pending = 1
-        complete = 2
-    }
-
     class aj["Job"]{
         <<interface>>
         + string id
         + time last_modified
-        + job_state current_state
-        + string client_id
-        - job_results results
-        + store()
-        + update_results()
-    }
-    class ajr["Job Results"]{
-        <<interface>>
-        + string id
-        + string client_id
-    }
-    class cr["Confirm Job Reciept"]{
-        <<interface>>
-        + bool accepted
+        + state current_state
+        + string client_token
     }
 
 }
 
-aj --> js
-aj --> ajr
-cr ..> ajr
 ```
 
 # Unit test description
 
-Object defines an abstract interface no unit testing.
+_List the unit tests for this unit_
