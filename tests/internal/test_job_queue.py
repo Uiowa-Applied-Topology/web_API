@@ -16,7 +16,9 @@ from tanglenomicon_data_api.internal import config_store as cfg
 class MockClass(GenerationJob):
     item: int = 0
 
-    async def store(self): ...
+    async def store(self):
+        return True
+
     def update_results(self, results): ...
 
 
@@ -102,7 +104,7 @@ async def test_retrieve_job_statistics_positive(setup_job_queue, get_test_jwt):
 
 @pytest.mark.anyio
 async def test_get_job_statistics_default(setup_job_queue):
-    data = jq.get_job_statistics()
+    data = await jq.get_job_statistics()
     assert data == {
         "queue_length": 0,
         "new": 0,
@@ -133,7 +135,7 @@ async def test_get_job_statistics_default(setup_job_queue):
             job_id=job_id,
         )
         jq._job_queue[job_id] = job
-    data = jq.get_job_statistics()
+    data = await jq.get_job_statistics()
     assert data == {
         "queue_length": 14,
         "new": 3,
@@ -144,7 +146,7 @@ async def test_get_job_statistics_default(setup_job_queue):
 
 @pytest.mark.anyio
 async def test_get_job_statistics_specific(setup_job_queue):
-    data = jq.get_job_statistics(MockClass)
+    data = await jq.get_job_statistics(MockClass)
     assert data == {
         "queue_length": 0,
         "new": 0,
@@ -175,7 +177,7 @@ async def test_get_job_statistics_specific(setup_job_queue):
             job_id=job_id,
         )
         jq._job_queue[job_id] = job
-    data = jq.get_job_statistics(MockClass)
+    data = await jq.get_job_statistics(MockClass)
     assert data == {
         "queue_length": 14,
         "new": 3,
@@ -186,7 +188,7 @@ async def test_get_job_statistics_specific(setup_job_queue):
 
 @pytest.mark.anyio
 async def test_get_job_statistics_nonexistent(setup_job_queue):
-    data = jq.get_job_statistics(MockClass)
+    data = await jq.get_job_statistics(MockClass)
     assert data == {
         "queue_length": 0,
         "new": 0,
@@ -217,7 +219,7 @@ async def test_get_job_statistics_nonexistent(setup_job_queue):
             job_id=job_id,
         )
         jq._job_queue[job_id] = job
-    data = jq.get_job_statistics(MockClass)
+    data = await jq.get_job_statistics(MockClass)
     assert data == {
         "queue_length": 0,
         "new": 0,
@@ -423,7 +425,6 @@ async def test_enqueue_job_in_queue(setup_job_queue):
     assert jq._job_queue[job_id]
     res = await jq.enqueue_job(job)
     assert res == False
-
 
 
 ################################################################################

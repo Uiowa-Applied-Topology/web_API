@@ -31,6 +31,7 @@ pyyaml
 uvicorn[standard]
 fastapi
 motor
+pymongo
 passlib[bcrypt]
 python-jose[cryptography]
 python-multipart
@@ -38,3 +39,4 @@ pydantic-settings
 dacite
 pygount
 # pytest-mock-resources[mongo]
+typer

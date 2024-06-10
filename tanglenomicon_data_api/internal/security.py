@@ -11,6 +11,7 @@ HTTPException
     Various HTTP error codes.
 """
 
+import logging
 from datetime import datetime, timedelta, timezone
 from typing import Annotated, Union
 
@@ -22,6 +23,8 @@ from pydantic import BaseModel
 from motor.motor_asyncio import AsyncIOMotorCollection
 from . import db_connector as dbc
 from . import config_store
+
+logging.getLogger("passlib").setLevel(logging.ERROR)
 
 
 class Token(BaseModel):
@@ -75,9 +78,9 @@ class UserInDB(User):
     token_expire: int
 
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+_pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 router = APIRouter()
 
@@ -136,7 +139,7 @@ def _verify_password(plain_password: str, hashed_password: str) -> bool:
     Bool
         ``True`` if the password matched the hash, else ``False``.
     """
-    return pwd_context.verify(plain_password, hashed_password)
+    return _pwd_context.verify(plain_password, hashed_password)
 
 
 async def _get_user(auth_col: AsyncIOMotorCollection, username: str) -> UserInDB | None:
@@ -228,7 +231,7 @@ def _create_access_token(
     return encoded_jwt
 
 
-async def auth_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> bool:
+async def auth_current_user(token: Annotated[str, Depends(_oauth2_scheme)]) -> bool:
     """Return ``True``/``False`` based on if the supplied token is valid.
 
     Parameters
@@ -252,7 +255,7 @@ async def auth_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> bo
 
 
 async def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
+    token: Annotated[str, Depends(_oauth2_scheme)],
     auth_col: Annotated[AsyncIOMotorCollection, Depends(_get_collection)],
 ) -> UserInDB:
     """Retrieve a user from the auth collection given a token.
@@ -304,6 +307,32 @@ async def _get_current_active_user(
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+
+
+async def add_user(username: str, password: str, token_expire: int = None):
+    """Add a user to the auth collection.
+
+    Parameters
+    ----------
+    username : The username of the user.
+    password : The password supplied by the user.
+    token_expire : The expiration time for the token.
+    """
+    auth_col = _get_collection()
+    if not token_expire:
+        token_expire = config_store.cfg_dict["auth"]["token_exp"]
+    pwdhash = _pwd_context.hash(password)
+    if not (await auth_col.find_one({"username": username})):
+        await auth_col.insert_one(
+            {
+                "username": username,
+                "hashed_password": pwdhash,
+                "disabled": False,
+                "token_expire": token_expire,
+            }
+        )
+    else:
+        print(f"User {username} already exists")
 
 
 @router.get("/users/me/", response_model=User)

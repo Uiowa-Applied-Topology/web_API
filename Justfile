@@ -15,10 +15,16 @@ bootstrap:
 
 
 run:
-    {{ python_exe }} -m tanglenomicon_data_api -c ./misc/crypt/config.yaml
+    {{ python_exe }} -m tanglenomicon_data_api run --cfg ./misc/crypt/config.yaml
 
 dev:
-    {{ python_exe }} -m tanglenomicon_data_api -c ./misc/crypt/dev_config_server.yaml
+    {{ python_exe }} -m tanglenomicon_data_api run --cfg ./misc/crypt/dev_config_server.yaml
+
+dev-local:
+    {{ python_exe }} -m tanglenomicon_data_api run --cfg ./misc/crypt/dev_config.yaml
+
+add_user:
+    {{ python_exe }} -m tanglenomicon_data_api adduser --cfg ./misc/crypt/dev_config_server.yaml
 
 flake:
     if test ! -e build/flake; then mkdir -p build/flake; fi
@@ -26,11 +32,11 @@ flake:
 
 sphinx:
     if test ! -e build/docs; then mkdir -p build/docs; fi
-    {{ python_dir }}/sphinx-build -M html docs build/docs
+    {{ python_exe }} {{ python_dir }}/sphinx-build -M html docs build/docs
 
 cloc:
     mkdir -p docs/summary
-    {{ python_dir}}/pygount --format=summary  --suffix=md,py,yaml
+    {{ python_exe }} {{ python_dir}}/pygount --format=summary  --suffix=md,py,yaml
 
 pytest:
     {{ python_exe }} -m pytest

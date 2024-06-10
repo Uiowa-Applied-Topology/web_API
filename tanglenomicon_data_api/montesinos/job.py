@@ -5,13 +5,15 @@ from ..interfaces.job import GenerationJob, GenerationJobResults, JobStateEnum
 from ..internal import config_store, job_queue
 from . import orm
 from ..rational import orm as rat_orm
-from threading import Semaphore
 from typing import List
 from dacite import from_dict
 from dataclasses import asdict
 import math
 import copy
 import uuid
+import logging
+
+logger = logging.getLogger("uvicorn")
 
 OPEN_STEN_FILTER = {
     "$and": [
@@ -25,9 +27,6 @@ STARTED_STEN_FILTER = {
         {"state": {"$ne": orm.StencilStateEnum.new}},
     ]
 }
-
-
-semaphore: Semaphore = Semaphore()
 
 
 def _move_head(stencildb: orm.StencilDB) -> orm.StencilHeadStateEnum:
@@ -91,12 +90,17 @@ async def _build_job(stencil: List[int], pages: List[int], job_id: str = None) -
     rational_col = orm._get_rational_collection()
     if not job_id:
         job_id = str(uuid.uuid4())
+    crossing_num = 0
+    for cn in stencil:
+        crossing_num += cn
     job = MontesinosJob(
         cur_state=JobStateEnum.new,
         timestamp=datetime.now(timezone.utc),
+        crossing_num=crossing_num,
         job_id=job_id,
         rat_lists=list(),
     )
+    job.stencil = " ".join(map(str, stencil))
     for cn, page in zip(stencil, pages):
         lis = []
         pipeline = [
@@ -160,32 +164,77 @@ class MontesinosJob(GenerationJob):
     """The implementation of job for Montesinos tangles."""
 
     rat_lists: List[List[str]]
+    crossing_num: int
+    _stencil: str = None
     _results: MontesinosJobResults = None
 
-    async def store(self):
-        """Store the current job into the Montesinos tangle collection."""
-        global semaphore
+    async def store(self) -> bool:
+        """Store the current job into the Montesinos tangle collection.
+
+        Returns
+        -------
+        bool
+            Indicator for success of storage.
+        """
+        ret_val = False
         montesinos_col = orm._get_storage_collection()
         stencil_col = orm._get_stencil_collection()
+
+        async def aiter_results():
+            for tang in list(set(self._results.mont_list)):
+                yield tang
+
         tangles_2_store = [
-            {"_id": tang, "crossing_num": self._results.crossing_num}
-            for tang in self._results.mont_list
+            {
+                "_id": tang,
+                "crossing_num": self.crossing_num,
+                "parent_stencil": self.stencil,
+            }
+            async for tang in aiter_results()
         ]
-        semaphore.acquire()
-        await montesinos_col.insert_many(tangles_2_store)
-        stencildb = from_dict(
-            data_class=orm.StencilDB,
-            data=(await stencil_col.find_one({"open_jobs.job_id": self.job_id})),
-        )
-        i = [j.job_id for j in stencildb.open_jobs].index(self.job_id)
-        del stencildb.open_jobs[i]
-        if (
-            stencildb.state == orm.StencilStateEnum.no_headroom
-            and len(stencildb.open_jobs) == 0
-        ):
-            stencildb.state = orm.StencilStateEnum.complete
-        await stencil_col.replace_one({"_id": stencildb._id}, asdict(stencildb))
-        semaphore.release()
+        if len(tangles_2_store) > 0:
+            ret_val = True
+            try:
+                await montesinos_col.insert_many(tangles_2_store)
+                stencildb = from_dict(
+                    data_class=orm.StencilDB,
+                    data=(
+                        await stencil_col.find_one({"open_jobs.job_id": self.job_id})
+                    ),
+                )
+
+                async def aiter_open_jobs():
+                    for job in stencildb.open_jobs:
+                        yield job
+
+                i = [j.job_id async for j in aiter_open_jobs()].index(self.job_id)
+                del stencildb.open_jobs[i]
+                if (
+                    stencildb.state == orm.StencilStateEnum.no_headroom
+                    and len(stencildb.open_jobs) == 0
+                ):
+                    stencildb.state = orm.StencilStateEnum.complete
+                await stencil_col.replace_one({"_id": stencildb._id}, asdict(stencildb))
+            except Exception as e:
+                logger.error(f"Exception while storing montesinos tangles: {e}")
+                ret_val = False
+                pass
+        return ret_val
+
+    @property
+    def stencil(self) -> str:
+        """Return the parent stencil.
+
+        Returns
+        -------
+        The parent stencil.
+        """
+        return self._stencil
+
+    @stencil.setter
+    def stencil(self, value):
+        """Set the parent stencil."""
+        self._stencil = value
 
     def update_results(self, res: MontesinosJobResults):
         """Update the job with the reported results."""
@@ -202,7 +251,6 @@ async def get_jobs(count: int = 1):
     """
     global semaphore
     stencil_col = orm._get_stencil_collection()
-    semaphore.acquire()
     try:
         stencildb = await stencil_col.find_one(OPEN_STEN_FILTER)
         if stencildb:
@@ -229,10 +277,8 @@ async def get_jobs(count: int = 1):
                     else:
                         break
             await stencil_col.replace_one({"_id": stencil._id}, asdict(stencil))
-        semaphore.release()
-    except Exception:
-        semaphore.release()
-        # @@@IMPROVEMENT: Add logging.
+    except Exception as e:
+        logger.error(f"Exception while obtaining jobs: {e}")
         ...
 
 
@@ -240,18 +286,20 @@ async def startup_task():
     """Task to run at startup to initialize Montesinos jobs."""
     global semaphore
     stencil_col = orm._get_stencil_collection()
-    semaphore.acquire()
 
     async for stencildb in stencil_col.find(STARTED_STEN_FILTER):
         stencildb = from_dict(data_class=orm.StencilDB, data=stencildb)
 
-        for open_item in stencildb.open_jobs:
+        async def aiter_open_jobs():
+            for open_item in stencildb.open_jobs:
+                yield open_item
+
+        async for open_item in aiter_open_jobs():
             await _build_job(
                 stencildb.stencil_array, open_item.cursor, job_id=open_item.job_id
             )
             ...
-    semaphore.release()
-    new_mont_j_cnt = job_queue.get_job_statistics(MontesinosJob)["new"]
+    new_mont_j_cnt = (await job_queue.get_job_statistics(MontesinosJob))["new"]
     if new_mont_j_cnt < config_store.cfg_dict["job-queue"]["min-new-count"]:
         await get_jobs(
             config_store.cfg_dict["job-queue"]["min-new-count"] - new_mont_j_cnt

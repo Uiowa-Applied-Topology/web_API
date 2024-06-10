@@ -163,6 +163,7 @@ test/results/*
 test/*.svg
 
 .vscode/*
+.idea/*
 py_venv/*
 shell.nix
 docs/apidocs/*

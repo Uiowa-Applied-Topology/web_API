@@ -59,6 +59,7 @@ async def test_retrieve_montesinos_job_queue_stats_positive(
             job = MontesinosJob(
                 cur_state=JobStateEnum.pending,
                 timestamp=datetime.now(timezone.utc),
+                crossing_num=0,
                 job_id=job_id,
                 rat_lists=[],
             )
@@ -68,6 +69,7 @@ async def test_retrieve_montesinos_job_queue_stats_positive(
             job = MontesinosJob(
                 cur_state=JobStateEnum.new,
                 timestamp=datetime.now(timezone.utc),
+                crossing_num=0,
                 job_id=job_id,
                 rat_lists=[],
             )
@@ -77,6 +79,7 @@ async def test_retrieve_montesinos_job_queue_stats_positive(
             job = MontesinosJob(
                 cur_state=JobStateEnum.complete,
                 timestamp=datetime.now(timezone.utc),
+                crossing_num=0,
                 job_id=job_id,
                 rat_lists=[],
             )
@@ -112,6 +115,7 @@ async def test_retrieve_montesinos_job_mock_jq(
             cur_state=JobStateEnum.new,
             timestamp=datetime.now(timezone.utc),
             job_id=job_id,
+            crossing_num=0,
             rat_lists=[
                 [
                     "h",
@@ -186,6 +190,7 @@ async def test_report_montesinos_job_positive(
     job = MontesinosJob(
         cur_state=JobStateEnum.pending,
         timestamp=datetime.now(timezone.utc),
+        crossing_num=0,
         job_id=job_id,
         client_id=client_id,
         rat_lists=[],
@@ -196,7 +201,7 @@ async def test_report_montesinos_job_positive(
         "Authorization": f"Bearer {get_test_jwt}",
         "Content-Type": "application/json",
     }
-    data = {"job_id": job_id, "mont_list": ["a tangle"], "crossing_num": 2}
+    data = {"job_id": job_id, "mont_list": ["a tangle"]}
     transport = ASGITransport(app=api)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         response = await ac.post("/montesinos/job/report", json=data, headers=headers)
@@ -211,7 +216,6 @@ async def test_report_montesinos_job_positive(
         assert job.client_id == client_id
         assert job._results
         assert job._results.mont_list == data["mont_list"]
-        assert job._results.crossing_num == data["crossing_num"]
 
 
 @pytest.mark.anyio
@@ -226,6 +230,7 @@ async def test_report_montesinos_job_not_in_queue(
     job = MontesinosJob(
         cur_state=JobStateEnum.pending,
         timestamp=datetime.now(timezone.utc),
+        crossing_num=0,
         job_id=job_id,
         client_id=client_id,
         rat_lists=[],
@@ -236,7 +241,7 @@ async def test_report_montesinos_job_not_in_queue(
         "Authorization": f"Bearer {get_test_jwt}",
         "Content-Type": "application/json",
     }
-    data = {"job_id": f"not {job_id}", "mont_list": ["a tangle"], "crossing_num": 2}
+    data = {"job_id": f"not {job_id}", "mont_list": ["a tangle"]}
     transport = ASGITransport(app=api)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         response = await ac.post("/montesinos/job/report", json=data, headers=headers)
@@ -255,6 +260,7 @@ async def test_report_montesinos_job_not_assigned_to_user(
     job = MontesinosJob(
         cur_state=JobStateEnum.pending,
         timestamp=datetime.now(timezone.utc),
+        crossing_num=0,
         job_id=job_id,
         client_id=f"not {client_id}",
         rat_lists=[],
@@ -265,7 +271,7 @@ async def test_report_montesinos_job_not_assigned_to_user(
         "Authorization": f"Bearer {get_test_jwt}",
         "Content-Type": "application/json",
     }
-    data = {"job_id": job_id, "mont_list": ["a tangle"], "crossing_num": 2}
+    data = {"job_id": job_id, "mont_list": ["a tangle"]}
     transport = ASGITransport(app=api)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         response = await ac.post("/montesinos/job/report", json=data, headers=headers)

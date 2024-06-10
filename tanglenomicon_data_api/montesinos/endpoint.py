@@ -71,7 +71,7 @@ async def _get_next_montesinos_job(
     HTTPException
         If no job found raise 404.
     """
-    new_mont_j_cnt = job_queue.get_job_statistics(mj.MontesinosJob)["new"]
+    new_mont_j_cnt = (await job_queue.get_job_statistics(mj.MontesinosJob))["new"]
     if new_mont_j_cnt < config_store.cfg_dict["job-queue"]["min-new-count"]:
         await mj.get_jobs(
             config_store.cfg_dict["job-queue"]["min-new-count"] - new_mont_j_cnt
@@ -133,4 +133,4 @@ async def retrieve_montesinos_job_queue_stats() -> dict:
         - Pending
         - Complete
     """
-    return job_queue.get_job_statistics(mj.MontesinosJob)
+    return await job_queue.get_job_statistics(mj.MontesinosJob)

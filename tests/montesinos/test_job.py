@@ -198,10 +198,11 @@ async def test_mj_store_task_positive(
 ):
     job_id = "A test job"
     results_tangs = ["a", "b", "c"]
-    res = MontesinosJobResults(job_id=job_id, mont_list=results_tangs, crossing_num=1)
+    res = MontesinosJobResults(job_id=job_id, mont_list=results_tangs)
     job = MontesinosJob(
         cur_state=JobStateEnum.pending,
         timestamp=datetime.now(timezone.utc),
+        crossing_num=0,
         job_id=job_id,
         rat_lists=[],
     )
@@ -222,6 +223,5 @@ async def test_mj_store_task_positive(
     ]
     async for m in col.find({}):
         assert m["_id"] in results_tangs
-        assert m["crossing_num"] == 1
 
     ...
