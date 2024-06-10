@@ -26,8 +26,7 @@ logging.getLogger("uvicorn").setLevel(logging.ERROR)
 
 app = typer.Typer()
 origins = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
+    "https://tanglenomicon.com",
     "http://localhost",
     "http://localhost:1313",
     "http://localhost:3000",
@@ -70,7 +69,7 @@ def _main():
     for job_def in job_defs:
         loop.create_task(job_def())
 
-    loop.run_until_complete(USrv(UCfg(app=api, loop=loop)).serve())
+    loop.run_until_complete(USrv(UCfg(app=api, host="0.0.0.0", loop=loop)).serve())
 
 
 @app.command()

@@ -4,10 +4,14 @@ WORKDIR /code
 
 COPY requirements.txt .
 
+RUN apk add --no-cache gcc musl-dev linux-headers
+
 RUN pip install -r requirements.txt
 
 COPY tanglenomicon_data_api/ tanglenomicon_data_api/
 
 EXPOSE 8000
 
-CMD [ "python", "-m", "/code/tanglenomicon_data_api","run", "--cfg", "/code/config.yaml" ]
+ENV PORT 8000
+
+CMD [ "python", "-m", "tanglenomicon_data_api","run", "--cfg", "/data/config.yaml" ]

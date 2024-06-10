@@ -14,17 +14,11 @@ bootstrap:
     {{ python_exe }} -m pip install -r requirements.txt
 
 
-run:
-    {{ python_exe }} -m tanglenomicon_data_api run --cfg ./misc/crypt/config.yaml
+run CFG="./misc/crypt/dev_config_server.yaml":
+    {{ python_exe }} -m tanglenomicon_data_api run --cfg {{CFG}}
 
-dev:
-    {{ python_exe }} -m tanglenomicon_data_api run --cfg ./misc/crypt/dev_config_server.yaml
-
-dev-local:
-    {{ python_exe }} -m tanglenomicon_data_api run --cfg ./misc/crypt/dev_config.yaml
-
-add_user:
-    {{ python_exe }} -m tanglenomicon_data_api adduser --cfg ./misc/crypt/dev_config_server.yaml
+adduser CFG="./misc/crypt/dev_config_server.yaml":
+    {{ python_exe }} -m tanglenomicon_data_api adduser --cfg {{CFG}}
 
 flake:
     if test ! -e build/flake; then mkdir -p build/flake; fi
