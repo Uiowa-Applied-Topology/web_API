@@ -11,7 +11,6 @@ from asyncio import AbstractEventLoop
 from typing_extensions import Annotated
 from getpass import getpass, getuser
 from fastapi.middleware.cors import CORSMiddleware
-import logging
 
 loop: AbstractEventLoop = asyncio.new_event_loop()
 api: FastAPI = FastAPI()
@@ -22,7 +21,6 @@ job_defs = [
     job_queue.task_clean_stale_jobs,
 ]
 
-logging.getLogger("uvicorn").setLevel(logging.ERROR)
 
 app = typer.Typer()
 origins = [
@@ -69,7 +67,7 @@ def _main():
     for job_def in job_defs:
         loop.create_task(job_def())
 
-    loop.run_until_complete(USrv(UCfg(app=api, host="0.0.0.0", loop=loop)).serve())
+    loop.run_until_complete(USrv(UCfg(app=api, host="0.0.0.0", loop="asyncio")).serve())
 
 
 @app.command()

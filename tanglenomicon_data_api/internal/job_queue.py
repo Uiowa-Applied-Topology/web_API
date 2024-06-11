@@ -9,7 +9,6 @@ from fastapi import Depends, APIRouter
 
 from typing import Dict, Type, List
 from datetime import datetime, timezone
-from threading import Semaphore
 import asyncio
 import logging
 
@@ -24,8 +23,8 @@ router = APIRouter(
 
 _job_queue: Dict[str, GenerationJob] = dict()
 
-jq_semaphore: Semaphore = Semaphore()
-task_semaphore: Semaphore = Semaphore()
+jq_semaphore: asyncio.Lock = asyncio.Lock()
+task_semaphore: asyncio.Lock = asyncio.Lock()
 
 
 async def aiterjq():
@@ -144,40 +143,38 @@ def _is_above_time_delta(then: datetime) -> bool:
 async def _clean_stale_jobs():
     """Clean job queue of stale jobs."""
     global _job_queue
-    task_semaphore.acquire()
-    jq_semaphore.acquire()
-    items: List[GenerationJob] = [
-        _job_queue[i]
-        async for i in aiter(aiterjq())
-        if (_is_above_time_delta(_job_queue[i].timestamp))
-        and (_job_queue[i].cur_state != JobStateEnum.complete)
-    ]
-    jq_semaphore.release()
-    for item in items:
-        item.cur_state = JobStateEnum.new
-    task_semaphore.release()
+    logger.debug("Clean stale jobs.")
+
+    async with task_semaphore:
+        async with jq_semaphore:
+            items: List[GenerationJob] = [
+                _job_queue[i]
+                async for i in aiter(aiterjq())
+                if (_is_above_time_delta(_job_queue[i].timestamp))
+                and (_job_queue[i].cur_state != JobStateEnum.complete)
+            ]
+        for item in items:
+            item.cur_state = JobStateEnum.new
 
 
 async def _clean_complete_jobs():
     """Store complete jobs into DB."""
     global _job_queue
-    task_semaphore.acquire()
-    jq_semaphore.acquire()
-    items: List[GenerationJob] = [
-        _job_queue[i]
-        async for i in aiter(aiterjq())
-        if _job_queue[i].cur_state == JobStateEnum.complete
-    ]
-    jq_semaphore.release()
-    for item in items:
-        try:
-            await item.store()
-            del _job_queue[item.job_id]
-            logger.debug(f"Stored {item.job_id}")
-        except Exception as e:
-            logger.error(f"Exception while processing job {item.job_id}: {e}")
-            pass
-    task_semaphore.release()
+    async with task_semaphore:
+        async with jq_semaphore:
+            items: List[GenerationJob] = [
+                _job_queue[i]
+                async for i in aiter(aiterjq())
+                if _job_queue[i].cur_state == JobStateEnum.complete
+            ]
+        logger.info(f"Storing {len(items)} jobs.")
+        for item in items:
+            try:
+                await item.store()
+                del _job_queue[item.job_id]
+            except Exception as e:
+                logger.error(f"Exception while processing job {item.job_id}: {e}")
+                pass
 
 
 async def mark_job_complete(results: GenerationJobResults, current_user: User) -> bool:
@@ -196,6 +193,7 @@ async def mark_job_complete(results: GenerationJobResults, current_user: User) -
         ``True`` if successfully marked complete ``False`` otherwise.
     """
     global _job_queue
+    logger.debug("Mark job complete.")
     marked = False
     if (
         results.job_id in _job_queue
@@ -229,18 +227,17 @@ async def get_next_job(
     """
     global _job_queue
     job = None
-    jq_semaphore.acquire()
-    items = [
-        i
-        async for i in aiter(aiterjq())
-        if isinstance(_job_queue[i], job_type)
-        and _job_queue[i].cur_state == JobStateEnum.new
-    ]
-    if len(items) > 0:
-        _job_queue[items[0]].cur_state = JobStateEnum.pending
-        _job_queue[items[0]].client_id = current_user.username
-        job = _job_queue[items[0]]
-    jq_semaphore.release()
+    async with jq_semaphore:
+        items = [
+            i
+            async for i in aiter(aiterjq())
+            if isinstance(_job_queue[i], job_type)
+            and _job_queue[i].cur_state == JobStateEnum.new
+        ]
+        if len(items) > 0:
+            _job_queue[items[0]].cur_state = JobStateEnum.pending
+            _job_queue[items[0]].client_id = current_user.username
+            job = _job_queue[items[0]]
     return job
 
 
@@ -259,11 +256,10 @@ async def enqueue_job(job: GenerationJob) -> bool:
     """
     global _job_queue
     enqueued = False
-    jq_semaphore.acquire()
-    if job.job_id not in _job_queue:
-        _job_queue[job.job_id] = job
-        enqueued = True
-    jq_semaphore.release()
+    async with jq_semaphore:
+        if job.job_id not in _job_queue:
+            _job_queue[job.job_id] = job
+            enqueued = True
     return enqueued
 
 

@@ -11,6 +11,7 @@ from dataclasses import asdict
 import math
 import copy
 import uuid
+from pymongo import UpdateOne
 import logging
 
 logger = logging.getLogger("uvicorn")
@@ -157,7 +158,6 @@ class MontesinosJobResults(GenerationJobResults):
     """The implementation of job results for Montesinos jobs."""
 
     mont_list: List[str]
-    crossing_num: int = None
 
 
 class MontesinosJob(GenerationJob):
@@ -167,6 +167,27 @@ class MontesinosJob(GenerationJob):
     crossing_num: int
     _stencil: str = None
     _results: MontesinosJobResults = None
+
+    async def _update_stencil(self):
+        """Update the parent stencil."""
+        stencil_col = orm._get_stencil_collection()
+        stencildb = from_dict(
+            data_class=orm.StencilDB,
+            data=(await stencil_col.find_one({"open_jobs.job_id": self.job_id})),
+        )
+
+        async def aiter_open_jobs():
+            for job in stencildb.open_jobs:
+                yield job
+
+        i = [j.job_id async for j in aiter_open_jobs()].index(self.job_id)
+        del stencildb.open_jobs[i]
+        if (
+            stencildb.state == orm.StencilStateEnum.no_headroom
+            and len(stencildb.open_jobs) == 0
+        ):
+            stencildb.state = orm.StencilStateEnum.complete
+        await stencil_col.replace_one({"_id": stencildb._id}, asdict(stencildb))
 
     async def store(self) -> bool:
         """Store the current job into the Montesinos tangle collection.
@@ -178,43 +199,29 @@ class MontesinosJob(GenerationJob):
         """
         ret_val = False
         montesinos_col = orm._get_storage_collection()
-        stencil_col = orm._get_stencil_collection()
 
         async def aiter_results():
             for tang in list(set(self._results.mont_list)):
                 yield tang
 
         tangles_2_store = [
-            {
-                "_id": tang,
-                "crossing_num": self.crossing_num,
-                "parent_stencil": self.stencil,
-            }
+            UpdateOne(
+                {"_id": tang},
+                {
+                    "$set": {
+                        "crossing_num": self.crossing_num,
+                        "parent_stencil": self.stencil,
+                    }
+                },
+                upsert=True,
+            )
             async for tang in aiter_results()
         ]
         if len(tangles_2_store) > 0:
             ret_val = True
             try:
-                await montesinos_col.insert_many(tangles_2_store)
-                stencildb = from_dict(
-                    data_class=orm.StencilDB,
-                    data=(
-                        await stencil_col.find_one({"open_jobs.job_id": self.job_id})
-                    ),
-                )
-
-                async def aiter_open_jobs():
-                    for job in stencildb.open_jobs:
-                        yield job
-
-                i = [j.job_id async for j in aiter_open_jobs()].index(self.job_id)
-                del stencildb.open_jobs[i]
-                if (
-                    stencildb.state == orm.StencilStateEnum.no_headroom
-                    and len(stencildb.open_jobs) == 0
-                ):
-                    stencildb.state = orm.StencilStateEnum.complete
-                await stencil_col.replace_one({"_id": stencildb._id}, asdict(stencildb))
+                await montesinos_col.bulk_write(tangles_2_store)
+                await self._update_stencil()
             except Exception as e:
                 logger.error(f"Exception while storing montesinos tangles: {e}")
                 ret_val = False
@@ -249,7 +256,6 @@ async def get_jobs(count: int = 1):
     count : int, optional
         The number of jobs to get and build, by default 1
     """
-    global semaphore
     stencil_col = orm._get_stencil_collection()
     try:
         stencildb = await stencil_col.find_one(OPEN_STEN_FILTER)
@@ -284,7 +290,6 @@ async def get_jobs(count: int = 1):
 
 async def startup_task():
     """Task to run at startup to initialize Montesinos jobs."""
-    global semaphore
     stencil_col = orm._get_stencil_collection()
 
     async for stencildb in stencil_col.find(STARTED_STEN_FILTER):
