@@ -157,7 +157,7 @@ async def _get_user(auth_col: AsyncIOMotorCollection, username: str) -> UserInDB
     UserInDB | None
         A user object from the auth collection or None.
     """
-    if (user := (await auth_col.find_one({"username": username}))) is not None:
+    if (user := (await auth_col.find_one({"username": str(username)}))) is not None:
         return UserInDB(**user)
     return None
 
@@ -325,10 +325,10 @@ async def add_user(username: str, password: str, token_expire: int = None):
     if not (await auth_col.find_one({"username": username})):
         await auth_col.insert_one(
             {
-                "username": username,
-                "hashed_password": pwdhash,
+                "username": str(username),
+                "hashed_password": str(pwdhash),
                 "disabled": False,
-                "token_expire": token_expire,
+                "token_expire": int(token_expire),
             }
         )
     else:

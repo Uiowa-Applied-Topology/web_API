@@ -206,11 +206,11 @@ class MontesinosJob(GenerationJob):
 
         tangles_2_store = [
             UpdateOne(
-                {"_id": tang},
+                {"_id": str(tang)},
                 {
                     "$set": {
-                        "crossing_num": self.crossing_num,
-                        "parent_stencil": self.stencil,
+                        "crossing_num": int(self.crossing_num),
+                        "parent_stencil": str(self.stencil),
                     }
                 },
                 upsert=True,
