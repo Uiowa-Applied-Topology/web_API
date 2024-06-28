@@ -1,4 +1,4 @@
-# Use case:Clean up stale jobs
+# Use case: Clean up stale jobs
 
 ## Primary actor:
 

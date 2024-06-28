@@ -1,4 +1,4 @@
-# Use case:Mark Job as Complete
+# Use case: Mark Job as Complete
 
 ## Primary actor:
 

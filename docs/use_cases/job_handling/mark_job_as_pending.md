@@ -1,4 +1,4 @@
-# Use case:Mark Job as pending
+# Use case: Mark Job as pending
 
 ## Primary actor:
 

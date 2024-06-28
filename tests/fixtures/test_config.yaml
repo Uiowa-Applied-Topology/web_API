@@ -12,8 +12,10 @@ job-queue:
       complete: 10
 tangle-classes:
     montesinos:
-      montesinos_stencil_col_name: "mont_stencils"
-      montesinos_storage_col_name: "montesinos"
+      stencil_col_name: "mont_stencils"
+      col_name: "montesinos"
       page-exp: 8
     rational:
-        rational_col_name: "rational"
+        col_name: "rational"
+    generic:
+        col_name: "rational"

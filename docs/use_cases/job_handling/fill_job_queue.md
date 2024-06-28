@@ -1,4 +1,4 @@
-# Use case:Fill Job Queue
+# Use case: Fill Job Queue
 
 ## Primary actor:
 

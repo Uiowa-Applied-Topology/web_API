@@ -88,7 +88,7 @@ async def _build_job(stencil: List[int], pages: List[int], job_id: str = None) -
     str
         The id for the built and enqueued job.
     """
-    rational_col = orm._get_rational_collection()
+    rational_col = rat_orm.get_rational_collection()
     if not job_id:
         job_id = str(uuid.uuid4())
     crossing_num = 0
@@ -105,7 +105,15 @@ async def _build_job(stencil: List[int], pages: List[int], job_id: str = None) -
     for cn, page in zip(stencil, pages):
         lis = []
         pipeline = [
-            {"$match": {"$and": [{"crossing_num": cn}, {"in_unit_interval": True}]}},
+            {
+                "$match": {
+                    "$and": [
+                        {"crossing_num": cn},
+                        {"in_unit_interval": True},
+                        {"isRational": True},
+                    ]
+                }
+            },
             {
                 "$facet": {
                     "metadata": [{"$count": "totalCount"}],
@@ -170,7 +178,7 @@ class MontesinosJob(GenerationJob):
 
     async def _update_stencil(self):
         """Update the parent stencil."""
-        stencil_col = orm._get_stencil_collection()
+        stencil_col = orm.get_stencil_collection()
         stencildb = from_dict(
             data_class=orm.StencilDB,
             data=(await stencil_col.find_one({"open_jobs.job_id": self.job_id})),
@@ -198,7 +206,7 @@ class MontesinosJob(GenerationJob):
             Indicator for success of storage.
         """
         ret_val = False
-        montesinos_col = orm._get_storage_collection()
+        montesinos_col = orm.get_montesinos_collection()
 
         async def aiter_results():
             for tang in list(set(self._results.mont_list)):
@@ -211,6 +219,7 @@ class MontesinosJob(GenerationJob):
                     "$set": {
                         "crossing_num": int(self.crossing_num),
                         "parent_stencil": str(self.stencil),
+                        "isMontesinos": True,
                     }
                 },
                 upsert=True,
@@ -256,7 +265,7 @@ async def get_jobs(count: int = 1):
     count : int, optional
         The number of jobs to get and build, by default 1
     """
-    stencil_col = orm._get_stencil_collection()
+    stencil_col = orm.get_stencil_collection()
     try:
         stencildb = await stencil_col.find_one(OPEN_STEN_FILTER)
         if stencildb:
@@ -290,7 +299,7 @@ async def get_jobs(count: int = 1):
 
 async def startup_task():
     """Task to run at startup to initialize Montesinos jobs."""
-    stencil_col = orm._get_stencil_collection()
+    stencil_col = orm.get_stencil_collection()
 
     async for stencildb in stencil_col.find(STARTED_STEN_FILTER):
         stencildb = from_dict(data_class=orm.StencilDB, data=stencildb)

@@ -82,7 +82,7 @@ async def _get_next_montesinos_job(
     return job
 
 
-@router.post("/job/report")
+@router.post("/job")
 async def report_montesinos_job(
     response: Annotated[ConfirmJobReceipt, Depends(_report_job_results)],
 ) -> ConfirmJobReceipt:
@@ -101,7 +101,7 @@ async def report_montesinos_job(
     return response
 
 
-@router.get("/job/retrieve", response_model=mj.MontesinosJob)
+@router.get("/job", response_model=mj.MontesinosJob)
 async def retrieve_montesinos_job(
     next_job: Annotated[mj.MontesinosJob, Depends(_get_next_montesinos_job)]
 ):
@@ -118,19 +118,3 @@ async def retrieve_montesinos_job(
         The next Montesinos Job.
     """
     return next_job
-
-
-@router.get("/queue/stats")
-async def retrieve_montesinos_job_queue_stats() -> dict:
-    """Return job queue statistics for montesinos jobs.
-
-    Returns
-    -------
-    dict
-        Job queue statistics for montesinos jobs. Broken into:
-        - Total
-        - New
-        - Pending
-        - Complete
-    """
-    return await job_queue.get_job_statistics(mj.MontesinosJob)

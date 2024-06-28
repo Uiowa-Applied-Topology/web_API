@@ -1,4 +1,4 @@
-# Use case:Write Record set
+# Use case: Write Record set
 
 ## Primary actor:
 

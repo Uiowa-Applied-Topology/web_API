@@ -1,6 +1,9 @@
 """The __main__ file/entry point for tanglenomicon_data_api."""
 
-from .montesinos import endpoint as mont_e
+from .montesinos import generation_endpoint as mont_ge
+from .montesinos import presentation_endpoint as mont_pe
+from .generic import presentation_endpoint as gen_pe
+from .rational import presentation_endpoint as rat_pe
 from .montesinos import job as mont_j
 from .internal import config_store, db_connector, security, job_queue
 from fastapi import FastAPI
@@ -14,7 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 loop: AbstractEventLoop = asyncio.new_event_loop()
 api: FastAPI = FastAPI()
-routers = [security, mont_e, job_queue]
+routers = [security, mont_ge, mont_pe, rat_pe, gen_pe]
 job_defs = [
     mont_j.startup_task,
     job_queue.task_clean_complete_jobs,

@@ -1,4 +1,4 @@
-# Use case:Build Job
+# Use case: Build Job
 
 ## Primary actor:
 
@@ -16,7 +16,6 @@ Construct a job to be distributed
 ## Trigger:
 
 An upstream actor requests the initialization of a new job.
-
 
 ## Scenario:
 

@@ -1,4 +1,4 @@
-# Use case:Read Record set
+# Use case: Read Record set
 
 ## Primary actor:
 

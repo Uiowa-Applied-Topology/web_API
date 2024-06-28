@@ -1,13 +1,10 @@
 import pytest
-import json
 from datetime import datetime, timezone
 from pathlib import Path
 from httpx import AsyncClient, ASGITransport
-from fastapi import FastAPI
-from anyio import create_task_group, move_on_after, sleep, run
+from anyio import move_on_after
 
 from tanglenomicon_data_api.interfaces.job import GenerationJob, JobStateEnum
-from tanglenomicon_data_api.internal import security
 from tanglenomicon_data_api.internal.security import User
 from tanglenomicon_data_api.internal import job_queue as jq
 from tanglenomicon_data_api.internal import config_store as cfg
@@ -22,77 +19,15 @@ class MockClass(GenerationJob):
     def update_results(self, results): ...
 
 
-api: FastAPI = FastAPI()
-routers = [security, jq]
-for ep in routers:
-    api.include_router(ep.router)
-
 pytestmark = pytest.mark.anyio
 
 
 test_path = Path.cwd() / Path("tests/internal")
 
-cfg.load(test_path / "test_config.yaml")
-
 
 @pytest.fixture
 def anyio_backend():
     return "asyncio"
-
-
-################################################################################
-################################################################################
-# Test cases for the retrieve_job_statistics endpoint
-################################################################################
-################################################################################
-
-
-@pytest.mark.anyio
-async def test_retrieve_job_statistics_positive(setup_job_queue, get_test_jwt):
-    headers = {"Authorization": f"Bearer {get_test_jwt}"}
-    transport = ASGITransport(app=api)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        response = await ac.get("/job_queue/stats", headers=headers)
-        assert response.status_code == 200
-        assert response.json() == {
-            "queue_length": 0,
-            "new": 0,
-            "pending": 0,
-            "complete": 0,
-        }
-        for i in range(5):
-            job_id = f"pending {i}"
-            job = GenerationJob(
-                cur_state=JobStateEnum.pending,
-                timestamp=datetime.now(timezone.utc),
-                job_id=job_id,
-            )
-            jq._job_queue[job_id] = job
-        for i in range(3):
-            job_id = f"new {i}"
-            job = GenerationJob(
-                cur_state=JobStateEnum.new,
-                timestamp=datetime.now(timezone.utc),
-                job_id=job_id,
-            )
-            jq._job_queue[job_id] = job
-        for i in range(6):
-            job_id = f"complete {i}"
-            job = GenerationJob(
-                cur_state=JobStateEnum.complete,
-                timestamp=datetime.now(timezone.utc),
-                job_id=job_id,
-            )
-            jq._job_queue[job_id] = job
-
-        response = await ac.get("/job_queue/stats", headers=headers)
-        assert response.status_code == 200
-        assert response.json() == {
-            "queue_length": 14,
-            "new": 3,
-            "pending": 5,
-            "complete": 6,
-        }
 
 
 ################################################################################
@@ -103,7 +38,7 @@ async def test_retrieve_job_statistics_positive(setup_job_queue, get_test_jwt):
 
 
 @pytest.mark.anyio
-async def test_get_job_statistics_default(setup_job_queue):
+async def test_get_job_statistics_default(get_test_cfg, setup_job_queue):
     data = await jq.get_job_statistics()
     assert data == {
         "queue_length": 0,
@@ -145,7 +80,7 @@ async def test_get_job_statistics_default(setup_job_queue):
 
 
 @pytest.mark.anyio
-async def test_get_job_statistics_specific(setup_job_queue):
+async def test_get_job_statistics_specific(get_test_cfg, setup_job_queue):
     data = await jq.get_job_statistics(MockClass)
     assert data == {
         "queue_length": 0,
@@ -187,7 +122,7 @@ async def test_get_job_statistics_specific(setup_job_queue):
 
 
 @pytest.mark.anyio
-async def test_get_job_statistics_nonexistent(setup_job_queue):
+async def test_get_job_statistics_nonexistent(get_test_cfg, setup_job_queue):
     data = await jq.get_job_statistics(MockClass)
     assert data == {
         "queue_length": 0,
@@ -236,7 +171,7 @@ async def test_get_job_statistics_nonexistent(setup_job_queue):
 
 
 @pytest.mark.anyio
-async def test_clean_stale_jobs_positive(setup_job_queue):
+async def test_clean_stale_jobs_positive(get_test_cfg, setup_job_queue):
 
     job_id = f"new"
     for i in range(5):
@@ -274,7 +209,7 @@ async def test_clean_stale_jobs_positive(setup_job_queue):
 
 
 @pytest.mark.anyio
-async def test_clean_stale_jobs_empty(setup_job_queue):
+async def test_clean_stale_jobs_empty(get_test_cfg, setup_job_queue):
 
     job_id = f"new"
     for i in range(3):
@@ -313,7 +248,7 @@ async def test_clean_stale_jobs_empty(setup_job_queue):
 
 
 @pytest.mark.anyio
-async def test_task_clean_complete_jobs_positive(setup_job_queue):
+async def test_task_clean_complete_jobs_positive(get_test_cfg, setup_job_queue):
 
     job_id = f"new"
     for i in range(5):
@@ -354,7 +289,7 @@ async def test_task_clean_complete_jobs_positive(setup_job_queue):
 
 
 @pytest.mark.anyio
-async def test_task_clean_complete_jobs_empty(setup_job_queue):
+async def test_task_clean_complete_jobs_empty(get_test_cfg, setup_job_queue):
 
     job_id = f"new"
     client_id = "client"
@@ -394,7 +329,7 @@ async def test_task_clean_complete_jobs_empty(setup_job_queue):
 
 
 @pytest.mark.anyio
-async def test_enqueue_job_positive(setup_job_queue):
+async def test_enqueue_job_positive(get_test_cfg, setup_job_queue):
 
     job_id = f"new"
     client_id = "client"
@@ -411,7 +346,7 @@ async def test_enqueue_job_positive(setup_job_queue):
 
 
 @pytest.mark.anyio
-async def test_enqueue_job_in_queue(setup_job_queue):
+async def test_enqueue_job_in_queue(get_test_cfg, setup_job_queue):
 
     job_id = f"new"
     client_id = "client"
@@ -435,7 +370,7 @@ async def test_enqueue_job_in_queue(setup_job_queue):
 
 
 @pytest.mark.anyio
-async def test_mark_job_complete_job_in_queue(setup_job_queue):
+async def test_mark_job_complete_job_in_queue(get_test_cfg, setup_job_queue):
 
     job_id = f"new"
     client_id = "client"
@@ -455,7 +390,7 @@ async def test_mark_job_complete_job_in_queue(setup_job_queue):
 
 
 @pytest.mark.anyio
-async def test_mark_job_complete_job_not_in_queue(setup_job_queue):
+async def test_mark_job_complete_job_not_in_queue(get_test_cfg, setup_job_queue):
 
     job_id = f"new"
     client_id = "client"
@@ -471,7 +406,7 @@ async def test_mark_job_complete_job_not_in_queue(setup_job_queue):
 
 
 @pytest.mark.anyio
-async def test_mark_job_complete_job_not_in_pending(setup_job_queue):
+async def test_mark_job_complete_job_not_in_pending(get_test_cfg, setup_job_queue):
 
     job_id = f"new"
     client_id = "client"
@@ -489,7 +424,7 @@ async def test_mark_job_complete_job_not_in_pending(setup_job_queue):
 
 
 @pytest.mark.anyio
-async def test_mark_job_complete_job_mismatch_client(setup_job_queue):
+async def test_mark_job_complete_job_mismatch_client(get_test_cfg, setup_job_queue):
 
     job_id = f"new"
     client_id = "client"
@@ -514,7 +449,7 @@ async def test_mark_job_complete_job_mismatch_client(setup_job_queue):
 
 
 @pytest.mark.anyio
-async def test_get_next_job_with_jobs_in_queue(setup_job_queue):
+async def test_get_next_job_with_jobs_in_queue(get_test_cfg, setup_job_queue):
 
     job_id = f"new"
     client_id = "client"
@@ -535,7 +470,7 @@ async def test_get_next_job_with_jobs_in_queue(setup_job_queue):
 
 
 @pytest.mark.anyio
-async def test_get_next_job_empty_queue(setup_job_queue):
+async def test_get_next_job_empty_queue(get_test_cfg, setup_job_queue):
 
     client_id = "client"
     user = User(username=client_id)

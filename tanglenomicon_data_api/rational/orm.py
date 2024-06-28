@@ -2,6 +2,20 @@
 
 from dataclasses import dataclass
 from typing import List
+from motor.motor_asyncio import AsyncIOMotorDatabase
+from ..internal import db_connector as dbc
+from ..internal import config_store as cfg
+
+
+def get_rational_collection() -> AsyncIOMotorDatabase:
+    """Return the mongodb collection containing the rational tangles.
+
+    Returns
+    -------
+    AsyncIOMotorDatabase
+        The rational tangle collection.
+    """
+    return dbc.db[cfg.cfg_dict["tangle-classes"]["rational"]["col_name"]]
 
 
 @dataclass

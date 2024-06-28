@@ -1,4 +1,4 @@
-# Use case:Mark Job as new
+# Use case: Mark Job as new
 
 ## Primary actor:
 

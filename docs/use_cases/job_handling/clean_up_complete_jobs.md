@@ -1,4 +1,4 @@
-# Use case:Clean up complete jobs
+# Use case: Clean up complete jobs
 
 ## Primary actor:
 

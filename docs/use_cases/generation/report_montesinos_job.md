@@ -1,4 +1,4 @@
-# Use case:Report Montesinos Job
+# Use case: Report Montesinos Job
 
 ## Primary actor:
 
@@ -16,7 +16,6 @@ Receives a completed job from a client.
 ## Trigger:
 
 Client reports a complete montesinos job.
-
 
 ## Scenario:
 

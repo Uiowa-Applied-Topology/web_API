@@ -6,44 +6,29 @@ from dataclasses import dataclass
 from bson import ObjectId
 from ..internal import db_connector as dbc
 from ..internal import config_store as cfg
-from motor.motor_asyncio import AsyncIOMotorCollection
+from motor.motor_asyncio import AsyncIOMotorDatabase
 
 
-def _get_stencil_collection() -> AsyncIOMotorCollection:
+def get_stencil_collection() -> AsyncIOMotorDatabase:
     """Return the mongodb collection containing the Montesinos stencils.
 
     Returns
     -------
-    AsyncIOMotorCollection
+    AsyncIOMotorDatabase
         The Montesinos stencils collection.
     """
-    return dbc.db[
-        cfg.cfg_dict["tangle-classes"]["montesinos"]["montesinos_stencil_col_name"]
-    ]
+    return dbc.db[cfg.cfg_dict["tangle-classes"]["montesinos"]["stencil_col_name"]]
 
 
-def _get_storage_collection() -> AsyncIOMotorCollection:
+def get_montesinos_collection() -> AsyncIOMotorDatabase:
     """Return the mongodb collection containing the Montesinos tangles.
 
     Returns
     -------
-    AsyncIOMotorCollection
+    AsyncIOMotorDatabase
         The Montesinos tangles collection.
     """
-    return dbc.db[
-        cfg.cfg_dict["tangle-classes"]["montesinos"]["montesinos_storage_col_name"]
-    ]
-
-
-def _get_rational_collection() -> AsyncIOMotorCollection:
-    """Return the mongodb collection containing the rational tangles.
-
-    Returns
-    -------
-    AsyncIOMotorCollection
-        The rational tangles collection.
-    """
-    return dbc.db[cfg.cfg_dict["tangle-classes"]["rational"]["rational_col_name"]]
+    return dbc.db[cfg.cfg_dict["tangle-classes"]["montesinos"]["col_name"]]
 
 
 class StencilHeadStateEnum(str, Enum):
@@ -81,3 +66,12 @@ class StencilDB:
     head: List[int]
     state: int
     open_jobs: List[StencilJobDB]
+
+
+@dataclass
+class MontesinosTangleDB:
+    """A montesinos tangle to be read from the tangle collection."""
+
+    _id: str
+    crossing_num: int
+    parent_stencil: str

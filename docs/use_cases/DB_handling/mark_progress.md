@@ -1,4 +1,4 @@
-# Use case:Mark Progress
+# Use case: Mark Progress
 
 ## Primary actor:
 

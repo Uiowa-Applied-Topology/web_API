@@ -4,8 +4,6 @@ from ..interfaces.job import GenerationJob, GenerationJobResults, JobStateEnum
 from ..internal.security import User
 from . import config_store
 
-from typing import Annotated
-from fastapi import Depends, APIRouter
 
 from typing import Dict, Type, List
 from datetime import datetime, timezone
@@ -14,12 +12,6 @@ import logging
 
 logger = logging.getLogger("uvicorn")
 
-
-router = APIRouter(
-    prefix="/job_queue",
-    tags=["Jobs"],
-    responses={404: {"description": "Not found"}},
-)
 
 _job_queue: Dict[str, GenerationJob] = dict()
 
@@ -296,22 +288,3 @@ async def task_clean_complete_jobs():
     while True:
         await asyncio.sleep(config_store.cfg_dict["job-queue"]["clocks"]["complete"])
         await _clean_complete_jobs()
-
-
-@router.get("/stats")
-async def retrieve_job_statistics(
-    stats: Annotated[dict, Depends(get_job_statistics)]
-) -> dict:
-    """Request for queue statistics.
-
-    Parameters
-    ----------
-    stats : Annotated[dict, Depends
-        The statistics.
-
-    Returns
-    -------
-    dict
-        The statistics.
-    """
-    return stats

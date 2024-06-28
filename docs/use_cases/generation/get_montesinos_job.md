@@ -1,4 +1,4 @@
-# Use case:Get Montesinos Job
+# Use case: Get Montesinos Job
 
 ## Primary actor:
 
@@ -16,7 +16,6 @@ Passes a new job to a client.
 ## Trigger:
 
 Client asks for a new montesinos job.
-
 
 ## Scenario:
 
