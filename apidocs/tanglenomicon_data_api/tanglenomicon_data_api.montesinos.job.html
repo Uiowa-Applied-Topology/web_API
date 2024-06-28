@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tanglenomicon_data_api.montesinos.job &mdash; Tanglenomicon API 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=7254e0c9" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+        <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="tanglenomicon_data_api.montesinos.generation_endpoint" href="tanglenomicon_data_api.montesinos.generation_endpoint.html" />
+    <link rel="prev" title="tanglenomicon_data_api.montesinos" href="tanglenomicon_data_api.montesinos.html" />
+<script type="text/javascript" id="MathJax-script" async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+if (typeof MathJax === 'undefined') {
+    MathJax = {
+        loader: {
+            load: ['[img]/img.min.js', '[tex]/color', '[tex]/amscd'],
+            paths: { img: 'https://cdn.jsdelivr.net/npm/mathjax-img@3' }
+        },
+        tex: {
+            inlineMath: [["$", "$"], ["\\(", "\\)"]],
+            displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+            processEscapes: true,
+            processEnvironments: true,
+            extensions: ["autoload-all.js", "AMSmath.js", "AMSsymbols.js", "AMScd.js"],
+            packages: { '[+]': ['img', 'color', 'amscd'] }
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+    MathJax.startup = {
+        ready() {
+            MathJax.startup.defaultReady();
+            MathJax.startup.promise.then(() => {
+                console.log("Start startup promise");
+
+                document.querySelectorAll("mjx-container").forEach(function (x) {
+                    x.parentElement.classList += ' has-jax '
+                })
+
+                document.querySelectorAll("mjx-container img").forEach((element) => {
+                    var src = element.getAttribute("src");
+                    if (src.endsWith('.svg') == true) {
+                        fetch(src)
+                        .then(res => res.text())
+                        .then(res => {
+                            const holder = document.createElement('div')
+                            holder.style.width = "1em";
+                            holder.style.height = "1em";
+                            holder.innerHTML = res
+                            element.replaceWith(holder)
+                        })
+                    }
+                });
+
+                console.log("End startup promise");
+            });
+        }
+    };
+}
+</script>
+
+<!-- Preamble -->
+<p hidden>
+    `$\newcommand{\N}{\mathbb{N}}
+    \newcommand{\Z}{\mathbb{Z}}
+    \newcommand{\Q}{\mathbb{Q}}
+    \newcommand{\R}{\mathbb{R}}
+    \newcommand{\LP}{\left(}
+    \newcommand{\RP}{\right)}
+    \newcommand{\LS}{\left\lbrace}
+    \newcommand{\RS}{\right\rbrace}
+    \newcommand{\LA}{\left\langle}
+    \newcommand{\RA}{\right\rangle}
+    \newcommand{\LB}{\left[}
+    \newcommand{\RB}{\right]}
+    \newcommand{\MM}{\ \middle|\ }
+    \newcommand{\exp}{\text{exp}}
+    \newcommand{\abs}[1]{\left\vert#1\right\vert}
+    \newcommand{\msr}[1]{m\left(#1\right)}
+    \newcommand{\inv}[1]{ #1^{-1}}
+    \newcommand{\bkt}[1]{\LA \img{ #1}\RA}
+    \require{color}$
+    </p>
+
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Tanglenomicon API
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../use_cases/index.html">Use Case Descriptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../unit_description/index.html">Unit Descriptions</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tanglenomicon_data_api.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api</span></code></a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tanglenomicon_data_api.generic.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.generic</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tanglenomicon_data_api.rational.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.rational</span></code></a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="tanglenomicon_data_api.montesinos.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.montesinos</span></code></a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.montesinos.job</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tanglenomicon_data_api.montesinos.generation_endpoint.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.montesinos.generation_endpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tanglenomicon_data_api.montesinos.presentation_endpoint.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.montesinos.presentation_endpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tanglenomicon_data_api.montesinos.orm.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.montesinos.orm</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tanglenomicon_data_api.interfaces.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.interfaces</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tanglenomicon_data_api.internal.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.internal</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Tanglenomicon API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="tanglenomicon_data_api.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api</span></code></a></li>
+          <li class="breadcrumb-item"><a href="tanglenomicon_data_api.montesinos.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.montesinos</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.montesinos.job</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tanglenomicon_data_api.montesinos.job">
+<span id="tanglenomicon-data-api-montesinos-job"></span><h1><a class="reference internal" href="#module-tanglenomicon_data_api.montesinos.job" title="tanglenomicon_data_api.montesinos.job"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.montesinos.job</span></code></a><a class="headerlink" href="#module-tanglenomicon_data_api.montesinos.job" title="Link to this heading"></a></h1>
+<p>An implementation of the job interface for Montesinos jobs.</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-left">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tanglenomicon_data_api.montesinos.job.MontesinosJobResults" title="tanglenomicon_data_api.montesinos.job.MontesinosJobResults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MontesinosJobResults</span></code></a></p></td>
+<td><p>The implementation of job results for Montesinos jobs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tanglenomicon_data_api.montesinos.job.MontesinosJob" title="tanglenomicon_data_api.montesinos.job.MontesinosJob"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MontesinosJob</span></code></a></p></td>
+<td><p>The implementation of job for Montesinos tangles.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-left">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tanglenomicon_data_api.montesinos.job.get_jobs" title="tanglenomicon_data_api.montesinos.job.get_jobs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_jobs</span></code></a></p></td>
+<td><p>Get and build a specified number of jobs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tanglenomicon_data_api.montesinos.job.startup_task" title="tanglenomicon_data_api.montesinos.job.startup_task"><code class="xref py py-obj docutils literal notranslate"><span class="pre">startup_task</span></code></a></p></td>
+<td><p>Task to run at startup to initialize Montesinos jobs.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data">
+<h3>Data<a class="headerlink" href="#data" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-left">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tanglenomicon_data_api.montesinos.job.logger" title="tanglenomicon_data_api.montesinos.job.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tanglenomicon_data_api.montesinos.job.OPEN_STEN_FILTER" title="tanglenomicon_data_api.montesinos.job.OPEN_STEN_FILTER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OPEN_STEN_FILTER</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tanglenomicon_data_api.montesinos.job.STARTED_STEN_FILTER" title="tanglenomicon_data_api.montesinos.job.STARTED_STEN_FILTER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">STARTED_STEN_FILTER</span></code></a></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="api">
+<h3>API<a class="headerlink" href="#api" title="Link to this heading"></a></h3>
+<dl class="py data">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.montesinos.job.logger">
+<span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.montesinos.job.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#tanglenomicon_data_api.montesinos.job.logger" title="Link to this definition"></a></dt>
+<dd><p>‘getLogger(…)’</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.montesinos.job.OPEN_STEN_FILTER">
+<span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.montesinos.job.</span></span><span class="sig-name descname"><span class="pre">OPEN_STEN_FILTER</span></span><a class="headerlink" href="#tanglenomicon_data_api.montesinos.job.OPEN_STEN_FILTER" title="Link to this definition"></a></dt>
+<dd><p>None</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.montesinos.job.STARTED_STEN_FILTER">
+<span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.montesinos.job.</span></span><span class="sig-name descname"><span class="pre">STARTED_STEN_FILTER</span></span><a class="headerlink" href="#tanglenomicon_data_api.montesinos.job.STARTED_STEN_FILTER" title="Link to this definition"></a></dt>
+<dd><p>None</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.montesinos.job.MontesinosJobResults">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.montesinos.job.</span></span><span class="sig-name descname"><span class="pre">MontesinosJobResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**data:</span> <span class="pre">typing.Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tanglenomicon_data_api/montesinos/job.html#MontesinosJobResults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tanglenomicon_data_api.montesinos.job.MontesinosJobResults" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="tanglenomicon_data_api.interfaces.job.html#tanglenomicon_data_api.interfaces.job.GenerationJobResults" title="tanglenomicon_data_api.interfaces.job.GenerationJobResults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tanglenomicon_data_api.interfaces.job.GenerationJobResults</span></code></a></p>
+<p>The implementation of job results for Montesinos jobs.</p>
+<p class="rubric">Initialization</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises [<code class="docutils literal notranslate"><span class="pre">ValidationError</span></code>][pydantic_core.ValidationError] if the input data cannot be
+validated to form a valid model.</p>
+<p><code class="docutils literal notranslate"><span class="pre">self</span></code> is explicitly positional-only to allow <code class="docutils literal notranslate"><span class="pre">self</span></code> as a field name.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.montesinos.job.MontesinosJobResults.mont_list">
+<span class="sig-name descname"><span class="pre">mont_list</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tanglenomicon_data_api.montesinos.job.MontesinosJobResults.mont_list" title="Link to this definition"></a></dt>
+<dd><p>None</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.montesinos.job.MontesinosJob">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.montesinos.job.</span></span><span class="sig-name descname"><span class="pre">MontesinosJob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**data:</span> <span class="pre">typing.Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tanglenomicon_data_api/montesinos/job.html#MontesinosJob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tanglenomicon_data_api.montesinos.job.MontesinosJob" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="tanglenomicon_data_api.interfaces.job.html#tanglenomicon_data_api.interfaces.job.GenerationJob" title="tanglenomicon_data_api.interfaces.job.GenerationJob"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tanglenomicon_data_api.interfaces.job.GenerationJob</span></code></a></p>
+<p>The implementation of job for Montesinos tangles.</p>
+<p class="rubric">Initialization</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises [<code class="docutils literal notranslate"><span class="pre">ValidationError</span></code>][pydantic_core.ValidationError] if the input data cannot be
+validated to form a valid model.</p>
+<p><code class="docutils literal notranslate"><span class="pre">self</span></code> is explicitly positional-only to allow <code class="docutils literal notranslate"><span class="pre">self</span></code> as a field name.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.montesinos.job.MontesinosJob.rat_lists">
+<span class="sig-name descname"><span class="pre">rat_lists</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#tanglenomicon_data_api.montesinos.job.MontesinosJob.rat_lists" title="Link to this definition"></a></dt>
+<dd><p>None</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.montesinos.job.MontesinosJob.crossing_num">
+<span class="sig-name descname"><span class="pre">crossing_num</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#tanglenomicon_data_api.montesinos.job.MontesinosJob.crossing_num" title="Link to this definition"></a></dt>
+<dd><p>None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.montesinos.job.MontesinosJob.store">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">store</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/tanglenomicon_data_api/montesinos/job.html#MontesinosJob.store"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tanglenomicon_data_api.montesinos.job.MontesinosJob.store" title="Link to this definition"></a></dt>
+<dd><p>Store the current job into the Montesinos tangle collection.</p>
+<h2 class="rubric" id="returns">Returns</h2>
+<p>bool
+Indicator for success of storage.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.montesinos.job.MontesinosJob.stencil">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stencil</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#tanglenomicon_data_api.montesinos.job.MontesinosJob.stencil" title="Link to this definition"></a></dt>
+<dd><p>Return the parent stencil.</p>
+<h2 class="rubric" id="id1">Returns</h2>
+<p>The parent stencil.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.montesinos.job.MontesinosJob.update_results">
+<span class="sig-name descname"><span class="pre">update_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#tanglenomicon_data_api.montesinos.job.MontesinosJobResults" title="tanglenomicon_data_api.montesinos.job.MontesinosJobResults"><span class="pre">tanglenomicon_data_api.montesinos.job.MontesinosJobResults</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tanglenomicon_data_api/montesinos/job.html#MontesinosJob.update_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tanglenomicon_data_api.montesinos.job.MontesinosJob.update_results" title="Link to this definition"></a></dt>
+<dd><p>Update the job with the reported results.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.montesinos.job.get_jobs">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.montesinos.job.</span></span><span class="sig-name descname"><span class="pre">get_jobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tanglenomicon_data_api/montesinos/job.html#get_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tanglenomicon_data_api.montesinos.job.get_jobs" title="Link to this definition"></a></dt>
+<dd><p>Get and build a specified number of jobs.</p>
+<h2 class="rubric" id="id2">Parameters</h2>
+<p>count : int, optional
+The number of jobs to get and build, by default 1</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.montesinos.job.startup_task">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.montesinos.job.</span></span><span class="sig-name descname"><span class="pre">startup_task</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tanglenomicon_data_api/montesinos/job.html#startup_task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tanglenomicon_data_api.montesinos.job.startup_task" title="Link to this definition"></a></dt>
+<dd><p>Task to run at startup to initialize Montesinos jobs.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tanglenomicon_data_api.montesinos.html" class="btn btn-neutral float-left" title="tanglenomicon_data_api.montesinos" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tanglenomicon_data_api.montesinos.generation_endpoint.html" class="btn btn-neutral float-right" title="tanglenomicon_data_api.montesinos.generation_endpoint" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, temp.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

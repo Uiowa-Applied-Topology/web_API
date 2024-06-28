@@ -1,0 +1,69 @@
+# {py:mod}`tanglenomicon_data_api.internal.db_connector`
+
+```{py:module} tanglenomicon_data_api.internal.db_connector
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.db_connector
+:allowtitles:
+```
+
+## Module Contents
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`init_client <tanglenomicon_data_api.internal.db_connector.init_client>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.db_connector.init_client
+    :summary:
+    ```
+````
+
+### Data
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`client <tanglenomicon_data_api.internal.db_connector.client>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.db_connector.client
+    :summary:
+    ```
+* - {py:obj}`db <tanglenomicon_data_api.internal.db_connector.db>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.db_connector.db
+    :summary:
+    ```
+````
+
+### API
+
+````{py:data} client
+:canonical: tanglenomicon_data_api.internal.db_connector.client
+:type: motor.motor_asyncio
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.db_connector.client
+```
+
+````
+
+````{py:data} db
+:canonical: tanglenomicon_data_api.internal.db_connector.db
+:type: dict[str, motor.motor_asyncio.AsyncIOMotorDatabase]
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.db_connector.db
+```
+
+````
+
+````{py:function} init_client(url: str, port: int, username: str, password: str, database_name: str)
+:canonical: tanglenomicon_data_api.internal.db_connector.init_client
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.db_connector.init_client
+```
+````

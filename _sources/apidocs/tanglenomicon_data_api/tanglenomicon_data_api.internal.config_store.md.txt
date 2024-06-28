@@ -1,0 +1,54 @@
+# {py:mod}`tanglenomicon_data_api.internal.config_store`
+
+```{py:module} tanglenomicon_data_api.internal.config_store
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.config_store
+:allowtitles:
+```
+
+## Module Contents
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`load <tanglenomicon_data_api.internal.config_store.load>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.config_store.load
+    :summary:
+    ```
+````
+
+### Data
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`cfg_dict <tanglenomicon_data_api.internal.config_store.cfg_dict>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.config_store.cfg_dict
+    :summary:
+    ```
+````
+
+### API
+
+````{py:data} cfg_dict
+:canonical: tanglenomicon_data_api.internal.config_store.cfg_dict
+:type: dict
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.config_store.cfg_dict
+```
+
+````
+
+````{py:function} load(path: str)
+:canonical: tanglenomicon_data_api.internal.config_store.load
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.config_store.load
+```
+````

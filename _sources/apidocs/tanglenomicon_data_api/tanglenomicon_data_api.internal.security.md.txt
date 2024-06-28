@@ -1,0 +1,281 @@
+# {py:mod}`tanglenomicon_data_api.internal.security`
+
+```{py:module} tanglenomicon_data_api.internal.security
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security
+:allowtitles:
+```
+
+## Module Contents
+
+### Classes
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`Token <tanglenomicon_data_api.internal.security.Token>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.security.Token
+    :summary:
+    ```
+* - {py:obj}`TokenData <tanglenomicon_data_api.internal.security.TokenData>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.security.TokenData
+    :summary:
+    ```
+* - {py:obj}`User <tanglenomicon_data_api.internal.security.User>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.security.User
+    :summary:
+    ```
+* - {py:obj}`UserInDB <tanglenomicon_data_api.internal.security.UserInDB>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.security.UserInDB
+    :summary:
+    ```
+````
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`auth_current_user <tanglenomicon_data_api.internal.security.auth_current_user>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.security.auth_current_user
+    :summary:
+    ```
+* - {py:obj}`get_current_user <tanglenomicon_data_api.internal.security.get_current_user>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.security.get_current_user
+    :summary:
+    ```
+* - {py:obj}`add_user <tanglenomicon_data_api.internal.security.add_user>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.security.add_user
+    :summary:
+    ```
+* - {py:obj}`read_users_me <tanglenomicon_data_api.internal.security.read_users_me>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.security.read_users_me
+    :summary:
+    ```
+* - {py:obj}`login_for_access_token <tanglenomicon_data_api.internal.security.login_for_access_token>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.security.login_for_access_token
+    :summary:
+    ```
+````
+
+### Data
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`router <tanglenomicon_data_api.internal.security.router>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.security.router
+    :summary:
+    ```
+* - {py:obj}`credentials_exception <tanglenomicon_data_api.internal.security.credentials_exception>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.security.credentials_exception
+    :summary:
+    ```
+````
+
+### API
+
+`````{py:class} Token(/, **data: typing.Any)
+:canonical: tanglenomicon_data_api.internal.security.Token
+
+Bases: {py:obj}`pydantic.BaseModel`
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.Token
+```
+
+```{rubric} Initialization
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.Token.__init__
+```
+
+````{py:attribute} access_token
+:canonical: tanglenomicon_data_api.internal.security.Token.access_token
+:type: str
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.Token.access_token
+```
+
+````
+
+````{py:attribute} token_type
+:canonical: tanglenomicon_data_api.internal.security.Token.token_type
+:type: str
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.Token.token_type
+```
+
+````
+
+`````
+
+`````{py:class} TokenData(/, **data: typing.Any)
+:canonical: tanglenomicon_data_api.internal.security.TokenData
+
+Bases: {py:obj}`pydantic.BaseModel`
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.TokenData
+```
+
+```{rubric} Initialization
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.TokenData.__init__
+```
+
+````{py:attribute} username
+:canonical: tanglenomicon_data_api.internal.security.TokenData.username
+:type: typing.Union[str, None]
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.TokenData.username
+```
+
+````
+
+`````
+
+`````{py:class} User(/, **data: typing.Any)
+:canonical: tanglenomicon_data_api.internal.security.User
+
+Bases: {py:obj}`pydantic.BaseModel`
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.User
+```
+
+```{rubric} Initialization
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.User.__init__
+```
+
+````{py:attribute} username
+:canonical: tanglenomicon_data_api.internal.security.User.username
+:type: str
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.User.username
+```
+
+````
+
+````{py:attribute} disabled
+:canonical: tanglenomicon_data_api.internal.security.User.disabled
+:type: typing.Union[bool, None]
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.User.disabled
+```
+
+````
+
+`````
+
+`````{py:class} UserInDB(/, **data: typing.Any)
+:canonical: tanglenomicon_data_api.internal.security.UserInDB
+
+Bases: {py:obj}`tanglenomicon_data_api.internal.security.User`
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.UserInDB
+```
+
+```{rubric} Initialization
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.UserInDB.__init__
+```
+
+````{py:attribute} hashed_password
+:canonical: tanglenomicon_data_api.internal.security.UserInDB.hashed_password
+:type: str
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.UserInDB.hashed_password
+```
+
+````
+
+````{py:attribute} token_expire
+:canonical: tanglenomicon_data_api.internal.security.UserInDB.token_expire
+:type: int
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.UserInDB.token_expire
+```
+
+````
+
+`````
+
+````{py:data} router
+:canonical: tanglenomicon_data_api.internal.security.router
+:value: >
+   'APIRouter(...)'
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.router
+```
+
+````
+
+````{py:data} credentials_exception
+:canonical: tanglenomicon_data_api.internal.security.credentials_exception
+:value: >
+   'HTTPException(...)'
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.credentials_exception
+```
+
+````
+
+````{py:function} auth_current_user(token: typing.Annotated[str, Depends(_oauth2_scheme)]) -> bool
+:canonical: tanglenomicon_data_api.internal.security.auth_current_user
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.auth_current_user
+```
+````
+
+````{py:function} get_current_user(token: typing.Annotated[str, Depends(_oauth2_scheme)], auth_col: typing.Annotated[motor.motor_asyncio.AsyncIOMotorCollection, Depends(_get_collection)]) -> tanglenomicon_data_api.internal.security.UserInDB
+:canonical: tanglenomicon_data_api.internal.security.get_current_user
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.get_current_user
+```
+````
+
+````{py:function} add_user(username: str, password: str, token_expire: int = None)
+:canonical: tanglenomicon_data_api.internal.security.add_user
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.add_user
+```
+````
+
+````{py:function} read_users_me(current_user: typing.Annotated[tanglenomicon_data_api.internal.security.User, Depends(_get_current_active_user)])
+:canonical: tanglenomicon_data_api.internal.security.read_users_me
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.read_users_me
+```
+````
+
+````{py:function} login_for_access_token(form_data: typing.Annotated[fastapi.security.OAuth2PasswordRequestForm, Depends()], auth_col: typing.Annotated[motor.motor_asyncio.AsyncIOMotorCollection, Depends(_get_collection)]) -> tanglenomicon_data_api.internal.security.Token
+:canonical: tanglenomicon_data_api.internal.security.login_for_access_token
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.security.login_for_access_token
+```
+````

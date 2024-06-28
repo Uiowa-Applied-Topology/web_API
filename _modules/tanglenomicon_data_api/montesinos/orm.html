@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tanglenomicon_data_api.montesinos.orm &mdash; Tanglenomicon API 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=7254e0c9" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({
+  securityLevel: 'loose',
+  theme: 'dark',
+});</script>
+        <script src="https://unpkg.com/d3/dist/d3.min.js"></script>
+        <script>
+            window.addEventListener("load", function () {
+              var svgs = d3.selectAll(".mermaid svg");
+              svgs.each(function() {
+                var svg = d3.select(this);
+                svg.html("<g>" + svg.html() + "</g>");
+                var inner = svg.select("g");
+                var zoom = d3.zoom().on("zoom", function(event) {
+                  inner.attr("transform", event.transform);
+                });
+                svg.call(zoom);
+              });
+            });
+            </script>
+        <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<script type="text/javascript" id="MathJax-script" async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+if (typeof MathJax === 'undefined') {
+    MathJax = {
+        loader: {
+            load: ['[img]/img.min.js', '[tex]/color', '[tex]/amscd'],
+            paths: { img: 'https://cdn.jsdelivr.net/npm/mathjax-img@3' }
+        },
+        tex: {
+            inlineMath: [["$", "$"], ["\\(", "\\)"]],
+            displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+            processEscapes: true,
+            processEnvironments: true,
+            extensions: ["autoload-all.js", "AMSmath.js", "AMSsymbols.js", "AMScd.js"],
+            packages: { '[+]': ['img', 'color', 'amscd'] }
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+    MathJax.startup = {
+        ready() {
+            MathJax.startup.defaultReady();
+            MathJax.startup.promise.then(() => {
+                console.log("Start startup promise");
+
+                document.querySelectorAll("mjx-container").forEach(function (x) {
+                    x.parentElement.classList += ' has-jax '
+                })
+
+                document.querySelectorAll("mjx-container img").forEach((element) => {
+                    var src = element.getAttribute("src");
+                    if (src.endsWith('.svg') == true) {
+                        fetch(src)
+                        .then(res => res.text())
+                        .then(res => {
+                            const holder = document.createElement('div')
+                            holder.style.width = "1em";
+                            holder.style.height = "1em";
+                            holder.innerHTML = res
+                            element.replaceWith(holder)
+                        })
+                    }
+                });
+
+                console.log("End startup promise");
+            });
+        }
+    };
+}
+</script>
+
+<!-- Preamble -->
+<p hidden>
+    `$\newcommand{\N}{\mathbb{N}}
+    \newcommand{\Z}{\mathbb{Z}}
+    \newcommand{\Q}{\mathbb{Q}}
+    \newcommand{\R}{\mathbb{R}}
+    \newcommand{\LP}{\left(}
+    \newcommand{\RP}{\right)}
+    \newcommand{\LS}{\left\lbrace}
+    \newcommand{\RS}{\right\rbrace}
+    \newcommand{\LA}{\left\langle}
+    \newcommand{\RA}{\right\rangle}
+    \newcommand{\LB}{\left[}
+    \newcommand{\RB}{\right]}
+    \newcommand{\MM}{\ \middle|\ }
+    \newcommand{\exp}{\text{exp}}
+    \newcommand{\abs}[1]{\left\vert#1\right\vert}
+    \newcommand{\msr}[1]{m\left(#1\right)}
+    \newcommand{\inv}[1]{ #1^{-1}}
+    \newcommand{\bkt}[1]{\LA \img{ #1}\RA}
+    \require{color}$
+    </p>
+
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Tanglenomicon API
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../use_cases/index.html">Use Case Descriptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../unit_description/index.html">Unit Descriptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidocs/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tanglenomicon API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tanglenomicon_data_api.montesinos.orm</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tanglenomicon_data_api.montesinos.orm</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;ORM for the Montesinos submodule.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">bson</span> <span class="kn">import</span> <span class="n">ObjectId</span>
+<span class="kn">from</span> <span class="nn">..internal</span> <span class="kn">import</span> <span class="n">db_connector</span> <span class="k">as</span> <span class="n">dbc</span>
+<span class="kn">from</span> <span class="nn">..internal</span> <span class="kn">import</span> <span class="n">config_store</span> <span class="k">as</span> <span class="n">cfg</span>
+<span class="kn">from</span> <span class="nn">motor.motor_asyncio</span> <span class="kn">import</span> <span class="n">AsyncIOMotorDatabase</span>
+
+
+<div class="viewcode-block" id="get_stencil_collection">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.montesinos.orm.html#tanglenomicon_data_api.montesinos.orm.get_stencil_collection">[docs]</a>
+<span class="k">def</span> <span class="nf">get_stencil_collection</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AsyncIOMotorDatabase</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the mongodb collection containing the Montesinos stencils.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    AsyncIOMotorDatabase</span>
+<span class="sd">        The Montesinos stencils collection.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">dbc</span><span class="o">.</span><span class="n">db</span><span class="p">[</span><span class="n">cfg</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;tangle-classes&quot;</span><span class="p">][</span><span class="s2">&quot;montesinos&quot;</span><span class="p">][</span><span class="s2">&quot;stencil_col_name&quot;</span><span class="p">]]</span></div>
+
+
+
+<div class="viewcode-block" id="get_montesinos_collection">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.montesinos.orm.html#tanglenomicon_data_api.montesinos.orm.get_montesinos_collection">[docs]</a>
+<span class="k">def</span> <span class="nf">get_montesinos_collection</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AsyncIOMotorDatabase</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the mongodb collection containing the Montesinos tangles.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    AsyncIOMotorDatabase</span>
+<span class="sd">        The Montesinos tangles collection.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">dbc</span><span class="o">.</span><span class="n">db</span><span class="p">[</span><span class="n">cfg</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;tangle-classes&quot;</span><span class="p">][</span><span class="s2">&quot;montesinos&quot;</span><span class="p">][</span><span class="s2">&quot;col_name&quot;</span><span class="p">]]</span></div>
+
+
+
+<div class="viewcode-block" id="StencilHeadStateEnum">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.montesinos.orm.html#tanglenomicon_data_api.montesinos.orm.StencilHeadStateEnum">[docs]</a>
+<span class="k">class</span> <span class="nc">StencilHeadStateEnum</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum describing the states of the Head pointer for stencils.&quot;&quot;&quot;</span>
+
+    <span class="n">headroom</span> <span class="o">=</span> <span class="s2">&quot;headroom&quot;</span>
+    <span class="n">no_headroom</span> <span class="o">=</span> <span class="s2">&quot;no_headroom&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="StencilStateEnum">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.montesinos.orm.html#tanglenomicon_data_api.montesinos.orm.StencilStateEnum">[docs]</a>
+<span class="k">class</span> <span class="nc">StencilStateEnum</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum describing the states of a stencil.&quot;&quot;&quot;</span>
+
+    <span class="n">new</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">started</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">no_headroom</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">complete</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+
+<div class="viewcode-block" id="StencilJobDB">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.montesinos.orm.html#tanglenomicon_data_api.montesinos.orm.StencilJobDB">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">StencilJobDB</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A subjob for a stencil to be read/written to/from a collection.&quot;&quot;&quot;</span>
+
+    <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">cursor</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="StencilDB">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.montesinos.orm.html#tanglenomicon_data_api.montesinos.orm.StencilDB">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">StencilDB</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A stencil to be read/written to/from a collection.&quot;&quot;&quot;</span>
+
+    <span class="n">_id</span><span class="p">:</span> <span class="n">ObjectId</span>
+    <span class="n">stencil_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">str_rep</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">crossing_num</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">head</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">state</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">open_jobs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StencilJobDB</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="MontesinosTangleDB">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.montesinos.orm.html#tanglenomicon_data_api.montesinos.orm.MontesinosTangleDB">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">MontesinosTangleDB</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A montesinos tangle to be read from the tangle collection.&quot;&quot;&quot;</span>
+
+    <span class="n">_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">crossing_num</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">parent_stencil</span><span class="p">:</span> <span class="nb">str</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, temp.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

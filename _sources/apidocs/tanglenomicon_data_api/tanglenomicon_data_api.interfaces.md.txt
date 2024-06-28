@@ -1,0 +1,17 @@
+# {py:mod}`tanglenomicon_data_api.interfaces`
+
+```{py:module} tanglenomicon_data_api.interfaces
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces
+:allowtitles:
+```
+
+## Submodules
+
+```{toctree}
+:titlesonly:
+:maxdepth: 1
+
+tanglenomicon_data_api.interfaces.job
+```

@@ -1,0 +1,215 @@
+# {py:mod}`tanglenomicon_data_api.interfaces.job`
+
+```{py:module} tanglenomicon_data_api.interfaces.job
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job
+:allowtitles:
+```
+
+## Module Contents
+
+### Classes
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`JobStateEnum <tanglenomicon_data_api.interfaces.job.JobStateEnum>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.JobStateEnum
+    :summary:
+    ```
+* - {py:obj}`GenerationJobResults <tanglenomicon_data_api.interfaces.job.GenerationJobResults>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.GenerationJobResults
+    :summary:
+    ```
+* - {py:obj}`ConfirmJobReceipt <tanglenomicon_data_api.interfaces.job.ConfirmJobReceipt>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.ConfirmJobReceipt
+    :summary:
+    ```
+* - {py:obj}`GenerationJob <tanglenomicon_data_api.interfaces.job.GenerationJob>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.GenerationJob
+    :summary:
+    ```
+````
+
+### API
+
+`````{py:class} JobStateEnum()
+:canonical: tanglenomicon_data_api.interfaces.job.JobStateEnum
+
+Bases: {py:obj}`str`, {py:obj}`enum.Enum`
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.JobStateEnum
+```
+
+```{rubric} Initialization
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.JobStateEnum.__init__
+```
+
+````{py:attribute} new
+:canonical: tanglenomicon_data_api.interfaces.job.JobStateEnum.new
+:value: >
+   'new'
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.JobStateEnum.new
+```
+
+````
+
+````{py:attribute} pending
+:canonical: tanglenomicon_data_api.interfaces.job.JobStateEnum.pending
+:value: >
+   'pending'
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.JobStateEnum.pending
+```
+
+````
+
+````{py:attribute} complete
+:canonical: tanglenomicon_data_api.interfaces.job.JobStateEnum.complete
+:value: >
+   'complete'
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.JobStateEnum.complete
+```
+
+````
+
+`````
+
+`````{py:class} GenerationJobResults(/, **data: typing.Any)
+:canonical: tanglenomicon_data_api.interfaces.job.GenerationJobResults
+
+Bases: {py:obj}`pydantic.BaseModel`
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.GenerationJobResults
+```
+
+```{rubric} Initialization
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.GenerationJobResults.__init__
+```
+
+````{py:attribute} job_id
+:canonical: tanglenomicon_data_api.interfaces.job.GenerationJobResults.job_id
+:type: str
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.GenerationJobResults.job_id
+```
+
+````
+
+`````
+
+`````{py:class} ConfirmJobReceipt(/, **data: typing.Any)
+:canonical: tanglenomicon_data_api.interfaces.job.ConfirmJobReceipt
+
+Bases: {py:obj}`tanglenomicon_data_api.interfaces.job.GenerationJobResults`
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.ConfirmJobReceipt
+```
+
+```{rubric} Initialization
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.ConfirmJobReceipt.__init__
+```
+
+````{py:attribute} accepted
+:canonical: tanglenomicon_data_api.interfaces.job.ConfirmJobReceipt.accepted
+:type: bool
+:value: >
+   False
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.ConfirmJobReceipt.accepted
+```
+
+````
+
+`````
+
+`````{py:class} GenerationJob(/, **data: typing.Any)
+:canonical: tanglenomicon_data_api.interfaces.job.GenerationJob
+
+Bases: {py:obj}`pydantic.BaseModel`
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.GenerationJob
+```
+
+```{rubric} Initialization
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.GenerationJob.__init__
+```
+
+````{py:attribute} job_id
+:canonical: tanglenomicon_data_api.interfaces.job.GenerationJob.job_id
+:type: str
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.GenerationJob.job_id
+```
+
+````
+
+````{py:attribute} timestamp
+:canonical: tanglenomicon_data_api.interfaces.job.GenerationJob.timestamp
+:type: datetime.datetime
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.GenerationJob.timestamp
+```
+
+````
+
+````{py:attribute} cur_state
+:canonical: tanglenomicon_data_api.interfaces.job.GenerationJob.cur_state
+:type: tanglenomicon_data_api.interfaces.job.JobStateEnum
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.GenerationJob.cur_state
+```
+
+````
+
+````{py:attribute} client_id
+:canonical: tanglenomicon_data_api.interfaces.job.GenerationJob.client_id
+:type: str
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.GenerationJob.client_id
+```
+
+````
+
+````{py:method} store()
+:canonical: tanglenomicon_data_api.interfaces.job.GenerationJob.store
+:abstractmethod:
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.GenerationJob.store
+```
+
+````
+
+````{py:method} update_results(res: tanglenomicon_data_api.interfaces.job.GenerationJobResults)
+:canonical: tanglenomicon_data_api.interfaces.job.GenerationJob.update_results
+:abstractmethod:
+
+```{autodoc2-docstring} tanglenomicon_data_api.interfaces.job.GenerationJob.update_results
+```
+
+````
+
+`````

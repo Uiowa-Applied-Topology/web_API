@@ -1,0 +1,201 @@
+# {py:mod}`tanglenomicon_data_api.montesinos.job`
+
+```{py:module} tanglenomicon_data_api.montesinos.job
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job
+:allowtitles:
+```
+
+## Module Contents
+
+### Classes
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`MontesinosJobResults <tanglenomicon_data_api.montesinos.job.MontesinosJobResults>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.MontesinosJobResults
+    :summary:
+    ```
+* - {py:obj}`MontesinosJob <tanglenomicon_data_api.montesinos.job.MontesinosJob>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.MontesinosJob
+    :summary:
+    ```
+````
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`get_jobs <tanglenomicon_data_api.montesinos.job.get_jobs>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.get_jobs
+    :summary:
+    ```
+* - {py:obj}`startup_task <tanglenomicon_data_api.montesinos.job.startup_task>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.startup_task
+    :summary:
+    ```
+````
+
+### Data
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`logger <tanglenomicon_data_api.montesinos.job.logger>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.logger
+    :summary:
+    ```
+* - {py:obj}`OPEN_STEN_FILTER <tanglenomicon_data_api.montesinos.job.OPEN_STEN_FILTER>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.OPEN_STEN_FILTER
+    :summary:
+    ```
+* - {py:obj}`STARTED_STEN_FILTER <tanglenomicon_data_api.montesinos.job.STARTED_STEN_FILTER>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.STARTED_STEN_FILTER
+    :summary:
+    ```
+````
+
+### API
+
+````{py:data} logger
+:canonical: tanglenomicon_data_api.montesinos.job.logger
+:value: >
+   'getLogger(...)'
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.logger
+```
+
+````
+
+````{py:data} OPEN_STEN_FILTER
+:canonical: tanglenomicon_data_api.montesinos.job.OPEN_STEN_FILTER
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.OPEN_STEN_FILTER
+```
+
+````
+
+````{py:data} STARTED_STEN_FILTER
+:canonical: tanglenomicon_data_api.montesinos.job.STARTED_STEN_FILTER
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.STARTED_STEN_FILTER
+```
+
+````
+
+`````{py:class} MontesinosJobResults(/, **data: typing.Any)
+:canonical: tanglenomicon_data_api.montesinos.job.MontesinosJobResults
+
+Bases: {py:obj}`tanglenomicon_data_api.interfaces.job.GenerationJobResults`
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.MontesinosJobResults
+```
+
+```{rubric} Initialization
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.MontesinosJobResults.__init__
+```
+
+````{py:attribute} mont_list
+:canonical: tanglenomicon_data_api.montesinos.job.MontesinosJobResults.mont_list
+:type: typing.List[str]
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.MontesinosJobResults.mont_list
+```
+
+````
+
+`````
+
+`````{py:class} MontesinosJob(/, **data: typing.Any)
+:canonical: tanglenomicon_data_api.montesinos.job.MontesinosJob
+
+Bases: {py:obj}`tanglenomicon_data_api.interfaces.job.GenerationJob`
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.MontesinosJob
+```
+
+```{rubric} Initialization
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.MontesinosJob.__init__
+```
+
+````{py:attribute} rat_lists
+:canonical: tanglenomicon_data_api.montesinos.job.MontesinosJob.rat_lists
+:type: typing.List[typing.List[str]]
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.MontesinosJob.rat_lists
+```
+
+````
+
+````{py:attribute} crossing_num
+:canonical: tanglenomicon_data_api.montesinos.job.MontesinosJob.crossing_num
+:type: int
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.MontesinosJob.crossing_num
+```
+
+````
+
+````{py:method} store() -> bool
+:canonical: tanglenomicon_data_api.montesinos.job.MontesinosJob.store
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.MontesinosJob.store
+```
+
+````
+
+````{py:property} stencil
+:canonical: tanglenomicon_data_api.montesinos.job.MontesinosJob.stencil
+:type: str
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.MontesinosJob.stencil
+```
+
+````
+
+````{py:method} update_results(res: tanglenomicon_data_api.montesinos.job.MontesinosJobResults)
+:canonical: tanglenomicon_data_api.montesinos.job.MontesinosJob.update_results
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.MontesinosJob.update_results
+```
+
+````
+
+`````
+
+````{py:function} get_jobs(count: int = 1)
+:canonical: tanglenomicon_data_api.montesinos.job.get_jobs
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.get_jobs
+```
+````
+
+````{py:function} startup_task()
+:canonical: tanglenomicon_data_api.montesinos.job.startup_task
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.job.startup_task
+```
+````

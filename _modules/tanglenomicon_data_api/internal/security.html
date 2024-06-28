@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tanglenomicon_data_api.internal.security &mdash; Tanglenomicon API 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=7254e0c9" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({
+  securityLevel: 'loose',
+  theme: 'dark',
+});</script>
+        <script src="https://unpkg.com/d3/dist/d3.min.js"></script>
+        <script>
+            window.addEventListener("load", function () {
+              var svgs = d3.selectAll(".mermaid svg");
+              svgs.each(function() {
+                var svg = d3.select(this);
+                svg.html("<g>" + svg.html() + "</g>");
+                var inner = svg.select("g");
+                var zoom = d3.zoom().on("zoom", function(event) {
+                  inner.attr("transform", event.transform);
+                });
+                svg.call(zoom);
+              });
+            });
+            </script>
+        <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<script type="text/javascript" id="MathJax-script" async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+if (typeof MathJax === 'undefined') {
+    MathJax = {
+        loader: {
+            load: ['[img]/img.min.js', '[tex]/color', '[tex]/amscd'],
+            paths: { img: 'https://cdn.jsdelivr.net/npm/mathjax-img@3' }
+        },
+        tex: {
+            inlineMath: [["$", "$"], ["\\(", "\\)"]],
+            displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+            processEscapes: true,
+            processEnvironments: true,
+            extensions: ["autoload-all.js", "AMSmath.js", "AMSsymbols.js", "AMScd.js"],
+            packages: { '[+]': ['img', 'color', 'amscd'] }
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+    MathJax.startup = {
+        ready() {
+            MathJax.startup.defaultReady();
+            MathJax.startup.promise.then(() => {
+                console.log("Start startup promise");
+
+                document.querySelectorAll("mjx-container").forEach(function (x) {
+                    x.parentElement.classList += ' has-jax '
+                })
+
+                document.querySelectorAll("mjx-container img").forEach((element) => {
+                    var src = element.getAttribute("src");
+                    if (src.endsWith('.svg') == true) {
+                        fetch(src)
+                        .then(res => res.text())
+                        .then(res => {
+                            const holder = document.createElement('div')
+                            holder.style.width = "1em";
+                            holder.style.height = "1em";
+                            holder.innerHTML = res
+                            element.replaceWith(holder)
+                        })
+                    }
+                });
+
+                console.log("End startup promise");
+            });
+        }
+    };
+}
+</script>
+
+<!-- Preamble -->
+<p hidden>
+    `$\newcommand{\N}{\mathbb{N}}
+    \newcommand{\Z}{\mathbb{Z}}
+    \newcommand{\Q}{\mathbb{Q}}
+    \newcommand{\R}{\mathbb{R}}
+    \newcommand{\LP}{\left(}
+    \newcommand{\RP}{\right)}
+    \newcommand{\LS}{\left\lbrace}
+    \newcommand{\RS}{\right\rbrace}
+    \newcommand{\LA}{\left\langle}
+    \newcommand{\RA}{\right\rangle}
+    \newcommand{\LB}{\left[}
+    \newcommand{\RB}{\right]}
+    \newcommand{\MM}{\ \middle|\ }
+    \newcommand{\exp}{\text{exp}}
+    \newcommand{\abs}[1]{\left\vert#1\right\vert}
+    \newcommand{\msr}[1]{m\left(#1\right)}
+    \newcommand{\inv}[1]{ #1^{-1}}
+    \newcommand{\bkt}[1]{\LA \img{ #1}\RA}
+    \require{color}$
+    </p>
+
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Tanglenomicon API
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../use_cases/index.html">Use Case Descriptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../unit_description/index.html">Unit Descriptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidocs/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tanglenomicon API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tanglenomicon_data_api.internal.security</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tanglenomicon_data_api.internal.security</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Security submodule handles authenticating users.</span>
+
+<span class="sd">This has been mostly lifted from [here](https://web.archive.org/web/20240505104734/https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/) &lt;!-- # noqa: E501 --&gt;</span>
+
+
+<span class="sd">Raises</span>
+<span class="sd">------</span>
+<span class="sd">credentials_exception</span>
+<span class="sd">    Credentials are invalid.</span>
+<span class="sd">HTTPException</span>
+<span class="sd">    Various HTTP error codes.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">fastapi.security</span> <span class="kn">import</span> <span class="n">OAuth2PasswordBearer</span><span class="p">,</span> <span class="n">OAuth2PasswordRequestForm</span>
+<span class="kn">from</span> <span class="nn">jose</span> <span class="kn">import</span> <span class="n">JWTError</span><span class="p">,</span> <span class="n">jwt</span>
+<span class="kn">from</span> <span class="nn">passlib.context</span> <span class="kn">import</span> <span class="n">CryptContext</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">motor.motor_asyncio</span> <span class="kn">import</span> <span class="n">AsyncIOMotorCollection</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">db_connector</span> <span class="k">as</span> <span class="n">dbc</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">config_store</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;passlib&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Token">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.security.html#tanglenomicon_data_api.internal.security.Token">[docs]</a>
+<span class="k">class</span> <span class="nc">Token</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The jwt token class.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    BaseModel : BaseModel</span>
+<span class="sd">        Usage docs: https://docs.pydantic.dev/2.7/concepts/models/</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">access_token</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">token_type</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+
+<div class="viewcode-block" id="TokenData">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.security.html#tanglenomicon_data_api.internal.security.TokenData">[docs]</a>
+<span class="k">class</span> <span class="nc">TokenData</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The jwt Token data class.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    BaseModel : BaseModel</span>
+<span class="sd">        Usage docs: https://docs.pydantic.dev/2.7/concepts/models/</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">username</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="User">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.security.html#tanglenomicon_data_api.internal.security.User">[docs]</a>
+<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;User class outline.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    BaseModel : BaseModel</span>
+<span class="sd">        Usage docs: https://docs.pydantic.dev/2.7/concepts/models/</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">username</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">disabled</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="UserInDB">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.security.html#tanglenomicon_data_api.internal.security.UserInDB">[docs]</a>
+<span class="k">class</span> <span class="nc">UserInDB</span><span class="p">(</span><span class="n">User</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ORM definition for user from the database.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    User : User</span>
+<span class="sd">        Implementation of User.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">hashed_password</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">token_expire</span><span class="p">:</span> <span class="nb">int</span></div>
+
+
+
+<span class="n">_pwd_context</span> <span class="o">=</span> <span class="n">CryptContext</span><span class="p">(</span><span class="n">schemes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bcrypt&quot;</span><span class="p">],</span> <span class="n">deprecated</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+
+<span class="n">_oauth2_scheme</span> <span class="o">=</span> <span class="n">OAuth2PasswordBearer</span><span class="p">(</span><span class="n">tokenUrl</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">)</span>
+
+<span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">()</span>
+
+<span class="n">credentials_exception</span> <span class="o">=</span> <span class="n">HTTPException</span><span class="p">(</span>
+    <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span><span class="p">,</span>
+    <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Could not validate credentials&quot;</span><span class="p">,</span>
+    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;WWW-Authenticate&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TokenData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a decoded jwt token.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    token : str</span>
+<span class="sd">        A token supplied by the user.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    TokenData</span>
+<span class="sd">        The decoded token data.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    credentials_exception</span>
+<span class="sd">        An error occurred when authenticating user.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
+            <span class="n">token</span><span class="p">,</span>
+            <span class="n">config_store</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;auth&quot;</span><span class="p">][</span><span class="s2">&quot;secret_key&quot;</span><span class="p">],</span>
+            <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="n">config_store</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;auth&quot;</span><span class="p">][</span><span class="s2">&quot;algorithm&quot;</span><span class="p">]],</span>
+        <span class="p">)</span>
+        <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sub&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">username</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">credentials_exception</span>
+        <span class="n">token_data</span> <span class="o">=</span> <span class="n">TokenData</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">JWTError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">credentials_exception</span>
+    <span class="k">return</span> <span class="n">token_data</span>
+
+
+<span class="k">def</span> <span class="nf">_verify_password</span><span class="p">(</span><span class="n">plain_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hashed_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a ``True``/``False`` based on if password matches hash.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    plain_password : str</span>
+<span class="sd">        The plain password sent by the user.</span>
+<span class="sd">    hashed_password : str</span>
+<span class="sd">        The stored password hash for the user.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Bool</span>
+<span class="sd">        ``True`` if the password matched the hash, else ``False``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_pwd_context</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">plain_password</span><span class="p">,</span> <span class="n">hashed_password</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">_get_user</span><span class="p">(</span><span class="n">auth_col</span><span class="p">:</span> <span class="n">AsyncIOMotorCollection</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserInDB</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find and return the user from the auth collection or None.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    auth_col : AsyncIOMotorCollection</span>
+<span class="sd">        The mongodb auth collection.</span>
+<span class="sd">    username : str</span>
+<span class="sd">        The user to find in the collection.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    UserInDB | None</span>
+<span class="sd">        A user object from the auth collection or None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">user</span> <span class="o">:=</span> <span class="p">(</span><span class="k">await</span> <span class="n">auth_col</span><span class="o">.</span><span class="n">find_one</span><span class="p">({</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">username</span><span class="p">)})))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">UserInDB</span><span class="p">(</span><span class="o">**</span><span class="n">user</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">_authenticate_user</span><span class="p">(</span>
+    <span class="n">auth_col</span><span class="p">:</span> <span class="n">AsyncIOMotorCollection</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserInDB</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return ``True``/``False`` based on if user exists and password matches.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    auth_col : AsyncIOMotorCollection</span>
+<span class="sd">        The mongodb auth collection.</span>
+<span class="sd">    username : str</span>
+<span class="sd">        The user to find in the collection.</span>
+<span class="sd">    password : str</span>
+<span class="sd">        The password supplied by the user.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    UserInDB | None</span>
+<span class="sd">        A user object from the auth collection or False if fail.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_get_user</span><span class="p">(</span><span class="n">auth_col</span><span class="p">,</span> <span class="n">username</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_verify_password</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">hashed_password</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">user</span>
+
+
+<span class="k">def</span> <span class="nf">_get_collection</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AsyncIOMotorCollection</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a reference to the mongodb auth collection.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    AsyncIOMotorCollection</span>
+<span class="sd">        A reference to the auth collection.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">dbc</span><span class="o">.</span><span class="n">db</span><span class="p">[</span><span class="n">config_store</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;auth&quot;</span><span class="p">][</span><span class="s2">&quot;auth-col-name&quot;</span><span class="p">]]</span>
+
+
+<span class="k">def</span> <span class="nf">_create_access_token</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">expires_delta</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">timedelta</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return an access jwt token.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : dict</span>
+<span class="sd">        The data to encode into a token.</span>
+<span class="sd">    expires_delta : Union[timedelta, None], optional</span>
+<span class="sd">        The timedelta to expire the token, by default None</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        A jwt token.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">to_encode</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">expires_delta</span><span class="p">:</span>
+        <span class="n">expire</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">+</span> <span class="n">expires_delta</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">expire</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">to_encode</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;exp&quot;</span><span class="p">:</span> <span class="n">expire</span><span class="p">})</span>
+    <span class="n">encoded_jwt</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+        <span class="n">to_encode</span><span class="p">,</span>
+        <span class="n">config_store</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;auth&quot;</span><span class="p">][</span><span class="s2">&quot;secret_key&quot;</span><span class="p">],</span>
+        <span class="n">algorithm</span><span class="o">=</span><span class="n">config_store</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;auth&quot;</span><span class="p">][</span><span class="s2">&quot;algorithm&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">encoded_jwt</span>
+
+
+<div class="viewcode-block" id="auth_current_user">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.security.html#tanglenomicon_data_api.internal.security.auth_current_user">[docs]</a>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">auth_current_user</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">_oauth2_scheme</span><span class="p">)])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return ``True``/``False`` based on if the supplied token is valid.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    token : Annotated[str, Depends</span>
+<span class="sd">        The token supplied by the user.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        ``True``/``False`` if user is authenticated.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    credentials_exception</span>
+<span class="sd">        An error occurred when authenticating user.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">_decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="get_current_user">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.security.html#tanglenomicon_data_api.internal.security.get_current_user">[docs]</a>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_current_user</span><span class="p">(</span>
+    <span class="n">token</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">_oauth2_scheme</span><span class="p">)],</span>
+    <span class="n">auth_col</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">AsyncIOMotorCollection</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">_get_collection</span><span class="p">)],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserInDB</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve a user from the auth collection given a token.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    token : Annotated[str, Depends</span>
+<span class="sd">        A jwt token supplied by the user.</span>
+<span class="sd">    auth_col : Annotated[AsyncIOMotorCollection, Depends</span>
+<span class="sd">        A reference to an auth collection.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    UserInDB</span>
+<span class="sd">        A user from the auth collection.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    credentials_exception</span>
+<span class="sd">        An error occurred when authenticating user.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">token_data</span> <span class="o">=</span> <span class="n">_decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_get_user</span><span class="p">(</span><span class="n">auth_col</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">token_data</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">credentials_exception</span>
+    <span class="k">return</span> <span class="n">user</span></div>
+
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">_get_current_active_user</span><span class="p">(</span>
+    <span class="n">current_user</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">User</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return data for current active user.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    current_user : Annotated[User, Depends</span>
+<span class="sd">        The current user.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    User</span>
+<span class="sd">        The current user.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    HTTPException</span>
+<span class="sd">        An http error if user is disabled.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">current_user</span><span class="o">.</span><span class="n">disabled</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Inactive user&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">current_user</span>
+
+
+<div class="viewcode-block" id="add_user">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.security.html#tanglenomicon_data_api.internal.security.add_user">[docs]</a>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">add_user</span><span class="p">(</span><span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token_expire</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a user to the auth collection.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    username : The username of the user.</span>
+<span class="sd">    password : The password supplied by the user.</span>
+<span class="sd">    token_expire : The expiration time for the token.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">auth_col</span> <span class="o">=</span> <span class="n">_get_collection</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">token_expire</span><span class="p">:</span>
+        <span class="n">token_expire</span> <span class="o">=</span> <span class="n">config_store</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;auth&quot;</span><span class="p">][</span><span class="s2">&quot;token_exp&quot;</span><span class="p">]</span>
+    <span class="n">pwdhash</span> <span class="o">=</span> <span class="n">_pwd_context</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="k">await</span> <span class="n">auth_col</span><span class="o">.</span><span class="n">find_one</span><span class="p">({</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">})):</span>
+        <span class="k">await</span> <span class="n">auth_col</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">username</span><span class="p">),</span>
+                <span class="s2">&quot;hashed_password&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">pwdhash</span><span class="p">),</span>
+                <span class="s2">&quot;disabled&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;token_expire&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">token_expire</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;User </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2"> already exists&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="read_users_me">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.security.html#tanglenomicon_data_api.internal.security.read_users_me">[docs]</a>
+<span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/users/me/&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">User</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">read_users_me</span><span class="p">(</span>
+    <span class="n">current_user</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">User</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">_get_current_active_user</span><span class="p">)]</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Endpoint to return the current active user.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    current_user : Annotated[User, Depends</span>
+<span class="sd">        The current user retrieved from the get current user function.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    User</span>
+<span class="sd">        The current user&#39;s information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">current_user</span></div>
+
+
+
+<div class="viewcode-block" id="login_for_access_token">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.security.html#tanglenomicon_data_api.internal.security.login_for_access_token">[docs]</a>
+<span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/token&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">login_for_access_token</span><span class="p">(</span>
+    <span class="n">form_data</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">OAuth2PasswordRequestForm</span><span class="p">,</span> <span class="n">Depends</span><span class="p">()],</span>
+    <span class="n">auth_col</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">AsyncIOMotorCollection</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">_get_collection</span><span class="p">)],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Token</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a token for the current user.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    form_data : Annotated[OAuth2PasswordRequestForm, Depends</span>
+<span class="sd">        The data submitted by the user.</span>
+<span class="sd">    auth_col : Annotated[AsyncIOMotorCollection, Depends</span>
+<span class="sd">        The mongodb auth collection.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Token</span>
+<span class="sd">        The generated token.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    HTTPException</span>
+<span class="sd">        Raised if user is not authenticated.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_authenticate_user</span><span class="p">(</span><span class="n">auth_col</span><span class="p">,</span> <span class="n">form_data</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">form_data</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Incorrect username or password&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;WWW-Authenticate&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer&quot;</span><span class="p">},</span>
+        <span class="p">)</span>
+    <span class="n">access_token_expires</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">token_expire</span><span class="p">)</span>
+    <span class="n">access_token</span> <span class="o">=</span> <span class="n">_create_access_token</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">},</span> <span class="n">expires_delta</span><span class="o">=</span><span class="n">access_token_expires</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">Token</span><span class="p">(</span><span class="n">access_token</span><span class="o">=</span><span class="n">access_token</span><span class="p">,</span> <span class="n">token_type</span><span class="o">=</span><span class="s2">&quot;bearer&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, temp.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

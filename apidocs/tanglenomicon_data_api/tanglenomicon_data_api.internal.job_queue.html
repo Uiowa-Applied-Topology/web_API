@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tanglenomicon_data_api.internal.job_queue &mdash; Tanglenomicon API 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=7254e0c9" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+        <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="tanglenomicon_data_api.internal.config_store" href="tanglenomicon_data_api.internal.config_store.html" />
+<script type="text/javascript" id="MathJax-script" async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+if (typeof MathJax === 'undefined') {
+    MathJax = {
+        loader: {
+            load: ['[img]/img.min.js', '[tex]/color', '[tex]/amscd'],
+            paths: { img: 'https://cdn.jsdelivr.net/npm/mathjax-img@3' }
+        },
+        tex: {
+            inlineMath: [["$", "$"], ["\\(", "\\)"]],
+            displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+            processEscapes: true,
+            processEnvironments: true,
+            extensions: ["autoload-all.js", "AMSmath.js", "AMSsymbols.js", "AMScd.js"],
+            packages: { '[+]': ['img', 'color', 'amscd'] }
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+    MathJax.startup = {
+        ready() {
+            MathJax.startup.defaultReady();
+            MathJax.startup.promise.then(() => {
+                console.log("Start startup promise");
+
+                document.querySelectorAll("mjx-container").forEach(function (x) {
+                    x.parentElement.classList += ' has-jax '
+                })
+
+                document.querySelectorAll("mjx-container img").forEach((element) => {
+                    var src = element.getAttribute("src");
+                    if (src.endsWith('.svg') == true) {
+                        fetch(src)
+                        .then(res => res.text())
+                        .then(res => {
+                            const holder = document.createElement('div')
+                            holder.style.width = "1em";
+                            holder.style.height = "1em";
+                            holder.innerHTML = res
+                            element.replaceWith(holder)
+                        })
+                    }
+                });
+
+                console.log("End startup promise");
+            });
+        }
+    };
+}
+</script>
+
+<!-- Preamble -->
+<p hidden>
+    `$\newcommand{\N}{\mathbb{N}}
+    \newcommand{\Z}{\mathbb{Z}}
+    \newcommand{\Q}{\mathbb{Q}}
+    \newcommand{\R}{\mathbb{R}}
+    \newcommand{\LP}{\left(}
+    \newcommand{\RP}{\right)}
+    \newcommand{\LS}{\left\lbrace}
+    \newcommand{\RS}{\right\rbrace}
+    \newcommand{\LA}{\left\langle}
+    \newcommand{\RA}{\right\rangle}
+    \newcommand{\LB}{\left[}
+    \newcommand{\RB}{\right]}
+    \newcommand{\MM}{\ \middle|\ }
+    \newcommand{\exp}{\text{exp}}
+    \newcommand{\abs}[1]{\left\vert#1\right\vert}
+    \newcommand{\msr}[1]{m\left(#1\right)}
+    \newcommand{\inv}[1]{ #1^{-1}}
+    \newcommand{\bkt}[1]{\LA \img{ #1}\RA}
+    \require{color}$
+    </p>
+
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Tanglenomicon API
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../use_cases/index.html">Use Case Descriptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../unit_description/index.html">Unit Descriptions</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tanglenomicon_data_api.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api</span></code></a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tanglenomicon_data_api.generic.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.generic</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tanglenomicon_data_api.rational.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.rational</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tanglenomicon_data_api.montesinos.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.montesinos</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tanglenomicon_data_api.interfaces.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.interfaces</span></code></a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="tanglenomicon_data_api.internal.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.internal</span></code></a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="tanglenomicon_data_api.internal.security.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.internal.security</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tanglenomicon_data_api.internal.db_connector.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.internal.db_connector</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tanglenomicon_data_api.internal.config_store.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.internal.config_store</span></code></a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.internal.job_queue</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Tanglenomicon API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="tanglenomicon_data_api.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api</span></code></a></li>
+          <li class="breadcrumb-item"><a href="tanglenomicon_data_api.internal.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.internal</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.internal.job_queue</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tanglenomicon_data_api.internal.job_queue">
+<span id="tanglenomicon-data-api-internal-job-queue"></span><h1><a class="reference internal" href="#module-tanglenomicon_data_api.internal.job_queue" title="tanglenomicon_data_api.internal.job_queue"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.internal.job_queue</span></code></a><a class="headerlink" href="#module-tanglenomicon_data_api.internal.job_queue" title="Link to this heading"></a></h1>
+<p>Job Queue handles the tangle generation job “queue”.</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-left">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tanglenomicon_data_api.internal.job_queue.aiterjq" title="tanglenomicon_data_api.internal.job_queue.aiterjq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aiterjq</span></code></a></p></td>
+<td><p>sdfsdfsdf.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tanglenomicon_data_api.internal.job_queue.mark_job_complete" title="tanglenomicon_data_api.internal.job_queue.mark_job_complete"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mark_job_complete</span></code></a></p></td>
+<td><p>Mark job in queue as complete.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tanglenomicon_data_api.internal.job_queue.get_next_job" title="tanglenomicon_data_api.internal.job_queue.get_next_job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_next_job</span></code></a></p></td>
+<td><p>Get the next job to complete from the job queue.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tanglenomicon_data_api.internal.job_queue.enqueue_job" title="tanglenomicon_data_api.internal.job_queue.enqueue_job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">enqueue_job</span></code></a></p></td>
+<td><p>Add a job to the queue.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tanglenomicon_data_api.internal.job_queue.get_job_statistics" title="tanglenomicon_data_api.internal.job_queue.get_job_statistics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_job_statistics</span></code></a></p></td>
+<td><p>Get all job statistics.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tanglenomicon_data_api.internal.job_queue.task_clean_stale_jobs" title="tanglenomicon_data_api.internal.job_queue.task_clean_stale_jobs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">task_clean_stale_jobs</span></code></a></p></td>
+<td><p>Task that periodically cleans stale jobs from the queue.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tanglenomicon_data_api.internal.job_queue.task_clean_complete_jobs" title="tanglenomicon_data_api.internal.job_queue.task_clean_complete_jobs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">task_clean_complete_jobs</span></code></a></p></td>
+<td><p>Task that periodically stores complete jobs in the queue.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data">
+<h3>Data<a class="headerlink" href="#data" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-left">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tanglenomicon_data_api.internal.job_queue.logger" title="tanglenomicon_data_api.internal.job_queue.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tanglenomicon_data_api.internal.job_queue.jq_semaphore" title="tanglenomicon_data_api.internal.job_queue.jq_semaphore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jq_semaphore</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tanglenomicon_data_api.internal.job_queue.task_semaphore" title="tanglenomicon_data_api.internal.job_queue.task_semaphore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">task_semaphore</span></code></a></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="api">
+<h3>API<a class="headerlink" href="#api" title="Link to this heading"></a></h3>
+<dl class="py data">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.internal.job_queue.logger">
+<span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.internal.job_queue.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#tanglenomicon_data_api.internal.job_queue.logger" title="Link to this definition"></a></dt>
+<dd><p>‘getLogger(…)’</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.internal.job_queue.jq_semaphore">
+<span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.internal.job_queue.</span></span><span class="sig-name descname"><span class="pre">jq_semaphore</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">asyncio.Lock</span></em><a class="headerlink" href="#tanglenomicon_data_api.internal.job_queue.jq_semaphore" title="Link to this definition"></a></dt>
+<dd><p>‘Lock(…)’</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.internal.job_queue.task_semaphore">
+<span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.internal.job_queue.</span></span><span class="sig-name descname"><span class="pre">task_semaphore</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">asyncio.Lock</span></em><a class="headerlink" href="#tanglenomicon_data_api.internal.job_queue.task_semaphore" title="Link to this definition"></a></dt>
+<dd><p>‘Lock(…)’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.internal.job_queue.aiterjq">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.internal.job_queue.</span></span><span class="sig-name descname"><span class="pre">aiterjq</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tanglenomicon_data_api/internal/job_queue.html#aiterjq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tanglenomicon_data_api.internal.job_queue.aiterjq" title="Link to this definition"></a></dt>
+<dd><p>sdfsdfsdf.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.internal.job_queue.mark_job_complete">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.internal.job_queue.</span></span><span class="sig-name descname"><span class="pre">mark_job_complete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tanglenomicon_data_api.interfaces.job.html#tanglenomicon_data_api.interfaces.job.GenerationJobResults" title="tanglenomicon_data_api.interfaces.job.GenerationJobResults"><span class="pre">tanglenomicon_data_api.interfaces.job.GenerationJobResults</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tanglenomicon_data_api.internal.security.html#tanglenomicon_data_api.internal.security.User" title="tanglenomicon_data_api.internal.security.User"><span class="pre">tanglenomicon_data_api.internal.security.User</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/tanglenomicon_data_api/internal/job_queue.html#mark_job_complete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tanglenomicon_data_api.internal.job_queue.mark_job_complete" title="Link to this definition"></a></dt>
+<dd><p>Mark job in queue as complete.</p>
+<h2 class="rubric" id="id7">Parameters</h2>
+<p>results : GenerationJobResults
+The reported results from the user.
+current_user : User
+The user submitting the results.</p>
+<h2 class="rubric" id="id8">Returns</h2>
+<p>bool
+<code class="docutils literal notranslate"><span class="pre">True</span></code> if successfully marked complete <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.internal.job_queue.get_next_job">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.internal.job_queue.</span></span><span class="sig-name descname"><span class="pre">get_next_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="tanglenomicon_data_api.interfaces.job.html#tanglenomicon_data_api.interfaces.job.GenerationJob" title="tanglenomicon_data_api.interfaces.job.GenerationJob"><span class="pre">tanglenomicon_data_api.interfaces.job.GenerationJob</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tanglenomicon_data_api.internal.security.html#tanglenomicon_data_api.internal.security.User" title="tanglenomicon_data_api.internal.security.User"><span class="pre">tanglenomicon_data_api.internal.security.User</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="tanglenomicon_data_api.interfaces.job.html#tanglenomicon_data_api.interfaces.job.GenerationJob" title="tanglenomicon_data_api.interfaces.job.GenerationJob"><span class="pre">tanglenomicon_data_api.interfaces.job.GenerationJob</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/tanglenomicon_data_api/internal/job_queue.html#get_next_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tanglenomicon_data_api.internal.job_queue.get_next_job" title="Link to this definition"></a></dt>
+<dd><p>Get the next job to complete from the job queue.</p>
+<h2 class="rubric" id="id9">Parameters</h2>
+<p>job_type : Type[generation_job]
+The type of job to find in the queue.
+current_user : User
+The user requesting the job.</p>
+<h2 class="rubric" id="id10">Returns</h2>
+<p>GenerationJob | None
+The job to feed the user or None if none exist.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.internal.job_queue.enqueue_job">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.internal.job_queue.</span></span><span class="sig-name descname"><span class="pre">enqueue_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tanglenomicon_data_api.interfaces.job.html#tanglenomicon_data_api.interfaces.job.GenerationJob" title="tanglenomicon_data_api.interfaces.job.GenerationJob"><span class="pre">tanglenomicon_data_api.interfaces.job.GenerationJob</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/tanglenomicon_data_api/internal/job_queue.html#enqueue_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tanglenomicon_data_api.internal.job_queue.enqueue_job" title="Link to this definition"></a></dt>
+<dd><p>Add a job to the queue.</p>
+<h2 class="rubric" id="id11">Parameters</h2>
+<p>job : generation_job
+The job to add to the queue.</p>
+<h2 class="rubric" id="id12">Returns</h2>
+<p>bool
+<code class="docutils literal notranslate"><span class="pre">True</span></code> if job is enqueued <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.internal.job_queue.get_job_statistics">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.internal.job_queue.</span></span><span class="sig-name descname"><span class="pre">get_job_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="tanglenomicon_data_api.interfaces.job.html#tanglenomicon_data_api.interfaces.job.GenerationJob" title="tanglenomicon_data_api.interfaces.job.GenerationJob"><span class="pre">tanglenomicon_data_api.interfaces.job.GenerationJob</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">GenerationJob</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/tanglenomicon_data_api/internal/job_queue.html#get_job_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tanglenomicon_data_api.internal.job_queue.get_job_statistics" title="Link to this definition"></a></dt>
+<dd><p>Get all job statistics.</p>
+<h2 class="rubric" id="id13">Parameters</h2>
+<p>job_type : Type[GenerationJob], optional
+The type of job to find, by default GenerationJob.</p>
+<h2 class="rubric" id="id14">Returns</h2>
+<p>dict
+The queue statistics for the type.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.internal.job_queue.task_clean_stale_jobs">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.internal.job_queue.</span></span><span class="sig-name descname"><span class="pre">task_clean_stale_jobs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tanglenomicon_data_api/internal/job_queue.html#task_clean_stale_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tanglenomicon_data_api.internal.job_queue.task_clean_stale_jobs" title="Link to this definition"></a></dt>
+<dd><p>Task that periodically cleans stale jobs from the queue.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tanglenomicon_data_api.internal.job_queue.task_clean_complete_jobs">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tanglenomicon_data_api.internal.job_queue.</span></span><span class="sig-name descname"><span class="pre">task_clean_complete_jobs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tanglenomicon_data_api/internal/job_queue.html#task_clean_complete_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tanglenomicon_data_api.internal.job_queue.task_clean_complete_jobs" title="Link to this definition"></a></dt>
+<dd><p>Task that periodically stores complete jobs in the queue.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tanglenomicon_data_api.internal.config_store.html" class="btn btn-neutral float-left" title="tanglenomicon_data_api.internal.config_store" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, temp.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

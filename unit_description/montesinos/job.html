@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unit: Montesinos job &mdash; Tanglenomicon API 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=7254e0c9" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({
+  securityLevel: 'loose',
+  theme: 'dark',
+});</script>
+        <script src="https://unpkg.com/d3/dist/d3.min.js"></script>
+        <script>
+            window.addEventListener("load", function () {
+              var svgs = d3.selectAll(".mermaid svg");
+              svgs.each(function() {
+                var svg = d3.select(this);
+                svg.html("<g>" + svg.html() + "</g>");
+                var inner = svg.select("g");
+                var zoom = d3.zoom().on("zoom", function(event) {
+                  inner.attr("transform", event.transform);
+                });
+                svg.call(zoom);
+              });
+            });
+            </script>
+        <script src="../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+        <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Unit: ORM interface" href="orm.html" />
+    <link rel="prev" title="Unit: Montesinos api endpoint" href="generation_endpoint.html" />
+<script type="text/javascript" id="MathJax-script" async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+if (typeof MathJax === 'undefined') {
+    MathJax = {
+        loader: {
+            load: ['[img]/img.min.js', '[tex]/color', '[tex]/amscd'],
+            paths: { img: 'https://cdn.jsdelivr.net/npm/mathjax-img@3' }
+        },
+        tex: {
+            inlineMath: [["$", "$"], ["\\(", "\\)"]],
+            displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+            processEscapes: true,
+            processEnvironments: true,
+            extensions: ["autoload-all.js", "AMSmath.js", "AMSsymbols.js", "AMScd.js"],
+            packages: { '[+]': ['img', 'color', 'amscd'] }
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+    MathJax.startup = {
+        ready() {
+            MathJax.startup.defaultReady();
+            MathJax.startup.promise.then(() => {
+                console.log("Start startup promise");
+
+                document.querySelectorAll("mjx-container").forEach(function (x) {
+                    x.parentElement.classList += ' has-jax '
+                })
+
+                document.querySelectorAll("mjx-container img").forEach((element) => {
+                    var src = element.getAttribute("src");
+                    if (src.endsWith('.svg') == true) {
+                        fetch(src)
+                        .then(res => res.text())
+                        .then(res => {
+                            const holder = document.createElement('div')
+                            holder.style.width = "1em";
+                            holder.style.height = "1em";
+                            holder.innerHTML = res
+                            element.replaceWith(holder)
+                        })
+                    }
+                });
+
+                console.log("End startup promise");
+            });
+        }
+    };
+}
+</script>
+
+<!-- Preamble -->
+<p hidden>
+    `$\newcommand{\N}{\mathbb{N}}
+    \newcommand{\Z}{\mathbb{Z}}
+    \newcommand{\Q}{\mathbb{Q}}
+    \newcommand{\R}{\mathbb{R}}
+    \newcommand{\LP}{\left(}
+    \newcommand{\RP}{\right)}
+    \newcommand{\LS}{\left\lbrace}
+    \newcommand{\RS}{\right\rbrace}
+    \newcommand{\LA}{\left\langle}
+    \newcommand{\RA}{\right\rangle}
+    \newcommand{\LB}{\left[}
+    \newcommand{\RB}{\right]}
+    \newcommand{\MM}{\ \middle|\ }
+    \newcommand{\exp}{\text{exp}}
+    \newcommand{\abs}[1]{\left\vert#1\right\vert}
+    \newcommand{\msr}[1]{m\left(#1\right)}
+    \newcommand{\inv}[1]{ #1^{-1}}
+    \newcommand{\bkt}[1]{\LA \img{ #1}\RA}
+    \require{color}$
+    </p>
+
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Tanglenomicon API
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../use_cases/index.html">Use Case Descriptions</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Unit Descriptions</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../interfaces/generation_endpoint.html">Unit: generation api endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interfaces/job.html">Unit: Job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interfaces/orm.html">Unit: ORM interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interfaces/presentation_endpoint.html">Unit: presentation api endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../internal/config_store.html">Unit: Config Store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../internal/db_connector.html">Unit: Database connector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../internal/job_queue.html">Unit: Job Queue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../internal/security.html">Unit: Security Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generation_endpoint.html">Unit: Montesinos api endpoint</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Unit: Montesinos job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orm.html">Unit: ORM interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="presentation_endpoint.html">Unit: Montesinos api presentation endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tanglenomicon_api.html">Unit: Tanglenomicon API</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../apidocs/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Tanglenomicon API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Unit Descriptions</a></li>
+      <li class="breadcrumb-item active">Unit: Montesinos job</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="unit-montesinos-job">
+<h1>Unit: Montesinos job<a class="headerlink" href="#unit-montesinos-job" title="Link to this heading"></a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>Implementation of the Job interface for the Montesinos job type.</p>
+<section id="strategy">
+<h3>Strategy<a class="headerlink" href="#strategy" title="Link to this heading"></a></h3>
+<p>Info on abstract strategy can be found in the core project.</p>
+</section>
+</section>
+<section id="diagrams">
+<h2>Diagrams<a class="headerlink" href="#diagrams" title="Link to this heading"></a></h2>
+<section id="class-diagram">
+<h3>Class diagram<a class="headerlink" href="#class-diagram" title="Link to this heading"></a></h3>
+<div class="mermaid">
+            classDiagram
+
+namespace Interfaces {
+
+    class aj[&quot;Job&quot;]{
+        &lt;&lt;interface&gt;&gt;
+    }
+    class ajr[&quot;Job Results&quot;]{
+        &lt;&lt;interface&gt;&gt;
+    }
+
+}
+
+
+namespace montesinos {
+
+    class mj[&quot;Montesinos Generation Job&quot;]{
+        + List~List~string~~ rat_list
+        - mont_results job_res
+    }
+    class mjr[&quot;Montesinos Job Results&quot;]{
+        + List~string~ mont_list
+    }
+    class sm[&quot;Montesinos Submodule&quot;]{
+    }
+
+}
+
+
+mj ..|&gt; aj
+mjr ..|&gt; ajr
+mj --|&gt; mjr
+sm -- mj
+sm -- mjr
+        </div></section>
+<section id="get-jobs">
+<h3>Get Jobs<a class="headerlink" href="#get-jobs" title="Link to this heading"></a></h3>
+<p>Retrieve $n$ jobs for $n\in \Z^+$</p>
+<div class="mermaid">
+            stateDiagram-v2
+
+
+    state &quot;i from 0 to count&quot; as fr {
+        state &quot;Build Job&quot; as bj
+        state &quot;Move Head&quot; as mh
+        [*] --&gt; bj
+        bj --&gt; mh
+        mh --&gt; [*]
+    }
+
+    [*] --&gt; fr
+    fr --&gt; [*]
+
+        </div><section id="build-job">
+<h4>Build Job<a class="headerlink" href="#build-job" title="Link to this heading"></a></h4>
+<div class="mermaid">
+            stateDiagram-v2
+
+    state &quot;Enqueue Job&quot; as en
+    state &quot;Entry k in stencil&quot; as fr {
+        state &quot;Get rational page k&quot; as bj
+        [*] --&gt; bj
+        bj --&gt; [*]
+    }
+
+    [*] --&gt; fr
+    fr --&gt; en
+    en --&gt; [*]
+
+        </div></section>
+<section id="move-head">
+<h4>Move Head<a class="headerlink" href="#move-head" title="Link to this heading"></a></h4>
+<div class="mermaid">
+            stateDiagram-v2
+
+    state if_check_headroom &lt;&lt;choice&gt;&gt;
+    state &quot;Set overflow as true&quot; as so
+    state &quot;Return headroom&quot; as rh
+    state &quot;Return no headroom&quot; as rnh
+    state &quot;Entry k in stencil&quot; as fr {
+        state &quot;Set head entry to 0&quot; as heo
+        state &quot;Set overflow as true&quot; as sot
+        state &quot;Set overflow as false&quot; as sof
+        state &quot;Increment head entry at k&quot; as ihe
+        state if_state &lt;&lt;choice&gt;&gt;
+        state if_should_overflow &lt;&lt;choice&gt;&gt;
+        [*] --&gt; if_state
+        if_state --&gt; sof: if overflow
+        sof --&gt; ihe
+        ihe --&gt; if_should_overflow
+        if_should_overflow --&gt; sot: if stencil[k]==head[k]
+        sot --&gt; heo
+        heo --&gt; [*]
+        if_should_overflow --&gt; [*]: if stencil[k]!=head[k]
+        if_state --&gt; break : if not overflow
+        break --&gt; [*]
+    }
+
+    [*] --&gt; so
+    so --&gt; fr
+    fr --&gt; if_check_headroom
+    if_check_headroom --&gt; rnh: if overflow
+    if_check_headroom --&gt; rh: if not overflow
+    rh --&gt; [*]
+    rnh --&gt; [*]
+
+        </div></section>
+</section>
+<section id="startup">
+<h3>Startup<a class="headerlink" href="#startup" title="Link to this heading"></a></h3>
+<div class="mermaid">
+            stateDiagram-v2
+
+    state &quot;Find open jobs from DB&quot; as ffdb
+    state &quot;Count Montesinos jobs in queue&quot; as cmjiq
+    state &quot;Build enough additional jobs to full queue&quot; as baj
+    state &quot;For each job&quot; as fr {
+        state &quot;Build job&quot; as bj
+        [*] --&gt; bj
+        bj --&gt; [*]
+    }
+
+    [*] --&gt; ffdb
+    ffdb --&gt; fr
+    fr --&gt; cmjiq
+    cmjiq --&gt; baj
+    baj --&gt; [*]
+
+        </div></section>
+<section id="store">
+<h3>Store<a class="headerlink" href="#store" title="Link to this heading"></a></h3>
+</section>
+</section>
+<section id="unit-test-description">
+<h2>Unit test description<a class="headerlink" href="#unit-test-description" title="Link to this heading"></a></h2>
+<section id="id1">
+<h3>Get Jobs<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<section id="positive-tests">
+<h4>Positive Tests<a class="headerlink" href="#positive-tests" title="Link to this heading"></a></h4>
+<section id="requested-count-is-2">
+<h5>Requested count is 2<a class="headerlink" href="#requested-count-is-2" title="Link to this heading"></a></h5>
+<p>This tests the behavior of the get jobs function when the requested count is 2.
+This is the normal positive behaviour.</p>
+<section id="inputs">
+<h6>Inputs:<a class="headerlink" href="#inputs" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>Mocked stencil collection two stencils one with no headroom.</p></li>
+<li><p>Mocked valid rational collection.</p></li>
+<li><p>Count set to 2.</p></li>
+</ul>
+</section>
+<section id="expected-output">
+<h6>Expected Output:<a class="headerlink" href="#expected-output" title="Link to this heading"></a></h6>
+<p>The system is expected to return and enqueue 2 jobs. Stencils updated with open jobs</p>
+</section>
+</section>
+</section>
+<section id="negative-tests">
+<h4>Negative Tests<a class="headerlink" href="#negative-tests" title="Link to this heading"></a></h4>
+<section id="stencil-collection-is-empty">
+<h5>Stencil collection is empty<a class="headerlink" href="#stencil-collection-is-empty" title="Link to this heading"></a></h5>
+<p>This tests the behavior of the get jobs function when an empty Stencil collection
+is provided.</p>
+<section id="id2">
+<h6>Inputs:<a class="headerlink" href="#id2" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>Mocked empty stencil collection.</p></li>
+<li><p>Mocked valid rational collection.</p></li>
+<li><p>Count set to 2.</p></li>
+</ul>
+</section>
+<section id="id3">
+<h6>Expected Output:<a class="headerlink" href="#id3" title="Link to this heading"></a></h6>
+<p>The system is expected to return and enqueue no data.</p>
+</section>
+</section>
+<section id="rational-collection-is-empty">
+<h5>Rational collection is empty<a class="headerlink" href="#rational-collection-is-empty" title="Link to this heading"></a></h5>
+<p>This tests the behavior of the get jobs function when an empty rational collection
+is provided.</p>
+<section id="id4">
+<h6>Inputs:<a class="headerlink" href="#id4" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>Mocked valid stencil collection.</p></li>
+<li><p>Mocked empty rational collection.</p></li>
+<li><p>Count set to 2.</p></li>
+</ul>
+</section>
+<section id="id5">
+<h6>Expected Output:<a class="headerlink" href="#id5" title="Link to this heading"></a></h6>
+<p>The system is expected to raise an empty rational exception.</p>
+</section>
+</section>
+<section id="requested-count-is-0">
+<h5>Requested count is 0<a class="headerlink" href="#requested-count-is-0" title="Link to this heading"></a></h5>
+<p>This tests the behavior of the get jobs function when the requested count is 0.</p>
+<section id="id6">
+<h6>Inputs:<a class="headerlink" href="#id6" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>Mocked valid stencil collection.</p></li>
+<li><p>Mocked valid rational collection.</p></li>
+<li><p>Count set to 0.</p></li>
+</ul>
+</section>
+<section id="id7">
+<h6>Expected Output:<a class="headerlink" href="#id7" title="Link to this heading"></a></h6>
+<p>The system is expected to return and enqueue no data.</p>
+</section>
+</section>
+</section>
+</section>
+<section id="startup-task">
+<h3>Startup Task<a class="headerlink" href="#startup-task" title="Link to this heading"></a></h3>
+<section id="id8">
+<h4>Positive Tests<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
+<section id="load-from-collection">
+<h5>Load from collection<a class="headerlink" href="#load-from-collection" title="Link to this heading"></a></h5>
+<p>Successfully loads open jobs from collection.</p>
+<section id="id9">
+<h6>Inputs:<a class="headerlink" href="#id9" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>Mocked valid stencil collection with min-new-count - 1 open jobs</p></li>
+<li><p>Mocked valid rational collection</p></li>
+</ul>
+</section>
+<section id="id10">
+<h6>Expected Output:<a class="headerlink" href="#id10" title="Link to this heading"></a></h6>
+<p>Enqueue jobs with correct id</p>
+</section>
+</section>
+<section id="collection-has-no-open-jobs">
+<h5>Collection has no open jobs<a class="headerlink" href="#collection-has-no-open-jobs" title="Link to this heading"></a></h5>
+<p>Collection has no open jobs so new jobs are created.</p>
+<section id="id11">
+<h6>Inputs:<a class="headerlink" href="#id11" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>Mocked valid stencil collection with all stencils in new state</p></li>
+<li><p>Mocked valid rational collection</p></li>
+<li><p>Empty job queue</p></li>
+</ul>
+</section>
+<section id="id12">
+<h6>Expected Output:<a class="headerlink" href="#id12" title="Link to this heading"></a></h6>
+<p>Enqueue new jobs.</p>
+</section>
+</section>
+</section>
+<section id="id13">
+<h4>Negative Tests<a class="headerlink" href="#id13" title="Link to this heading"></a></h4>
+<p>I can’t think of any at the moment.</p>
+</section>
+</section>
+<section id="montesinosjob-store">
+<h3>MontesinosJob.Store<a class="headerlink" href="#montesinosjob-store" title="Link to this heading"></a></h3>
+<section id="positive-test">
+<h4>Positive Test<a class="headerlink" href="#positive-test" title="Link to this heading"></a></h4>
+<p>Results are stored to database and stencil is updated</p>
+<section id="id14">
+<h5>Inputs:<a class="headerlink" href="#id14" title="Link to this heading"></a></h5>
+<ul class="simple">
+<li><p>Mocked valid stencil collection with min-new-count - 1 open jobs</p></li>
+<li><p>Mocked valid rational collection</p></li>
+</ul>
+</section>
+<section id="id15">
+<h5>Expected Output:<a class="headerlink" href="#id15" title="Link to this heading"></a></h5>
+<p>Enqueue jobs with correct id</p>
+</section>
+</section>
+<section id="id16">
+<h4>Negative Tests<a class="headerlink" href="#id16" title="Link to this heading"></a></h4>
+<p>I can’t think of any at the moment.</p>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="generation_endpoint.html" class="btn btn-neutral float-left" title="Unit: Montesinos api endpoint" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="orm.html" class="btn btn-neutral float-right" title="Unit: ORM interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, temp.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

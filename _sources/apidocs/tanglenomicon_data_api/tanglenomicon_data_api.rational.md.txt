@@ -1,0 +1,18 @@
+# {py:mod}`tanglenomicon_data_api.rational`
+
+```{py:module} tanglenomicon_data_api.rational
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.rational
+:allowtitles:
+```
+
+## Submodules
+
+```{toctree}
+:titlesonly:
+:maxdepth: 1
+
+tanglenomicon_data_api.rational.presentation_endpoint
+tanglenomicon_data_api.rational.orm
+```

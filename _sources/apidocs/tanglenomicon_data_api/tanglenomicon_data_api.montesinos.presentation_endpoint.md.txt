@@ -1,0 +1,66 @@
+# {py:mod}`tanglenomicon_data_api.montesinos.presentation_endpoint`
+
+```{py:module} tanglenomicon_data_api.montesinos.presentation_endpoint
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.presentation_endpoint
+:allowtitles:
+```
+
+## Module Contents
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`retrieve_montesinos_tangles <tanglenomicon_data_api.montesinos.presentation_endpoint.retrieve_montesinos_tangles>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.presentation_endpoint.retrieve_montesinos_tangles
+    :summary:
+    ```
+* - {py:obj}`retrieve_generic_job_queue_stats <tanglenomicon_data_api.montesinos.presentation_endpoint.retrieve_generic_job_queue_stats>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.presentation_endpoint.retrieve_generic_job_queue_stats
+    :summary:
+    ```
+````
+
+### Data
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`router <tanglenomicon_data_api.montesinos.presentation_endpoint.router>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.presentation_endpoint.router
+    :summary:
+    ```
+````
+
+### API
+
+````{py:data} router
+:canonical: tanglenomicon_data_api.montesinos.presentation_endpoint.router
+:value: >
+   'APIRouter(...)'
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.presentation_endpoint.router
+```
+
+````
+
+````{py:function} retrieve_montesinos_tangles(tangle_list: typing.Annotated[typing.List[tanglenomicon_data_api.montesinos.orm.MontesinosTangleDB], Depends(_retrieve_montesinos_tangles)])
+:canonical: tanglenomicon_data_api.montesinos.presentation_endpoint.retrieve_montesinos_tangles
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.presentation_endpoint.retrieve_montesinos_tangles
+```
+````
+
+````{py:function} retrieve_generic_job_queue_stats() -> dict
+:canonical: tanglenomicon_data_api.montesinos.presentation_endpoint.retrieve_generic_job_queue_stats
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.presentation_endpoint.retrieve_generic_job_queue_stats
+```
+````

@@ -1,0 +1,296 @@
+# {py:mod}`tanglenomicon_data_api.montesinos.orm`
+
+```{py:module} tanglenomicon_data_api.montesinos.orm
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm
+:allowtitles:
+```
+
+## Module Contents
+
+### Classes
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`StencilHeadStateEnum <tanglenomicon_data_api.montesinos.orm.StencilHeadStateEnum>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilHeadStateEnum
+    :summary:
+    ```
+* - {py:obj}`StencilStateEnum <tanglenomicon_data_api.montesinos.orm.StencilStateEnum>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilStateEnum
+    :summary:
+    ```
+* - {py:obj}`StencilJobDB <tanglenomicon_data_api.montesinos.orm.StencilJobDB>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilJobDB
+    :summary:
+    ```
+* - {py:obj}`StencilDB <tanglenomicon_data_api.montesinos.orm.StencilDB>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilDB
+    :summary:
+    ```
+* - {py:obj}`MontesinosTangleDB <tanglenomicon_data_api.montesinos.orm.MontesinosTangleDB>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.MontesinosTangleDB
+    :summary:
+    ```
+````
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`get_stencil_collection <tanglenomicon_data_api.montesinos.orm.get_stencil_collection>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.get_stencil_collection
+    :summary:
+    ```
+* - {py:obj}`get_montesinos_collection <tanglenomicon_data_api.montesinos.orm.get_montesinos_collection>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.get_montesinos_collection
+    :summary:
+    ```
+````
+
+### API
+
+````{py:function} get_stencil_collection() -> motor.motor_asyncio.AsyncIOMotorDatabase
+:canonical: tanglenomicon_data_api.montesinos.orm.get_stencil_collection
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.get_stencil_collection
+```
+````
+
+````{py:function} get_montesinos_collection() -> motor.motor_asyncio.AsyncIOMotorDatabase
+:canonical: tanglenomicon_data_api.montesinos.orm.get_montesinos_collection
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.get_montesinos_collection
+```
+````
+
+`````{py:class} StencilHeadStateEnum()
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilHeadStateEnum
+
+Bases: {py:obj}`str`, {py:obj}`enum.Enum`
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilHeadStateEnum
+```
+
+```{rubric} Initialization
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilHeadStateEnum.__init__
+```
+
+````{py:attribute} headroom
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilHeadStateEnum.headroom
+:value: >
+   'headroom'
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilHeadStateEnum.headroom
+```
+
+````
+
+````{py:attribute} no_headroom
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilHeadStateEnum.no_headroom
+:value: >
+   'no_headroom'
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilHeadStateEnum.no_headroom
+```
+
+````
+
+`````
+
+`````{py:class} StencilStateEnum()
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilStateEnum
+
+Bases: {py:obj}`int`, {py:obj}`enum.Enum`
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilStateEnum
+```
+
+```{rubric} Initialization
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilStateEnum.__init__
+```
+
+````{py:attribute} new
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilStateEnum.new
+:value: >
+   0
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilStateEnum.new
+```
+
+````
+
+````{py:attribute} started
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilStateEnum.started
+:value: >
+   1
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilStateEnum.started
+```
+
+````
+
+````{py:attribute} no_headroom
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilStateEnum.no_headroom
+:value: >
+   2
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilStateEnum.no_headroom
+```
+
+````
+
+````{py:attribute} complete
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilStateEnum.complete
+:value: >
+   3
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilStateEnum.complete
+```
+
+````
+
+`````
+
+`````{py:class} StencilJobDB
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilJobDB
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilJobDB
+```
+
+````{py:attribute} job_id
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilJobDB.job_id
+:type: str
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilJobDB.job_id
+```
+
+````
+
+````{py:attribute} cursor
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilJobDB.cursor
+:type: typing.List[int]
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilJobDB.cursor
+```
+
+````
+
+`````
+
+`````{py:class} StencilDB
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilDB
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilDB
+```
+
+````{py:attribute} stencil_array
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilDB.stencil_array
+:type: typing.List[int]
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilDB.stencil_array
+```
+
+````
+
+````{py:attribute} str_rep
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilDB.str_rep
+:type: str
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilDB.str_rep
+```
+
+````
+
+````{py:attribute} crossing_num
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilDB.crossing_num
+:type: int
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilDB.crossing_num
+```
+
+````
+
+````{py:attribute} head
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilDB.head
+:type: typing.List[int]
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilDB.head
+```
+
+````
+
+````{py:attribute} state
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilDB.state
+:type: int
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilDB.state
+```
+
+````
+
+````{py:attribute} open_jobs
+:canonical: tanglenomicon_data_api.montesinos.orm.StencilDB.open_jobs
+:type: typing.List[tanglenomicon_data_api.montesinos.orm.StencilJobDB]
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.StencilDB.open_jobs
+```
+
+````
+
+`````
+
+`````{py:class} MontesinosTangleDB
+:canonical: tanglenomicon_data_api.montesinos.orm.MontesinosTangleDB
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.MontesinosTangleDB
+```
+
+````{py:attribute} crossing_num
+:canonical: tanglenomicon_data_api.montesinos.orm.MontesinosTangleDB.crossing_num
+:type: int
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.MontesinosTangleDB.crossing_num
+```
+
+````
+
+````{py:attribute} parent_stencil
+:canonical: tanglenomicon_data_api.montesinos.orm.MontesinosTangleDB.parent_stencil
+:type: str
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.orm.MontesinosTangleDB.parent_stencil
+```
+
+````
+
+`````

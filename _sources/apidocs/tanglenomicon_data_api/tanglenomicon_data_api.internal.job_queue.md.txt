@@ -1,0 +1,156 @@
+# {py:mod}`tanglenomicon_data_api.internal.job_queue`
+
+```{py:module} tanglenomicon_data_api.internal.job_queue
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue
+:allowtitles:
+```
+
+## Module Contents
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`aiterjq <tanglenomicon_data_api.internal.job_queue.aiterjq>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.aiterjq
+    :summary:
+    ```
+* - {py:obj}`mark_job_complete <tanglenomicon_data_api.internal.job_queue.mark_job_complete>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.mark_job_complete
+    :summary:
+    ```
+* - {py:obj}`get_next_job <tanglenomicon_data_api.internal.job_queue.get_next_job>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.get_next_job
+    :summary:
+    ```
+* - {py:obj}`enqueue_job <tanglenomicon_data_api.internal.job_queue.enqueue_job>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.enqueue_job
+    :summary:
+    ```
+* - {py:obj}`get_job_statistics <tanglenomicon_data_api.internal.job_queue.get_job_statistics>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.get_job_statistics
+    :summary:
+    ```
+* - {py:obj}`task_clean_stale_jobs <tanglenomicon_data_api.internal.job_queue.task_clean_stale_jobs>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.task_clean_stale_jobs
+    :summary:
+    ```
+* - {py:obj}`task_clean_complete_jobs <tanglenomicon_data_api.internal.job_queue.task_clean_complete_jobs>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.task_clean_complete_jobs
+    :summary:
+    ```
+````
+
+### Data
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`logger <tanglenomicon_data_api.internal.job_queue.logger>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.logger
+    :summary:
+    ```
+* - {py:obj}`jq_semaphore <tanglenomicon_data_api.internal.job_queue.jq_semaphore>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.jq_semaphore
+    :summary:
+    ```
+* - {py:obj}`task_semaphore <tanglenomicon_data_api.internal.job_queue.task_semaphore>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.task_semaphore
+    :summary:
+    ```
+````
+
+### API
+
+````{py:data} logger
+:canonical: tanglenomicon_data_api.internal.job_queue.logger
+:value: >
+   'getLogger(...)'
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.logger
+```
+
+````
+
+````{py:data} jq_semaphore
+:canonical: tanglenomicon_data_api.internal.job_queue.jq_semaphore
+:type: asyncio.Lock
+:value: >
+   'Lock(...)'
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.jq_semaphore
+```
+
+````
+
+````{py:data} task_semaphore
+:canonical: tanglenomicon_data_api.internal.job_queue.task_semaphore
+:type: asyncio.Lock
+:value: >
+   'Lock(...)'
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.task_semaphore
+```
+
+````
+
+````{py:function} aiterjq()
+:canonical: tanglenomicon_data_api.internal.job_queue.aiterjq
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.aiterjq
+```
+````
+
+````{py:function} mark_job_complete(results: tanglenomicon_data_api.interfaces.job.GenerationJobResults, current_user: tanglenomicon_data_api.internal.security.User) -> bool
+:canonical: tanglenomicon_data_api.internal.job_queue.mark_job_complete
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.mark_job_complete
+```
+````
+
+````{py:function} get_next_job(job_type: typing.Type[tanglenomicon_data_api.interfaces.job.GenerationJob], current_user: tanglenomicon_data_api.internal.security.User) -> tanglenomicon_data_api.interfaces.job.GenerationJob | None
+:canonical: tanglenomicon_data_api.internal.job_queue.get_next_job
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.get_next_job
+```
+````
+
+````{py:function} enqueue_job(job: tanglenomicon_data_api.interfaces.job.GenerationJob) -> bool
+:canonical: tanglenomicon_data_api.internal.job_queue.enqueue_job
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.enqueue_job
+```
+````
+
+````{py:function} get_job_statistics(job_type: typing.Type[tanglenomicon_data_api.interfaces.job.GenerationJob] = GenerationJob) -> dict
+:canonical: tanglenomicon_data_api.internal.job_queue.get_job_statistics
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.get_job_statistics
+```
+````
+
+````{py:function} task_clean_stale_jobs()
+:canonical: tanglenomicon_data_api.internal.job_queue.task_clean_stale_jobs
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.task_clean_stale_jobs
+```
+````
+
+````{py:function} task_clean_complete_jobs()
+:canonical: tanglenomicon_data_api.internal.job_queue.task_clean_complete_jobs
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.internal.job_queue.task_clean_complete_jobs
+```
+````

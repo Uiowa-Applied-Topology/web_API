@@ -1,0 +1,66 @@
+# {py:mod}`tanglenomicon_data_api.montesinos.generation_endpoint`
+
+```{py:module} tanglenomicon_data_api.montesinos.generation_endpoint
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.generation_endpoint
+:allowtitles:
+```
+
+## Module Contents
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`report_montesinos_job <tanglenomicon_data_api.montesinos.generation_endpoint.report_montesinos_job>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.generation_endpoint.report_montesinos_job
+    :summary:
+    ```
+* - {py:obj}`retrieve_montesinos_job <tanglenomicon_data_api.montesinos.generation_endpoint.retrieve_montesinos_job>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.generation_endpoint.retrieve_montesinos_job
+    :summary:
+    ```
+````
+
+### Data
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`router <tanglenomicon_data_api.montesinos.generation_endpoint.router>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.montesinos.generation_endpoint.router
+    :summary:
+    ```
+````
+
+### API
+
+````{py:data} router
+:canonical: tanglenomicon_data_api.montesinos.generation_endpoint.router
+:value: >
+   'APIRouter(...)'
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.generation_endpoint.router
+```
+
+````
+
+````{py:function} report_montesinos_job(response: typing.Annotated[tanglenomicon_data_api.interfaces.job.ConfirmJobReceipt, Depends(_report_job_results)]) -> tanglenomicon_data_api.interfaces.job.ConfirmJobReceipt
+:canonical: tanglenomicon_data_api.montesinos.generation_endpoint.report_montesinos_job
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.generation_endpoint.report_montesinos_job
+```
+````
+
+````{py:function} retrieve_montesinos_job(next_job: typing.Annotated[tanglenomicon_data_api.montesinos.job.MontesinosJob, Depends(_get_next_montesinos_job)])
+:canonical: tanglenomicon_data_api.montesinos.generation_endpoint.retrieve_montesinos_job
+:async:
+
+```{autodoc2-docstring} tanglenomicon_data_api.montesinos.generation_endpoint.retrieve_montesinos_job
+```
+````

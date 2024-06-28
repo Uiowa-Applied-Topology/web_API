@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tanglenomicon_data_api.internal.job_queue &mdash; Tanglenomicon API 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=7254e0c9" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({
+  securityLevel: 'loose',
+  theme: 'dark',
+});</script>
+        <script src="https://unpkg.com/d3/dist/d3.min.js"></script>
+        <script>
+            window.addEventListener("load", function () {
+              var svgs = d3.selectAll(".mermaid svg");
+              svgs.each(function() {
+                var svg = d3.select(this);
+                svg.html("<g>" + svg.html() + "</g>");
+                var inner = svg.select("g");
+                var zoom = d3.zoom().on("zoom", function(event) {
+                  inner.attr("transform", event.transform);
+                });
+                svg.call(zoom);
+              });
+            });
+            </script>
+        <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<script type="text/javascript" id="MathJax-script" async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+if (typeof MathJax === 'undefined') {
+    MathJax = {
+        loader: {
+            load: ['[img]/img.min.js', '[tex]/color', '[tex]/amscd'],
+            paths: { img: 'https://cdn.jsdelivr.net/npm/mathjax-img@3' }
+        },
+        tex: {
+            inlineMath: [["$", "$"], ["\\(", "\\)"]],
+            displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+            processEscapes: true,
+            processEnvironments: true,
+            extensions: ["autoload-all.js", "AMSmath.js", "AMSsymbols.js", "AMScd.js"],
+            packages: { '[+]': ['img', 'color', 'amscd'] }
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+    MathJax.startup = {
+        ready() {
+            MathJax.startup.defaultReady();
+            MathJax.startup.promise.then(() => {
+                console.log("Start startup promise");
+
+                document.querySelectorAll("mjx-container").forEach(function (x) {
+                    x.parentElement.classList += ' has-jax '
+                })
+
+                document.querySelectorAll("mjx-container img").forEach((element) => {
+                    var src = element.getAttribute("src");
+                    if (src.endsWith('.svg') == true) {
+                        fetch(src)
+                        .then(res => res.text())
+                        .then(res => {
+                            const holder = document.createElement('div')
+                            holder.style.width = "1em";
+                            holder.style.height = "1em";
+                            holder.innerHTML = res
+                            element.replaceWith(holder)
+                        })
+                    }
+                });
+
+                console.log("End startup promise");
+            });
+        }
+    };
+}
+</script>
+
+<!-- Preamble -->
+<p hidden>
+    `$\newcommand{\N}{\mathbb{N}}
+    \newcommand{\Z}{\mathbb{Z}}
+    \newcommand{\Q}{\mathbb{Q}}
+    \newcommand{\R}{\mathbb{R}}
+    \newcommand{\LP}{\left(}
+    \newcommand{\RP}{\right)}
+    \newcommand{\LS}{\left\lbrace}
+    \newcommand{\RS}{\right\rbrace}
+    \newcommand{\LA}{\left\langle}
+    \newcommand{\RA}{\right\rangle}
+    \newcommand{\LB}{\left[}
+    \newcommand{\RB}{\right]}
+    \newcommand{\MM}{\ \middle|\ }
+    \newcommand{\exp}{\text{exp}}
+    \newcommand{\abs}[1]{\left\vert#1\right\vert}
+    \newcommand{\msr}[1]{m\left(#1\right)}
+    \newcommand{\inv}[1]{ #1^{-1}}
+    \newcommand{\bkt}[1]{\LA \img{ #1}\RA}
+    \require{color}$
+    </p>
+
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Tanglenomicon API
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../use_cases/index.html">Use Case Descriptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../unit_description/index.html">Unit Descriptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidocs/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tanglenomicon API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tanglenomicon_data_api.internal.job_queue</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tanglenomicon_data_api.internal.job_queue</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Job Queue handles the tangle generation job &quot;queue&quot;.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">..interfaces.job</span> <span class="kn">import</span> <span class="n">GenerationJob</span><span class="p">,</span> <span class="n">GenerationJobResults</span><span class="p">,</span> <span class="n">JobStateEnum</span>
+<span class="kn">from</span> <span class="nn">..internal.security</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">config_store</span>
+
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;uvicorn&quot;</span><span class="p">)</span>
+
+
+<span class="n">_job_queue</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">GenerationJob</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+<span class="n">jq_semaphore</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+<span class="n">task_semaphore</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="aiterjq">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.job_queue.html#tanglenomicon_data_api.internal.job_queue.aiterjq">[docs]</a>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">aiterjq</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;sdfsdfsdf.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">_job_queue</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">i</span></div>
+
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">_get_count</span><span class="p">(</span><span class="n">job_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">GenerationJob</span><span class="p">]</span> <span class="o">=</span> <span class="n">GenerationJob</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of jobs from the queue.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    job_type : Type[generation_job], optional</span>
+<span class="sd">        The type of job to find, by default GenerationJob.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        The count.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">i</span> <span class="k">async</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">aiter</span><span class="p">(</span><span class="n">aiterjq</span><span class="p">())</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_job_queue</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">job_type</span><span class="p">)]</span>
+    <span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">_get_count_new</span><span class="p">(</span><span class="n">job_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">GenerationJob</span><span class="p">]</span> <span class="o">=</span> <span class="n">GenerationJob</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of jobs from the queue in the &#39;new&#39; state.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    job_type : Type[generation_job], optional</span>
+<span class="sd">        The type of job to find, by default GenerationJob.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        The count.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">i</span>
+            <span class="k">async</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">aiter</span><span class="p">(</span><span class="n">aiterjq</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_job_queue</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">job_type</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">_job_queue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">cur_state</span> <span class="o">==</span> <span class="n">JobStateEnum</span><span class="o">.</span><span class="n">new</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">_get_count_complete</span><span class="p">(</span><span class="n">job_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">GenerationJob</span><span class="p">]</span> <span class="o">=</span> <span class="n">GenerationJob</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of jobs from the queue in the &#39;complete&#39; state.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    job_type : Type[generation_job], optional</span>
+<span class="sd">        The type of job to find, by default GenerationJob.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        The count.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">i</span>
+            <span class="k">async</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">aiter</span><span class="p">(</span><span class="n">aiterjq</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_job_queue</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">job_type</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">_job_queue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">cur_state</span> <span class="o">==</span> <span class="n">JobStateEnum</span><span class="o">.</span><span class="n">complete</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">_get_count_pending</span><span class="p">(</span><span class="n">job_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">GenerationJob</span><span class="p">]</span> <span class="o">=</span> <span class="n">GenerationJob</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of jobs from the queue in the &#39;pending&#39; state.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    job_type : Type[generation_job], optional</span>
+<span class="sd">        The type of job to find, by default GenerationJob.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        The count.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">i</span>
+            <span class="k">async</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">aiter</span><span class="p">(</span><span class="n">aiterjq</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_job_queue</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">job_type</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">_job_queue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">cur_state</span> <span class="o">==</span> <span class="n">JobStateEnum</span><span class="o">.</span><span class="n">pending</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_is_above_time_delta</span><span class="p">(</span><span class="n">then</span><span class="p">:</span> <span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the time between now and then is below or above threshold.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    then : datetime</span>
+<span class="sd">        The timestamp from &quot;then&quot;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        ``True`` if above threshold ``False`` otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="n">then</span>
+    <span class="k">if</span> <span class="n">diff</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">config_store</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;job-queue&quot;</span><span class="p">][</span><span class="s2">&quot;clocks&quot;</span><span class="p">][</span><span class="s2">&quot;stale&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">_clean_stale_jobs</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clean job queue of stale jobs.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_job_queue</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Clean stale jobs.&quot;</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">with</span> <span class="n">task_semaphore</span><span class="p">:</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">jq_semaphore</span><span class="p">:</span>
+            <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">GenerationJob</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">_job_queue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">async</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">aiter</span><span class="p">(</span><span class="n">aiterjq</span><span class="p">())</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">_is_above_time_delta</span><span class="p">(</span><span class="n">_job_queue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">timestamp</span><span class="p">))</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="n">_job_queue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">cur_state</span> <span class="o">!=</span> <span class="n">JobStateEnum</span><span class="o">.</span><span class="n">complete</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">cur_state</span> <span class="o">=</span> <span class="n">JobStateEnum</span><span class="o">.</span><span class="n">new</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">_clean_complete_jobs</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store complete jobs into DB.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_job_queue</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">task_semaphore</span><span class="p">:</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">jq_semaphore</span><span class="p">:</span>
+            <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">GenerationJob</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">_job_queue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">async</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">aiter</span><span class="p">(</span><span class="n">aiterjq</span><span class="p">())</span>
+                <span class="k">if</span> <span class="n">_job_queue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">cur_state</span> <span class="o">==</span> <span class="n">JobStateEnum</span><span class="o">.</span><span class="n">complete</span>
+            <span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Storing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span><span class="si">}</span><span class="s2"> jobs.&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">item</span><span class="o">.</span><span class="n">store</span><span class="p">()</span>
+                <span class="k">del</span> <span class="n">_job_queue</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">job_id</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exception while processing job </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">job_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="mark_job_complete">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.job_queue.html#tanglenomicon_data_api.internal.job_queue.mark_job_complete">[docs]</a>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">mark_job_complete</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">GenerationJobResults</span><span class="p">,</span> <span class="n">current_user</span><span class="p">:</span> <span class="n">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mark job in queue as complete.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    results : GenerationJobResults</span>
+<span class="sd">        The reported results from the user.</span>
+<span class="sd">    current_user : User</span>
+<span class="sd">        The user submitting the results.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        ``True`` if successfully marked complete ``False`` otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_job_queue</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Mark job complete.&quot;</span><span class="p">)</span>
+    <span class="n">marked</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">job_id</span> <span class="ow">in</span> <span class="n">_job_queue</span>
+        <span class="ow">and</span> <span class="n">_job_queue</span><span class="p">[</span><span class="n">results</span><span class="o">.</span><span class="n">job_id</span><span class="p">]</span><span class="o">.</span><span class="n">cur_state</span> <span class="o">==</span> <span class="n">JobStateEnum</span><span class="o">.</span><span class="n">pending</span>
+        <span class="ow">and</span> <span class="n">_job_queue</span><span class="p">[</span><span class="n">results</span><span class="o">.</span><span class="n">job_id</span><span class="p">]</span><span class="o">.</span><span class="n">client_id</span> <span class="o">==</span> <span class="n">current_user</span><span class="o">.</span><span class="n">username</span>
+    <span class="p">):</span>
+        <span class="n">job</span><span class="p">:</span> <span class="n">GenerationJob</span> <span class="o">=</span> <span class="n">_job_queue</span><span class="p">[</span><span class="n">results</span><span class="o">.</span><span class="n">job_id</span><span class="p">]</span>
+        <span class="n">job</span><span class="o">.</span><span class="n">update_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="n">job</span><span class="o">.</span><span class="n">cur_state</span> <span class="o">=</span> <span class="n">JobStateEnum</span><span class="o">.</span><span class="n">complete</span>
+        <span class="n">marked</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># @@@IMPROVEMENT: should add logging here.</span>
+    <span class="k">return</span> <span class="n">marked</span></div>
+
+
+
+<div class="viewcode-block" id="get_next_job">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.job_queue.html#tanglenomicon_data_api.internal.job_queue.get_next_job">[docs]</a>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_next_job</span><span class="p">(</span>
+    <span class="n">job_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">GenerationJob</span><span class="p">],</span> <span class="n">current_user</span><span class="p">:</span> <span class="n">User</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GenerationJob</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the next job to complete from the job queue.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    job_type : Type[generation_job]</span>
+<span class="sd">        The type of job to find in the queue.</span>
+<span class="sd">    current_user : User</span>
+<span class="sd">        The user requesting the job.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GenerationJob | None</span>
+<span class="sd">        The job to feed the user or None if none exist.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_job_queue</span>
+    <span class="n">job</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">jq_semaphore</span><span class="p">:</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">i</span>
+            <span class="k">async</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">aiter</span><span class="p">(</span><span class="n">aiterjq</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_job_queue</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">job_type</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">_job_queue</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">cur_state</span> <span class="o">==</span> <span class="n">JobStateEnum</span><span class="o">.</span><span class="n">new</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_job_queue</span><span class="p">[</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">cur_state</span> <span class="o">=</span> <span class="n">JobStateEnum</span><span class="o">.</span><span class="n">pending</span>
+            <span class="n">_job_queue</span><span class="p">[</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">client_id</span> <span class="o">=</span> <span class="n">current_user</span><span class="o">.</span><span class="n">username</span>
+            <span class="n">job</span> <span class="o">=</span> <span class="n">_job_queue</span><span class="p">[</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">job</span></div>
+
+
+
+<div class="viewcode-block" id="enqueue_job">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.job_queue.html#tanglenomicon_data_api.internal.job_queue.enqueue_job">[docs]</a>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">enqueue_job</span><span class="p">(</span><span class="n">job</span><span class="p">:</span> <span class="n">GenerationJob</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a job to the queue.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    job : generation_job</span>
+<span class="sd">        The job to add to the queue.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        ``True`` if job is enqueued ``False`` otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_job_queue</span>
+    <span class="n">enqueued</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">jq_semaphore</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">job</span><span class="o">.</span><span class="n">job_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_job_queue</span><span class="p">:</span>
+            <span class="n">_job_queue</span><span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span>
+            <span class="n">enqueued</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">enqueued</span></div>
+
+
+
+<div class="viewcode-block" id="get_job_statistics">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.job_queue.html#tanglenomicon_data_api.internal.job_queue.get_job_statistics">[docs]</a>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_job_statistics</span><span class="p">(</span><span class="n">job_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">GenerationJob</span><span class="p">]</span> <span class="o">=</span> <span class="n">GenerationJob</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all job statistics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    job_type : Type[GenerationJob], optional</span>
+<span class="sd">        The type of job to find, by default GenerationJob.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        The queue statistics for the type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;queue_length&quot;</span><span class="p">:</span> <span class="k">await</span> <span class="n">_get_count</span><span class="p">(</span><span class="n">job_type</span><span class="p">),</span>
+        <span class="s2">&quot;new&quot;</span><span class="p">:</span> <span class="k">await</span> <span class="n">_get_count_new</span><span class="p">(</span><span class="n">job_type</span><span class="p">),</span>
+        <span class="s2">&quot;pending&quot;</span><span class="p">:</span> <span class="k">await</span> <span class="n">_get_count_pending</span><span class="p">(</span><span class="n">job_type</span><span class="p">),</span>
+        <span class="s2">&quot;complete&quot;</span><span class="p">:</span> <span class="k">await</span> <span class="n">_get_count_complete</span><span class="p">(</span><span class="n">job_type</span><span class="p">),</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="task_clean_stale_jobs">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.job_queue.html#tanglenomicon_data_api.internal.job_queue.task_clean_stale_jobs">[docs]</a>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">task_clean_stale_jobs</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Task that periodically cleans stale jobs from the queue.&quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">config_store</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;job-queue&quot;</span><span class="p">][</span><span class="s2">&quot;clocks&quot;</span><span class="p">][</span><span class="s2">&quot;stale&quot;</span><span class="p">])</span>
+        <span class="k">await</span> <span class="n">_clean_stale_jobs</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="task_clean_complete_jobs">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.job_queue.html#tanglenomicon_data_api.internal.job_queue.task_clean_complete_jobs">[docs]</a>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">task_clean_complete_jobs</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Task that periodically stores complete jobs in the queue.&quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">config_store</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;job-queue&quot;</span><span class="p">][</span><span class="s2">&quot;clocks&quot;</span><span class="p">][</span><span class="s2">&quot;complete&quot;</span><span class="p">])</span>
+        <span class="k">await</span> <span class="n">_clean_complete_jobs</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, temp.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+# {py:mod}`tanglenomicon_data_api.generic.orm`
+
+```{py:module} tanglenomicon_data_api.generic.orm
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.generic.orm
+:allowtitles:
+```
+
+## Module Contents
+
+### Classes
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`GenericTangDB <tanglenomicon_data_api.generic.orm.GenericTangDB>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.generic.orm.GenericTangDB
+    :summary:
+    ```
+````
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`get_generic_collection <tanglenomicon_data_api.generic.orm.get_generic_collection>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.generic.orm.get_generic_collection
+    :summary:
+    ```
+````
+
+### API
+
+````{py:function} get_generic_collection() -> motor.motor_asyncio.AsyncIOMotorDatabase
+:canonical: tanglenomicon_data_api.generic.orm.get_generic_collection
+
+```{autodoc2-docstring} tanglenomicon_data_api.generic.orm.get_generic_collection
+```
+````
+
+````{py:class} GenericTangDB
+:canonical: tanglenomicon_data_api.generic.orm.GenericTangDB
+
+```{autodoc2-docstring} tanglenomicon_data_api.generic.orm.GenericTangDB
+```
+
+````

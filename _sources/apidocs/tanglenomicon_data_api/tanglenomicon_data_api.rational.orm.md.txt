@@ -1,0 +1,95 @@
+# {py:mod}`tanglenomicon_data_api.rational.orm`
+
+```{py:module} tanglenomicon_data_api.rational.orm
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.rational.orm
+:allowtitles:
+```
+
+## Module Contents
+
+### Classes
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`RationalTangDB <tanglenomicon_data_api.rational.orm.RationalTangDB>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.rational.orm.RationalTangDB
+    :summary:
+    ```
+````
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`get_rational_collection <tanglenomicon_data_api.rational.orm.get_rational_collection>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.rational.orm.get_rational_collection
+    :summary:
+    ```
+````
+
+### API
+
+````{py:function} get_rational_collection() -> motor.motor_asyncio.AsyncIOMotorDatabase
+:canonical: tanglenomicon_data_api.rational.orm.get_rational_collection
+
+```{autodoc2-docstring} tanglenomicon_data_api.rational.orm.get_rational_collection
+```
+````
+
+`````{py:class} RationalTangDB
+:canonical: tanglenomicon_data_api.rational.orm.RationalTangDB
+
+```{autodoc2-docstring} tanglenomicon_data_api.rational.orm.RationalTangDB
+```
+
+````{py:attribute} twist_vector
+:canonical: tanglenomicon_data_api.rational.orm.RationalTangDB.twist_vector
+:type: str
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.rational.orm.RationalTangDB.twist_vector
+```
+
+````
+
+````{py:attribute} crossing_num
+:canonical: tanglenomicon_data_api.rational.orm.RationalTangDB.crossing_num
+:type: int
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.rational.orm.RationalTangDB.crossing_num
+```
+
+````
+
+````{py:attribute} tv_array
+:canonical: tanglenomicon_data_api.rational.orm.RationalTangDB.tv_array
+:type: typing.List[int]
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.rational.orm.RationalTangDB.tv_array
+```
+
+````
+
+````{py:attribute} in_unit_interval
+:canonical: tanglenomicon_data_api.rational.orm.RationalTangDB.in_unit_interval
+:type: bool
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.rational.orm.RationalTangDB.in_unit_interval
+```
+
+````
+
+`````

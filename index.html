@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tanglenomicon Data Server API &mdash; Tanglenomicon API 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=7254e0c9" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({
+  securityLevel: 'loose',
+  theme: 'dark',
+});</script>
+        <script src="https://unpkg.com/d3/dist/d3.min.js"></script>
+        <script>
+            window.addEventListener("load", function () {
+              var svgs = d3.selectAll(".mermaid svg");
+              svgs.each(function() {
+                var svg = d3.select(this);
+                svg.html("<g>" + svg.html() + "</g>");
+                var inner = svg.select("g");
+                var zoom = d3.zoom().on("zoom", function(event) {
+                  inner.attr("transform", event.transform);
+                });
+                svg.call(zoom);
+              });
+            });
+            </script>
+        <script src="_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+        <script src="_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Use Case Descriptions" href="use_cases/index.html" />
+<script type="text/javascript" id="MathJax-script" async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+if (typeof MathJax === 'undefined') {
+    MathJax = {
+        loader: {
+            load: ['[img]/img.min.js', '[tex]/color', '[tex]/amscd'],
+            paths: { img: 'https://cdn.jsdelivr.net/npm/mathjax-img@3' }
+        },
+        tex: {
+            inlineMath: [["$", "$"], ["\\(", "\\)"]],
+            displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+            processEscapes: true,
+            processEnvironments: true,
+            extensions: ["autoload-all.js", "AMSmath.js", "AMSsymbols.js", "AMScd.js"],
+            packages: { '[+]': ['img', 'color', 'amscd'] }
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+    MathJax.startup = {
+        ready() {
+            MathJax.startup.defaultReady();
+            MathJax.startup.promise.then(() => {
+                console.log("Start startup promise");
+
+                document.querySelectorAll("mjx-container").forEach(function (x) {
+                    x.parentElement.classList += ' has-jax '
+                })
+
+                document.querySelectorAll("mjx-container img").forEach((element) => {
+                    var src = element.getAttribute("src");
+                    if (src.endsWith('.svg') == true) {
+                        fetch(src)
+                        .then(res => res.text())
+                        .then(res => {
+                            const holder = document.createElement('div')
+                            holder.style.width = "1em";
+                            holder.style.height = "1em";
+                            holder.innerHTML = res
+                            element.replaceWith(holder)
+                        })
+                    }
+                });
+
+                console.log("End startup promise");
+            });
+        }
+    };
+}
+</script>
+
+<!-- Preamble -->
+<p hidden>
+    `$\newcommand{\N}{\mathbb{N}}
+    \newcommand{\Z}{\mathbb{Z}}
+    \newcommand{\Q}{\mathbb{Q}}
+    \newcommand{\R}{\mathbb{R}}
+    \newcommand{\LP}{\left(}
+    \newcommand{\RP}{\right)}
+    \newcommand{\LS}{\left\lbrace}
+    \newcommand{\RS}{\right\rbrace}
+    \newcommand{\LA}{\left\langle}
+    \newcommand{\RA}{\right\rangle}
+    \newcommand{\LB}{\left[}
+    \newcommand{\RB}{\right]}
+    \newcommand{\MM}{\ \middle|\ }
+    \newcommand{\exp}{\text{exp}}
+    \newcommand{\abs}[1]{\left\vert#1\right\vert}
+    \newcommand{\msr}[1]{m\left(#1\right)}
+    \newcommand{\inv}[1]{ #1^{-1}}
+    \newcommand{\bkt}[1]{\LA \img{ #1}\RA}
+    \require{color}$
+    </p>
+
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Tanglenomicon API
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="use_cases/index.html">Use Case Descriptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="unit_description/index.html">Unit Descriptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apidocs/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Tanglenomicon API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Tanglenomicon Data Server API</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  rel="stylesheet"
+/>
+<section id="tanglenomicon-data-server-api">
+<h1>Tanglenomicon Data Server API<a class="headerlink" href="#tanglenomicon-data-server-api" title="Link to this heading"></a></h1>
+<p>The Tanglenomicon data server API describes the API provided by the Tanglenomicon to read/write to the mongodb.</p>
+</section>
+<section id="planning">
+<h1>Planning<a class="headerlink" href="#planning" title="Link to this heading"></a></h1>
+<section id="tasks">
+<h2>Tasks<a class="headerlink" href="#tasks" title="Link to this heading"></a></h2>
+<p>Tasks will be decomposed per feature. Each feature will include one or many endpoints. Issues will be tracked per
+report, combining where it makes sense.</p>
+</section>
+<section id="version-control">
+<h2>Version control<a class="headerlink" href="#version-control" title="Link to this heading"></a></h2>
+<p>Version control will be git based with GitHub as the source of truth. Work items will have a branch per work item.
+Merging a work item will be managed by GitHub pull requests.</p>
+</section>
+<section id="project-structure">
+<h2>Project Structure<a class="headerlink" href="#project-structure" title="Link to this heading"></a></h2>
+<p>Project structure will follow a standard python project structure</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>📦tanglenomicon_data_api
+ ┣ 📂.github
+ ┣ 📂docs
+ ┣ 📂tanglenomicon_data_api
+ ┣ 📂test
+ ┣ 📜.flake8
+ ┣ 📜.gitignore
+ ┣ 📜LICENSE
+ ┣ 📜README.md
+ ┣ 📜requirements.txt
+ ┗ 📜setup.py
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>📂tanglenomicon_data_api : Shall contains source code</p></li>
+<li><p>📂test : Shall contain test code</p></li>
+<li><p>📂docs : Shall contain documentation for specific features</p></li>
+</ul>
+</section>
+<section id="define-a-unit-a-unit-in-this-project-shall-be-a-python-module">
+<h2>Define a Unit: A unit in this project shall be a python module.<a class="headerlink" href="#define-a-unit-a-unit-in-this-project-shall-be-a-python-module" title="Link to this heading"></a></h2>
+</section>
+<section id="quality">
+<h2>Quality<a class="headerlink" href="#quality" title="Link to this heading"></a></h2>
+<p>This project will be a public API for the tanglenomicon project. This requires a high level of validation. With the
+primary design goal of never crashing. While api R/W failures are acceptable with reporting.</p>
+<section id="unit-testing">
+<h3>Unit testing<a class="headerlink" href="#unit-testing" title="Link to this heading"></a></h3>
+<p>Every unit is expected to have a unit test suite. Unit test suites are expected to flex every public interface of their
+unit. Code coverage is optional.</p>
+</section>
+<section id="integration-testing">
+<h3>Integration testing<a class="headerlink" href="#integration-testing" title="Link to this heading"></a></h3>
+<p>Integration tests are expected for every program flow.</p>
+</section>
+</section>
+<section id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Link to this heading"></a></h2>
+<section id="functional-requirements">
+<h3>Functional Requirements<a class="headerlink" href="#functional-requirements" title="Link to this heading"></a></h3>
+<div class="mermaid">
+            flowchart LR
+    subgraph Generation
+        direction LR
+        G1([Get Montesinos job])
+        G2([Report Montesinos job])
+    end
+    subgraph Presentation
+        direction LR
+        PL1([Get paged tangles])
+        PL2([Get specific tangle])
+        PL3([Get tangles with property])
+    end
+
+    subgraph Job Handling
+        direction LR
+        JH1([Build job])
+        JH2([Clean up stale jobs])
+        JH3([Clean up complete jobs])
+        JH4([Mark job as complete])
+        JH5([Mark job as new])
+        JH6([Mark job as pending])
+        JH7([Fill job queue])
+    end
+    subgraph Database Handling
+        direction LR
+        DH1([Mark progress])
+        DH2([Write record set])
+        DH3([Read record set])
+    end
+
+    client[&quot;Client fa:fa-user&quot;]
+    time[&quot;Time fa:fa-user&quot;]
+    client --&gt; G1
+    client --&gt; G2
+    time --&gt; JH2
+    time --&gt; JH3
+    time --&gt; JH7
+    JH1 -. include .-&gt; JH5
+    JH2 -. include .-&gt; JH6
+    JH7 -. include .-&gt; JH1
+    JH1 -. include .-&gt; DH3
+    JH3 -. include .-&gt; DH1
+    JH3 -. include .-&gt; DH2
+    G1 -. include .-&gt; JH6
+    G2 -. include .-&gt; JH4
+    client --&gt; PL1 -. include .-&gt; DH3
+    client --&gt; PL2 -. include .-&gt; DH3
+    client --&gt; PL3 -. include .-&gt; DH3
+
+        </div><p>Functional requirements are phrased in the following use cases</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="use_cases/index.html">Use Case Descriptions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/DB_handling/mark_progress.html">Use case: Mark Progress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/DB_handling/read_record_set.html">Use case: Read Record set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/DB_handling/write_record_set.html">Use case: Write Record set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/generation/get_montesinos_job.html">Use case: Get Montesinos Job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/generation/report_montesinos_job.html">Use case: Report Montesinos Job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/job_handling/build_job.html">Use case: Build Job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/job_handling/clean_up_complete_jobs.html">Use case: Clean up complete jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/job_handling/clean_up_stale_jobs.html">Use case: Clean up stale jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/job_handling/fill_job_queue.html">Use case: Fill Job Queue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/job_handling/mark_job_as_complete.html">Use case: Mark Job as Complete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/job_handling/mark_job_as_new.html">Use case: Mark Job as new</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/job_handling/mark_job_as_pending.html">Use case: Mark Job as pending</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/presentation/get_paged_tangles.html">Use case: Get paged tangles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/presentation/get_specific_tangle.html">Use case: Get specific tangle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/presentation/get_tangles_with_property.html">Use case: Get tangles with property</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="non-functional-requirements">
+<h3>Non-functional Requirements<a class="headerlink" href="#non-functional-requirements" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Must be packaged as a docker container</p></li>
+<li><p>Must run in linux</p></li>
+</ul>
+</section>
+</section>
+<section id="technologies">
+<h2>Technologies<a class="headerlink" href="#technologies" title="Link to this heading"></a></h2>
+<section id="languages-frameworks">
+<h3>Languages/Frameworks<a class="headerlink" href="#languages-frameworks" title="Link to this heading"></a></h3>
+<p>The project will be written in python using the <a class="reference external" href="https://fastapi.tiangolo.com/">fastapi</a> framework. All required
+packages are included in the <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code></p>
+<p>Using a virtual environment is suggested from the root run in powershell:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>py_venv
+.<span class="se">\p</span>y_venv<span class="se">\S</span>cripts<span class="se">\A</span>ctivate.ps1
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>.<span class="se">\r</span>equirements.txt
+</pre></div>
+</div>
+<p>alternatively using the included just file:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>just<span class="w"> </span>bootstrap
+</pre></div>
+</div>
+<section id="style-guide">
+<h4>Style Guide<a class="headerlink" href="#style-guide" title="Link to this heading"></a></h4>
+<p>All python files are expected to pass the configured flake8 without warnings this includes aligning
+to <a class="reference external" href="https://github.com/psf/black">https://github.com/psf/black</a>.</p>
+</section>
+</section>
+<section id="tools">
+<h3>Tools<a class="headerlink" href="#tools" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>vscode</p></li>
+<li><p>mermaid.js</p></li>
+<li><p>plantUML</p></li>
+<li><p>python3</p></li>
+<li><p>pytest</p></li>
+<li><p>flake8</p></li>
+<li><p>git</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="design-and-documentation">
+<h1>Design and Documentation<a class="headerlink" href="#design-and-documentation" title="Link to this heading"></a></h1>
+<section id="system">
+<h2>System<a class="headerlink" href="#system" title="Link to this heading"></a></h2>
+<section id="block-diagram">
+<h3>Block Diagram<a class="headerlink" href="#block-diagram" title="Link to this heading"></a></h3>
+<div class="mermaid">
+            flowchart LR
+    tanglenomicon_data_api[&quot;Tanglenomicon API&quot;]
+    subgraph Interfaces
+        age[&quot;Generation Endpoint\n&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&quot;]
+        ape[&quot;Presentation Endpoint\n&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&quot;]
+        aj[&quot;Job\n&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&quot;]
+        es[&quot;State\n&amp;lt;&amp;lt;enumeration&amp;gt;&amp;gt;&quot;]
+        o[&quot;ORM\n&amp;lt;&amp;lt;enumeration&amp;gt;&amp;gt;&quot;]
+    end
+
+    subgraph Internal
+        dc[&quot;DB Connector&quot;]
+        jq[&quot;Job Queue&quot;]
+        cs[&quot;Config Store&quot;]
+        sm[&quot;Security Model&quot;]
+    end
+
+    subgraph Montesinos
+        mpe[&quot;Montesinos Presentation Endpoint&quot;]
+        mo[&quot;ORM&quot;]
+        mj[&quot;Montesinos Job&quot;]
+        mge[&quot;Montesinos Generation Endpoint&quot;]
+    end
+
+    subgraph Generic
+        gpe[&quot;Presentation Endpoint&quot;]
+        go[&quot;ORM&quot;]
+    end
+    subgraph rational
+        rpe[&quot;Presentation Endpoint&quot;]
+        ro[&quot;ORM&quot;]
+    end
+
+    rpe ---&gt;|1| tanglenomicon_data_api
+    mge ---&gt;|1| tanglenomicon_data_api
+    jq ---&gt;|1| tanglenomicon_data_api
+    sm ---&gt;|1| tanglenomicon_data_api
+    gpe ---&gt;|1| tanglenomicon_data_api
+    cs ---&gt; tanglenomicon_data_api
+    dc ---&gt;|1| jq
+    dc ---&gt;|1| sm
+    mj ---&gt;|1 . . *| jq
+    mpe -.-&gt; ape
+    mj -.-&gt; aj
+    mo -.-&gt; o
+    mge -.-&gt; age
+    aj -.-&gt; es
+    gpe -.-&gt; ape
+    go -.-&gt; o
+    rpe -.-&gt; ape
+    ro -.-&gt; o
+
+
+        </div></section>
+</section>
+<section id="units">
+<h2>Units<a class="headerlink" href="#units" title="Link to this heading"></a></h2>
+<p>Unit descriptions are as follows:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="unit_description/index.html">Unit Descriptions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/interfaces/generation_endpoint.html">Unit: generation api endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/interfaces/job.html">Unit: Job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/interfaces/orm.html">Unit: ORM interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/interfaces/presentation_endpoint.html">Unit: presentation api endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/internal/config_store.html">Unit: Config Store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/internal/db_connector.html">Unit: Database connector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/internal/job_queue.html">Unit: Job Queue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/internal/security.html">Unit: Security Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/montesinos/generation_endpoint.html">Unit: Montesinos api endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/montesinos/job.html">Unit: Montesinos job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/montesinos/orm.html">Unit Montesinos ORM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/montesinos/presentation_endpoint.html">Unit: Montesinos api presentation endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/generic/orm.html">Unit: Generic ORM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/generic/presentation_endpoint.html">Unit: Montesinos api presentation endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/rational/orm.html">Unit Rational ORM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/rational/presentation_endpoint.html">Unit: rational api presentation endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_description/tanglenomicon_api.html">Unit: Tanglenomicon API</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+<section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apidocs/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.generic.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.generic</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.generic.presentation_endpoint.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.generic.presentation_endpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.generic.orm.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.generic.orm</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.rational.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.rational</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.rational.presentation_endpoint.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.rational.presentation_endpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.rational.orm.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.rational.orm</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.montesinos.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.montesinos</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.montesinos.job.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.montesinos.job</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.montesinos.generation_endpoint.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.montesinos.generation_endpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.montesinos.presentation_endpoint.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.montesinos.presentation_endpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.montesinos.orm.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.montesinos.orm</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.interfaces.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.interfaces</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.interfaces.job.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.interfaces.job</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.internal</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.security.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.internal.security</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.db_connector.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.internal.db_connector</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.config_store.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.internal.config_store</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="apidocs/tanglenomicon_data_api/tanglenomicon_data_api.internal.job_queue.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tanglenomicon_data_api.internal.job_queue</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="use_cases/index.html" class="btn btn-neutral float-right" title="Use Case Descriptions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, temp.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

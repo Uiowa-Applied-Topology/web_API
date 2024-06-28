@@ -1,0 +1,140 @@
+---
+orphan: true
+---
+
+# {py:mod}`tanglenomicon_data_api.__main__`
+
+```{py:module} tanglenomicon_data_api.__main__
+```
+
+```{autodoc2-docstring} tanglenomicon_data_api.__main__
+:allowtitles:
+```
+
+## Module Contents
+
+### Functions
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`adduser <tanglenomicon_data_api.__main__.adduser>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.__main__.adduser
+    :summary:
+    ```
+* - {py:obj}`run <tanglenomicon_data_api.__main__.run>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.__main__.run
+    :summary:
+    ```
+````
+
+### Data
+
+````{list-table}
+:class: autosummary longtable
+:align: left
+
+* - {py:obj}`loop <tanglenomicon_data_api.__main__.loop>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.__main__.loop
+    :summary:
+    ```
+* - {py:obj}`api <tanglenomicon_data_api.__main__.api>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.__main__.api
+    :summary:
+    ```
+* - {py:obj}`routers <tanglenomicon_data_api.__main__.routers>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.__main__.routers
+    :summary:
+    ```
+* - {py:obj}`job_defs <tanglenomicon_data_api.__main__.job_defs>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.__main__.job_defs
+    :summary:
+    ```
+* - {py:obj}`app <tanglenomicon_data_api.__main__.app>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.__main__.app
+    :summary:
+    ```
+* - {py:obj}`origins <tanglenomicon_data_api.__main__.origins>`
+  - ```{autodoc2-docstring} tanglenomicon_data_api.__main__.origins
+    :summary:
+    ```
+````
+
+### API
+
+````{py:data} loop
+:canonical: tanglenomicon_data_api.__main__.loop
+:type: asyncio.AbstractEventLoop
+:value: >
+   'new_event_loop(...)'
+
+```{autodoc2-docstring} tanglenomicon_data_api.__main__.loop
+```
+
+````
+
+````{py:data} api
+:canonical: tanglenomicon_data_api.__main__.api
+:type: fastapi.FastAPI
+:value: >
+   'FastAPI(...)'
+
+```{autodoc2-docstring} tanglenomicon_data_api.__main__.api
+```
+
+````
+
+````{py:data} routers
+:canonical: tanglenomicon_data_api.__main__.routers
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.__main__.routers
+```
+
+````
+
+````{py:data} job_defs
+:canonical: tanglenomicon_data_api.__main__.job_defs
+:value: >
+   None
+
+```{autodoc2-docstring} tanglenomicon_data_api.__main__.job_defs
+```
+
+````
+
+````{py:data} app
+:canonical: tanglenomicon_data_api.__main__.app
+:value: >
+   'Typer(...)'
+
+```{autodoc2-docstring} tanglenomicon_data_api.__main__.app
+```
+
+````
+
+````{py:data} origins
+:canonical: tanglenomicon_data_api.__main__.origins
+:value: >
+   ['https://tanglenomicon.com', 'http://localhost', 'http://localhost:1313', 'http://localhost:3000', ...
+
+```{autodoc2-docstring} tanglenomicon_data_api.__main__.origins
+```
+
+````
+
+````{py:function} adduser(cfg: typing_extensions.Annotated[str, typer.Option(prompt='Path to configuration file.')], name: typing_extensions.Annotated[str, typer.Option(prompt='Username to add')] = None)
+:canonical: tanglenomicon_data_api.__main__.adduser
+
+```{autodoc2-docstring} tanglenomicon_data_api.__main__.adduser
+```
+````
+
+````{py:function} run(cfg: typing_extensions.Annotated[str, typer.Option(prompt='Path to configuration file.')])
+:canonical: tanglenomicon_data_api.__main__.run
+
+```{autodoc2-docstring} tanglenomicon_data_api.__main__.run
+```
+````

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tanglenomicon_data_api.montesinos.presentation_endpoint &mdash; Tanglenomicon API 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=7254e0c9" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({
+  securityLevel: 'loose',
+  theme: 'dark',
+});</script>
+        <script src="https://unpkg.com/d3/dist/d3.min.js"></script>
+        <script>
+            window.addEventListener("load", function () {
+              var svgs = d3.selectAll(".mermaid svg");
+              svgs.each(function() {
+                var svg = d3.select(this);
+                svg.html("<g>" + svg.html() + "</g>");
+                var inner = svg.select("g");
+                var zoom = d3.zoom().on("zoom", function(event) {
+                  inner.attr("transform", event.transform);
+                });
+                svg.call(zoom);
+              });
+            });
+            </script>
+        <script src="../../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+        <script src="../../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<script type="text/javascript" id="MathJax-script" async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+if (typeof MathJax === 'undefined') {
+    MathJax = {
+        loader: {
+            load: ['[img]/img.min.js', '[tex]/color', '[tex]/amscd'],
+            paths: { img: 'https://cdn.jsdelivr.net/npm/mathjax-img@3' }
+        },
+        tex: {
+            inlineMath: [["$", "$"], ["\\(", "\\)"]],
+            displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+            processEscapes: true,
+            processEnvironments: true,
+            extensions: ["autoload-all.js", "AMSmath.js", "AMSsymbols.js", "AMScd.js"],
+            packages: { '[+]': ['img', 'color', 'amscd'] }
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+    MathJax.startup = {
+        ready() {
+            MathJax.startup.defaultReady();
+            MathJax.startup.promise.then(() => {
+                console.log("Start startup promise");
+
+                document.querySelectorAll("mjx-container").forEach(function (x) {
+                    x.parentElement.classList += ' has-jax '
+                })
+
+                document.querySelectorAll("mjx-container img").forEach((element) => {
+                    var src = element.getAttribute("src");
+                    if (src.endsWith('.svg') == true) {
+                        fetch(src)
+                        .then(res => res.text())
+                        .then(res => {
+                            const holder = document.createElement('div')
+                            holder.style.width = "1em";
+                            holder.style.height = "1em";
+                            holder.innerHTML = res
+                            element.replaceWith(holder)
+                        })
+                    }
+                });
+
+                console.log("End startup promise");
+            });
+        }
+    };
+}
+</script>
+
+<!-- Preamble -->
+<p hidden>
+    `$\newcommand{\N}{\mathbb{N}}
+    \newcommand{\Z}{\mathbb{Z}}
+    \newcommand{\Q}{\mathbb{Q}}
+    \newcommand{\R}{\mathbb{R}}
+    \newcommand{\LP}{\left(}
+    \newcommand{\RP}{\right)}
+    \newcommand{\LS}{\left\lbrace}
+    \newcommand{\RS}{\right\rbrace}
+    \newcommand{\LA}{\left\langle}
+    \newcommand{\RA}{\right\rangle}
+    \newcommand{\LB}{\left[}
+    \newcommand{\RB}{\right]}
+    \newcommand{\MM}{\ \middle|\ }
+    \newcommand{\exp}{\text{exp}}
+    \newcommand{\abs}[1]{\left\vert#1\right\vert}
+    \newcommand{\msr}[1]{m\left(#1\right)}
+    \newcommand{\inv}[1]{ #1^{-1}}
+    \newcommand{\bkt}[1]{\LA \img{ #1}\RA}
+    \require{color}$
+    </p>
+
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Tanglenomicon API
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../use_cases/index.html">Use Case Descriptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../unit_description/index.html">Unit Descriptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidocs/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Tanglenomicon API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tanglenomicon_data_api.montesinos.presentation_endpoint</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tanglenomicon_data_api.montesinos.presentation_endpoint</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Defines the public API endpoints to work/report on montesinos tangles.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">APIRouter</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">orm</span><span class="p">,</span> <span class="n">job</span>
+<span class="kn">from</span> <span class="nn">..internal</span> <span class="kn">import</span> <span class="n">job_queue</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">dacite</span> <span class="kn">import</span> <span class="n">from_dict</span>
+
+<span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span>
+    <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;/montesinos&quot;</span><span class="p">,</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Montesinos&quot;</span><span class="p">],</span>
+    <span class="n">dependencies</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">responses</span><span class="o">=</span><span class="p">{</span><span class="mi">404</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Not found&quot;</span><span class="p">}},</span>
+<span class="p">)</span>
+
+
+<span class="c1">################################################################################</span>
+<span class="c1"># Helper Functions</span>
+<span class="c1">################################################################################</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">_retrieve_montesinos_tangles</span><span class="p">(</span>
+    <span class="n">page_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">page_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">tangle_col</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">get_montesinos_collection</span><span class="p">()</span>
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;$match&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;isMontesinos&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;$facet&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;$count&quot;</span><span class="p">:</span> <span class="s2">&quot;totalCount&quot;</span><span class="p">}],</span>
+                <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span><span class="s2">&quot;$skip&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">page_idx</span> <span class="o">*</span> <span class="n">page_size</span><span class="p">)},</span>
+                    <span class="p">{</span><span class="s2">&quot;$limit&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">page_size</span><span class="p">)},</span>
+                <span class="p">],</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+    <span class="p">]</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">response</span> <span class="ow">in</span> <span class="n">tangle_col</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">from_dict</span><span class="p">(</span><span class="n">data_class</span><span class="o">=</span><span class="n">orm</span><span class="o">.</span><span class="n">MontesinosTangleDB</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">rat_tang</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">rat_tang</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+        <span class="p">]</span>
+
+
+<div class="viewcode-block" id="retrieve_montesinos_tangles">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.montesinos.presentation_endpoint.html#tanglenomicon_data_api.montesinos.presentation_endpoint.retrieve_montesinos_tangles">[docs]</a>
+<span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/tangles&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">orm</span><span class="o">.</span><span class="n">MontesinosTangleDB</span><span class="p">])</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">retrieve_montesinos_tangles</span><span class="p">(</span>
+    <span class="n">tangle_list</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">orm</span><span class="o">.</span><span class="n">MontesinosTangleDB</span><span class="p">],</span> <span class="n">Depends</span><span class="p">(</span><span class="n">_retrieve_montesinos_tangles</span><span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the next montesinos job.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tangle_list : Annotated[mj.montesinos_Job, Depends</span>
+<span class="sd">        The next montesinos Job.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    montesinos_Job</span>
+<span class="sd">        The next montesinos Job.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">tangle_list</span></div>
+
+
+
+<div class="viewcode-block" id="retrieve_generic_job_queue_stats">
+<a class="viewcode-back" href="../../../apidocs/tanglenomicon_data_api/tanglenomicon_data_api.montesinos.presentation_endpoint.html#tanglenomicon_data_api.montesinos.presentation_endpoint.retrieve_generic_job_queue_stats">[docs]</a>
+<span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/queue/stats&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">retrieve_generic_job_queue_stats</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return job queue statistics for generic jobs.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Job queue statistics for generic jobs. Broken into:</span>
+<span class="sd">        - Total</span>
+<span class="sd">        - New</span>
+<span class="sd">        - Pending</span>
+<span class="sd">        - Complete</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="k">await</span> <span class="n">job_queue</span><span class="o">.</span><span class="n">get_job_statistics</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">MontesinosJob</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, temp.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

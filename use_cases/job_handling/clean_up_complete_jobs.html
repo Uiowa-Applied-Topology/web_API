@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Use case: Clean up complete jobs &mdash; Tanglenomicon API 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=7254e0c9" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+        <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Use case: Clean up stale jobs" href="clean_up_stale_jobs.html" />
+    <link rel="prev" title="Use case: Build Job" href="build_job.html" />
+<script type="text/javascript" id="MathJax-script" async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+if (typeof MathJax === 'undefined') {
+    MathJax = {
+        loader: {
+            load: ['[img]/img.min.js', '[tex]/color', '[tex]/amscd'],
+            paths: { img: 'https://cdn.jsdelivr.net/npm/mathjax-img@3' }
+        },
+        tex: {
+            inlineMath: [["$", "$"], ["\\(", "\\)"]],
+            displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+            processEscapes: true,
+            processEnvironments: true,
+            extensions: ["autoload-all.js", "AMSmath.js", "AMSsymbols.js", "AMScd.js"],
+            packages: { '[+]': ['img', 'color', 'amscd'] }
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+    MathJax.startup = {
+        ready() {
+            MathJax.startup.defaultReady();
+            MathJax.startup.promise.then(() => {
+                console.log("Start startup promise");
+
+                document.querySelectorAll("mjx-container").forEach(function (x) {
+                    x.parentElement.classList += ' has-jax '
+                })
+
+                document.querySelectorAll("mjx-container img").forEach((element) => {
+                    var src = element.getAttribute("src");
+                    if (src.endsWith('.svg') == true) {
+                        fetch(src)
+                        .then(res => res.text())
+                        .then(res => {
+                            const holder = document.createElement('div')
+                            holder.style.width = "1em";
+                            holder.style.height = "1em";
+                            holder.innerHTML = res
+                            element.replaceWith(holder)
+                        })
+                    }
+                });
+
+                console.log("End startup promise");
+            });
+        }
+    };
+}
+</script>
+
+<!-- Preamble -->
+<p hidden>
+    `$\newcommand{\N}{\mathbb{N}}
+    \newcommand{\Z}{\mathbb{Z}}
+    \newcommand{\Q}{\mathbb{Q}}
+    \newcommand{\R}{\mathbb{R}}
+    \newcommand{\LP}{\left(}
+    \newcommand{\RP}{\right)}
+    \newcommand{\LS}{\left\lbrace}
+    \newcommand{\RS}{\right\rbrace}
+    \newcommand{\LA}{\left\langle}
+    \newcommand{\RA}{\right\rangle}
+    \newcommand{\LB}{\left[}
+    \newcommand{\RB}{\right]}
+    \newcommand{\MM}{\ \middle|\ }
+    \newcommand{\exp}{\text{exp}}
+    \newcommand{\abs}[1]{\left\vert#1\right\vert}
+    \newcommand{\msr}[1]{m\left(#1\right)}
+    \newcommand{\inv}[1]{ #1^{-1}}
+    \newcommand{\bkt}[1]{\LA \img{ #1}\RA}
+    \require{color}$
+    </p>
+
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Tanglenomicon API
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Use Case Descriptions</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../DB_handling/mark_progress.html">Use case: Mark Progress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../DB_handling/read_record_set.html">Use case: Read Record set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../DB_handling/write_record_set.html">Use case: Write Record set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generation/get_montesinos_job.html">Use case: Get Montesinos Job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generation/report_montesinos_job.html">Use case: Report Montesinos Job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_job.html">Use case: Build Job</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Use case: Clean up complete jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clean_up_stale_jobs.html">Use case: Clean up stale jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fill_job_queue.html">Use case: Fill Job Queue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mark_job_as_complete.html">Use case: Mark Job as Complete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mark_job_as_new.html">Use case: Mark Job as new</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mark_job_as_pending.html">Use case: Mark Job as pending</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../presentation/get_paged_tangles.html">Use case: Get paged tangles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../presentation/get_specific_tangle.html">Use case: Get specific tangle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../presentation/get_tangles_with_property.html">Use case: Get tangles with property</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../unit_description/index.html">Unit Descriptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../apidocs/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Tanglenomicon API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Use Case Descriptions</a></li>
+      <li class="breadcrumb-item active">Use case: Clean up complete jobs</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="use-case-clean-up-complete-jobs">
+<h1>Use case: Clean up complete jobs<a class="headerlink" href="#use-case-clean-up-complete-jobs" title="Link to this heading"></a></h1>
+<section id="primary-actor">
+<h2>Primary actor:<a class="headerlink" href="#primary-actor" title="Link to this heading"></a></h2>
+<p>Time</p>
+</section>
+<section id="goal">
+<h2>Goal:<a class="headerlink" href="#goal" title="Link to this heading"></a></h2>
+<p>Remove completed jobs from queue</p>
+</section>
+<section id="preconditions">
+<h2>Preconditions:<a class="headerlink" href="#preconditions" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Server is initialized</p></li>
+<li><p>LTS is connected</p></li>
+</ul>
+</section>
+<section id="trigger">
+<h2>Trigger:<a class="headerlink" href="#trigger" title="Link to this heading"></a></h2>
+<p>A timed event cleans the queue of completed jobs.</p>
+</section>
+<section id="scenario">
+<h2>Scenario:<a class="headerlink" href="#scenario" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Walks list of jobs</p></li>
+<li><p>Sends records to LTS</p></li>
+<li><p>Sends progress update to LTS</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="build_job.html" class="btn btn-neutral float-left" title="Use case: Build Job" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="clean_up_stale_jobs.html" class="btn btn-neutral float-right" title="Use case: Clean up stale jobs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, temp.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unit: Job Queue &mdash; Tanglenomicon API 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=7254e0c9" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({
+  securityLevel: 'loose',
+  theme: 'dark',
+});</script>
+        <script src="https://unpkg.com/d3/dist/d3.min.js"></script>
+        <script>
+            window.addEventListener("load", function () {
+              var svgs = d3.selectAll(".mermaid svg");
+              svgs.each(function() {
+                var svg = d3.select(this);
+                svg.html("<g>" + svg.html() + "</g>");
+                var inner = svg.select("g");
+                var zoom = d3.zoom().on("zoom", function(event) {
+                  inner.attr("transform", event.transform);
+                });
+                svg.call(zoom);
+              });
+            });
+            </script>
+        <script src="../../_static/dark_mode_js/default_dark.js?v=fd565c74"></script>
+        <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Unit: Security Model" href="security.html" />
+    <link rel="prev" title="Unit: Database connector" href="db_connector.html" />
+<script type="text/javascript" id="MathJax-script" async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+if (typeof MathJax === 'undefined') {
+    MathJax = {
+        loader: {
+            load: ['[img]/img.min.js', '[tex]/color', '[tex]/amscd'],
+            paths: { img: 'https://cdn.jsdelivr.net/npm/mathjax-img@3' }
+        },
+        tex: {
+            inlineMath: [["$", "$"], ["\\(", "\\)"]],
+            displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+            processEscapes: true,
+            processEnvironments: true,
+            extensions: ["autoload-all.js", "AMSmath.js", "AMSsymbols.js", "AMScd.js"],
+            packages: { '[+]': ['img', 'color', 'amscd'] }
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+    MathJax.startup = {
+        ready() {
+            MathJax.startup.defaultReady();
+            MathJax.startup.promise.then(() => {
+                console.log("Start startup promise");
+
+                document.querySelectorAll("mjx-container").forEach(function (x) {
+                    x.parentElement.classList += ' has-jax '
+                })
+
+                document.querySelectorAll("mjx-container img").forEach((element) => {
+                    var src = element.getAttribute("src");
+                    if (src.endsWith('.svg') == true) {
+                        fetch(src)
+                        .then(res => res.text())
+                        .then(res => {
+                            const holder = document.createElement('div')
+                            holder.style.width = "1em";
+                            holder.style.height = "1em";
+                            holder.innerHTML = res
+                            element.replaceWith(holder)
+                        })
+                    }
+                });
+
+                console.log("End startup promise");
+            });
+        }
+    };
+}
+</script>
+
+<!-- Preamble -->
+<p hidden>
+    `$\newcommand{\N}{\mathbb{N}}
+    \newcommand{\Z}{\mathbb{Z}}
+    \newcommand{\Q}{\mathbb{Q}}
+    \newcommand{\R}{\mathbb{R}}
+    \newcommand{\LP}{\left(}
+    \newcommand{\RP}{\right)}
+    \newcommand{\LS}{\left\lbrace}
+    \newcommand{\RS}{\right\rbrace}
+    \newcommand{\LA}{\left\langle}
+    \newcommand{\RA}{\right\rangle}
+    \newcommand{\LB}{\left[}
+    \newcommand{\RB}{\right]}
+    \newcommand{\MM}{\ \middle|\ }
+    \newcommand{\exp}{\text{exp}}
+    \newcommand{\abs}[1]{\left\vert#1\right\vert}
+    \newcommand{\msr}[1]{m\left(#1\right)}
+    \newcommand{\inv}[1]{ #1^{-1}}
+    \newcommand{\bkt}[1]{\LA \img{ #1}\RA}
+    \require{color}$
+    </p>
+
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Tanglenomicon API
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../use_cases/index.html">Use Case Descriptions</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Unit Descriptions</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../interfaces/generation_endpoint.html">Unit: generation api endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interfaces/job.html">Unit: Job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interfaces/orm.html">Unit: ORM interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../interfaces/presentation_endpoint.html">Unit: presentation api endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config_store.html">Unit: Config Store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="db_connector.html">Unit: Database connector</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Unit: Job Queue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="security.html">Unit: Security Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../montesinos/generation_endpoint.html">Unit: Montesinos api endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../montesinos/job.html">Unit: Montesinos job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../montesinos/orm.html">Unit: ORM interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../montesinos/presentation_endpoint.html">Unit: Montesinos api presentation endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tanglenomicon_api.html">Unit: Tanglenomicon API</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../apidocs/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Tanglenomicon API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Unit Descriptions</a></li>
+      <li class="breadcrumb-item active">Unit: Job Queue</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="unit-job-queue">
+<h1>Unit: Job Queue<a class="headerlink" href="#unit-job-queue" title="Link to this heading"></a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>This class defines the job queue. This is used to hold the current job states for the server.</p>
+</section>
+<section id="diagrams">
+<h2>Diagrams<a class="headerlink" href="#diagrams" title="Link to this heading"></a></h2>
+<div class="mermaid">
+            classDiagram
+
+    class jq[&quot;Job Queue&quot;]{
+        - List~Job~ job_queue
+        - Semephore semephore
+        - db_connector db
+        + mark_job_complete(job_id)
+        + get_next_job(type)
+        + clean_stale_jobs()
+        + clean_complete_jobs()
+        + add_new_jobs(job)
+    }
+        </div></section>
+<section id="function-flow">
+<h2>Function flow<a class="headerlink" href="#function-flow" title="Link to this heading"></a></h2>
+<section id="retrieve-job-statistics">
+<h3>retrieve_job_statistics<a class="headerlink" href="#retrieve-job-statistics" title="Link to this heading"></a></h3>
+<div class="mermaid">
+            stateDiagram-v2
+
+    [*] --&gt; ts
+    state &quot;Call get_job_statistics&quot; as ts
+    ts   --&gt; [*]
+        </div></section>
+<section id="get-job-statistics">
+<h3>get_job_statistics<a class="headerlink" href="#get-job-statistics" title="Link to this heading"></a></h3>
+<div class="mermaid">
+            stateDiagram-v2
+
+    [*] --&gt; ts
+    state &quot;Get statistics&quot; as ts
+    ts   --&gt; [*]
+        </div></section>
+<section id="task-clean-stale-jobs">
+<h3>task_clean_stale_jobs<a class="headerlink" href="#task-clean-stale-jobs" title="Link to this heading"></a></h3>
+<div class="mermaid">
+            
+stateDiagram-v2
+
+    [*] --&gt; ts
+    state &quot;at each time step&quot; as ts {
+    [*] --&gt; for
+    state &quot;for each job&quot; as for {
+    state if_state &lt;&lt;choice&gt;&gt;
+    state &quot;Get State&quot; as staleChk
+    state &quot;Set state to new&quot; as setNew
+    [*] --&gt; staleChk
+     staleChk --&gt; if_state
+    if_state --&gt; setNew: if is Stale
+    if_state --&gt; [*] : if is not Stale
+    setNew --&gt; [*]
+    }
+    for   --&gt; [*]
+    }
+    ts   --&gt; [*]
+        </div></section>
+<section id="task-clean-complete-jobs">
+<h3>task_clean_complete_jobs<a class="headerlink" href="#task-clean-complete-jobs" title="Link to this heading"></a></h3>
+<div class="mermaid">
+            
+stateDiagram-v2
+
+    [*] --&gt; ts
+    state &quot;at each time step&quot; as ts {
+    [*] --&gt; for
+    state &quot;for each job&quot; as for {
+    state if_state &lt;&lt;choice&gt;&gt;
+    state &quot;Get State&quot; as staleChk
+    state &quot;Commit to storage&quot; as setNew
+    [*] --&gt; staleChk
+     staleChk --&gt; if_state
+    if_state --&gt; setNew: if is complete
+    if_state --&gt; [*] : if is not complete
+    setNew --&gt; [*]
+    }
+    for   --&gt; [*]
+    }
+    ts   --&gt; [*]
+        </div></section>
+<section id="enqueue-job">
+<h3>enqueue_job<a class="headerlink" href="#enqueue-job" title="Link to this heading"></a></h3>
+<div class="mermaid">
+            stateDiagram-v2
+
+    state if_state &lt;&lt;choice&gt;&gt;
+    state &quot;Add job to queue&quot; as setNew
+    [*] --&gt;  if_state
+    if_state --&gt; setNew: if id is in list
+    if_state --&gt; [*] : if id is not in list
+    setNew --&gt; [*]
+        </div></section>
+<section id="mark-job-complete">
+<h3>mark_job_complete<a class="headerlink" href="#mark-job-complete" title="Link to this heading"></a></h3>
+<div class="mermaid">
+            
+stateDiagram-v2
+    state if_state &lt;&lt;choice&gt;&gt;
+
+    state &quot;Get job state&quot; as getjs
+    state &quot;Update job payload&quot; as updateJob
+    state &quot;Set state of job to complete&quot; as setNew
+
+    [*] --&gt; getjs
+    getjs --&gt; if_state
+    if_state --&gt; updateJob : if is pending
+    if_state --&gt; [*] : if is not pending
+    updateJob --&gt; setNew
+    setNew --&gt; [*]
+        </div></section>
+<section id="get-next-job">
+<h3>get_next_job<a class="headerlink" href="#get-next-job" title="Link to this heading"></a></h3>
+<div class="mermaid">
+            
+stateDiagram-v2
+    state &quot;Get lowest index new job of 'type'&quot; as staleChk
+
+    [*] --&gt; staleChk
+    staleChk --&gt; [*]
+        </div></section>
+</section>
+<section id="unit-test-description">
+<h2>Unit test description<a class="headerlink" href="#unit-test-description" title="Link to this heading"></a></h2>
+<hr class="docutils" />
+<section id="retrieve-job-statistics-endpoint">
+<h3>retrieve_job_statistics endpoint<a class="headerlink" href="#retrieve-job-statistics-endpoint" title="Link to this heading"></a></h3>
+<section id="positive-test">
+<h4>Positive Test<a class="headerlink" href="#positive-test" title="Link to this heading"></a></h4>
+<p>Job queue stats are correctly reported.</p>
+<section id="inputs">
+<h5>Inputs:<a class="headerlink" href="#inputs" title="Link to this heading"></a></h5>
+<ul class="simple">
+<li><p>Mocked job_queue with variable job counts in each state.</p></li>
+</ul>
+</section>
+<section id="expected-output">
+<h5>Expected Output:<a class="headerlink" href="#expected-output" title="Link to this heading"></a></h5>
+<p>Jobs reported with correct counts.</p>
+</section>
+</section>
+<section id="negative-tests">
+<h4>Negative Tests<a class="headerlink" href="#negative-tests" title="Link to this heading"></a></h4>
+<p>I can’t think of any.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="id1">
+<h3>get_job_statistics<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<section id="id2">
+<h4>Positive Test<a class="headerlink" href="#id2" title="Link to this heading"></a></h4>
+<section id="default-type">
+<h5>Default type<a class="headerlink" href="#default-type" title="Link to this heading"></a></h5>
+<p>Job queue stats are correctly reported.</p>
+<section id="id3">
+<h6>Inputs:<a class="headerlink" href="#id3" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>Mocked job_queue with variable job counts in each state.</p></li>
+</ul>
+</section>
+<section id="id4">
+<h6>Expected Output:<a class="headerlink" href="#id4" title="Link to this heading"></a></h6>
+<p>Jobs reported with correct counts.</p>
+</section>
+</section>
+<section id="specific-type">
+<h5>Specific type<a class="headerlink" href="#specific-type" title="Link to this heading"></a></h5>
+<p>Tests behaviour when job queue stats are requested for a specific class type.</p>
+<section id="id5">
+<h6>Inputs:<a class="headerlink" href="#id5" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>Mocked job_queue with variable job counts in each state and multiple types.</p></li>
+</ul>
+</section>
+<section id="id6">
+<h6>Expected Output:<a class="headerlink" href="#id6" title="Link to this heading"></a></h6>
+<p>Jobs reported with correct counts.</p>
+</section>
+</section>
+</section>
+<section id="id7">
+<h4>Negative Tests<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
+<section id="nonexistent-type">
+<h5>Nonexistent type<a class="headerlink" href="#nonexistent-type" title="Link to this heading"></a></h5>
+<p>Tests behaviour when requesting type not in queue.</p>
+<section id="id8">
+<h6>Inputs:<a class="headerlink" href="#id8" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>Mocked job_queue with variable job counts in each state.</p></li>
+</ul>
+</section>
+<section id="id9">
+<h6>Expected Output:<a class="headerlink" href="#id9" title="Link to this heading"></a></h6>
+<p>Jobs reported with correct counts.</p>
+</section>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="id10">
+<h3>task_clean_stale_jobs<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<section id="positive-tests">
+<h4>Positive Tests<a class="headerlink" href="#positive-tests" title="Link to this heading"></a></h4>
+<section id="job-queue-has-stale-jobs">
+<h5>Job Queue has stale jobs<a class="headerlink" href="#job-queue-has-stale-jobs" title="Link to this heading"></a></h5>
+<p>Tests normal program flow.</p>
+<section id="id11">
+<h6>Inputs:<a class="headerlink" href="#id11" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>job queue has stale jobs.</p></li>
+</ul>
+</section>
+<section id="id12">
+<h6>Expected Output:<a class="headerlink" href="#id12" title="Link to this heading"></a></h6>
+<p>stale jobs have been set as new.</p>
+</section>
+</section>
+<section id="job-queue-has-no-stale-jobs">
+<h5>Job Queue has no stale jobs<a class="headerlink" href="#job-queue-has-no-stale-jobs" title="Link to this heading"></a></h5>
+<p>Tests normal program flow.</p>
+<section id="id13">
+<h6>Inputs:<a class="headerlink" href="#id13" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>job queue has no stale jobs.</p></li>
+</ul>
+</section>
+<section id="id14">
+<h6>Expected Output:<a class="headerlink" href="#id14" title="Link to this heading"></a></h6>
+<p>Job queue shows no changes.</p>
+</section>
+</section>
+</section>
+<section id="id15">
+<h4>Negative Tests<a class="headerlink" href="#id15" title="Link to this heading"></a></h4>
+<section id="job-queue-is-empty">
+<h5>Job queue is empty<a class="headerlink" href="#job-queue-is-empty" title="Link to this heading"></a></h5>
+<p>Tests behaviour when job queue is empty.</p>
+<section id="id16">
+<h6>Inputs:<a class="headerlink" href="#id16" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>job queue has no jobs.</p></li>
+</ul>
+</section>
+<section id="id17">
+<h6>Expected Output:<a class="headerlink" href="#id17" title="Link to this heading"></a></h6>
+<p>Job queue shows no changes.</p>
+</section>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="id18">
+<h3>task_clean_complete_jobs<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<section id="job-queue-has-complete-jobs">
+<h4>Job Queue has complete jobs<a class="headerlink" href="#job-queue-has-complete-jobs" title="Link to this heading"></a></h4>
+<p>Tests normal program flow.</p>
+<section id="id19">
+<h5>Inputs:<a class="headerlink" href="#id19" title="Link to this heading"></a></h5>
+<ul class="simple">
+<li><p>job queue has complete jobs.</p></li>
+</ul>
+</section>
+<section id="id20">
+<h5>Expected Output:<a class="headerlink" href="#id20" title="Link to this heading"></a></h5>
+<p>complete jobs have been set as new.</p>
+</section>
+</section>
+<section id="job-queue-has-no-complete-jobs">
+<h4>Job Queue has no complete jobs<a class="headerlink" href="#job-queue-has-no-complete-jobs" title="Link to this heading"></a></h4>
+<p>Tests normal program flow.</p>
+<section id="id21">
+<h5>Inputs:<a class="headerlink" href="#id21" title="Link to this heading"></a></h5>
+<ul class="simple">
+<li><p>job queue has no complete jobs.</p></li>
+</ul>
+</section>
+<section id="id22">
+<h5>Expected Output:<a class="headerlink" href="#id22" title="Link to this heading"></a></h5>
+<p>Job queue shows no changes.</p>
+</section>
+</section>
+<section id="id23">
+<h4>Negative Tests<a class="headerlink" href="#id23" title="Link to this heading"></a></h4>
+<section id="id24">
+<h5>Job queue is empty<a class="headerlink" href="#id24" title="Link to this heading"></a></h5>
+<p>Tests behaviour when job queue is empty.</p>
+<section id="id25">
+<h6>Inputs:<a class="headerlink" href="#id25" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>job queue has no jobs.</p></li>
+</ul>
+</section>
+<section id="id26">
+<h6>Expected Output:<a class="headerlink" href="#id26" title="Link to this heading"></a></h6>
+<p>Job queue shows no changes.</p>
+</section>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="id27">
+<h3>enqueue_job<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<section id="id28">
+<h4>Positive Tests<a class="headerlink" href="#id28" title="Link to this heading"></a></h4>
+<section id="job-not-in-queue">
+<h5>Job not in queue<a class="headerlink" href="#job-not-in-queue" title="Link to this heading"></a></h5>
+<p>Tests the normal program flow.</p>
+<section id="id29">
+<h6>Inputs:<a class="headerlink" href="#id29" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>job queue is empty.</p></li>
+</ul>
+</section>
+<section id="id30">
+<h6>Expected Output:<a class="headerlink" href="#id30" title="Link to this heading"></a></h6>
+<p>Enqueue succeeds returning true.</p>
+</section>
+</section>
+</section>
+<section id="id31">
+<h4>Negative Tests<a class="headerlink" href="#id31" title="Link to this heading"></a></h4>
+<section id="job-in-queue">
+<h5>Job in queue<a class="headerlink" href="#job-in-queue" title="Link to this heading"></a></h5>
+<p>Tests behaviour when attempting to enqueue job already in queue.</p>
+<section id="id32">
+<h6>Inputs:<a class="headerlink" href="#id32" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>job queue has job already enqueued.</p></li>
+</ul>
+</section>
+<section id="id33">
+<h6>Expected Output:<a class="headerlink" href="#id33" title="Link to this heading"></a></h6>
+<p>Enqueue fails returning false.</p>
+</section>
+</section>
+</section>
+<section id="id34">
+<h4>Negative Tests<a class="headerlink" href="#id34" title="Link to this heading"></a></h4>
+<p>I can’t think of any.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="id35">
+<h3>mark_job_complete<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
+<section id="id36">
+<h4>Positive Tests<a class="headerlink" href="#id36" title="Link to this heading"></a></h4>
+<section id="request-with-job-in-queue">
+<h5>Request with job in queue<a class="headerlink" href="#request-with-job-in-queue" title="Link to this heading"></a></h5>
+<p>Tests the normal program flow.</p>
+<section id="id37">
+<h6>Inputs:<a class="headerlink" href="#id37" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>job queue has pending jobs.</p></li>
+</ul>
+</section>
+<section id="id38">
+<h6>Expected Output:<a class="headerlink" href="#id38" title="Link to this heading"></a></h6>
+<p>Requested job is marked as complete.</p>
+</section>
+</section>
+</section>
+<section id="id39">
+<h4>Negative Tests<a class="headerlink" href="#id39" title="Link to this heading"></a></h4>
+<section id="id40">
+<h5>Job not in queue<a class="headerlink" href="#id40" title="Link to this heading"></a></h5>
+<p>Tests behaviour when requested job is not in queue.</p>
+<section id="id41">
+<h6>Inputs:<a class="headerlink" href="#id41" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>job queue is empty.</p></li>
+</ul>
+</section>
+<section id="id42">
+<h6>Expected Output:<a class="headerlink" href="#id42" title="Link to this heading"></a></h6>
+<p>Mark returns false.</p>
+</section>
+</section>
+<section id="job-not-in-pending">
+<h5>Job not in pending<a class="headerlink" href="#job-not-in-pending" title="Link to this heading"></a></h5>
+<p>Tests behaviour when requested job is not in queue</p>
+<section id="id43">
+<h6>Inputs:<a class="headerlink" href="#id43" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>job queue has new but no pending jobs.</p></li>
+</ul>
+</section>
+<section id="id44">
+<h6>Expected Output:<a class="headerlink" href="#id44" title="Link to this heading"></a></h6>
+<p>Function returns false.</p>
+</section>
+</section>
+<section id="client-mismatch">
+<h5>Client mismatch<a class="headerlink" href="#client-mismatch" title="Link to this heading"></a></h5>
+<p>Tests behaviour when requested job is reported by the wrong client.</p>
+<section id="id45">
+<h6>Inputs:<a class="headerlink" href="#id45" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>job queue has jobs in pending.</p></li>
+</ul>
+</section>
+<section id="id46">
+<h6>Expected Output:<a class="headerlink" href="#id46" title="Link to this heading"></a></h6>
+<p>Function returns false.</p>
+</section>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="id47">
+<h3>get_next_job<a class="headerlink" href="#id47" title="Link to this heading"></a></h3>
+<section id="id48">
+<h4>Positive Tests<a class="headerlink" href="#id48" title="Link to this heading"></a></h4>
+<section id="request-with-jobs-in-queue">
+<h5>Request with jobs in queue<a class="headerlink" href="#request-with-jobs-in-queue" title="Link to this heading"></a></h5>
+<p>Tests the normal program flow.</p>
+<section id="id49">
+<h6>Inputs:<a class="headerlink" href="#id49" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>job queue has new jobs.</p></li>
+</ul>
+</section>
+<section id="id50">
+<h6>Expected Output:<a class="headerlink" href="#id50" title="Link to this heading"></a></h6>
+<p>job found and is marked as pending.</p>
+</section>
+</section>
+</section>
+<section id="id51">
+<h4>Negative Tests<a class="headerlink" href="#id51" title="Link to this heading"></a></h4>
+<section id="jobs-not-in-queue">
+<h5>Jobs not in queue<a class="headerlink" href="#jobs-not-in-queue" title="Link to this heading"></a></h5>
+<p>Tests behaviour when job queue is empty.</p>
+<section id="id52">
+<h6>Inputs:<a class="headerlink" href="#id52" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>job queue is empty.</p></li>
+</ul>
+</section>
+<section id="id53">
+<h6>Expected Output:<a class="headerlink" href="#id53" title="Link to this heading"></a></h6>
+<p>An exception is raised.</p>
+</section>
+</section>
+<section id="id54">
+<h5>Job not in pending<a class="headerlink" href="#id54" title="Link to this heading"></a></h5>
+<p>Requested job is not in queue.</p>
+<section id="id55">
+<h6>Inputs:<a class="headerlink" href="#id55" title="Link to this heading"></a></h6>
+<ul class="simple">
+<li><p>job queue has new but no pending jobs.</p></li>
+</ul>
+</section>
+<section id="id56">
+<h6>Expected Output:<a class="headerlink" href="#id56" title="Link to this heading"></a></h6>
+<p>A None object is returned.</p>
+</section>
+</section>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="db_connector.html" class="btn btn-neutral float-left" title="Unit: Database connector" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="security.html" class="btn btn-neutral float-right" title="Unit: Security Model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, temp.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
