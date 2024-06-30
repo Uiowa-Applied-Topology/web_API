@@ -77,9 +77,7 @@ async def test_retrieve_montesinos_tangles_empty_list(
         response = await ac.get(
             "/montesinos/tangles", params={"page_idx": 0, "page_size": 0}
         )
-        assert response.status_code == 200
-        data = response.json()
-        assert len(data) == 0
+        assert response.status_code == 404
 
 
 ################################################################################

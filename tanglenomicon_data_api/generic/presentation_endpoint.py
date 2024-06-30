@@ -19,27 +19,32 @@ router = APIRouter(
 
 
 async def _retrieve_generic_tangles(
+    start_id: str = None,
     page_idx: int = 0,
     page_size: int = 100,
 ):
+    if page_size <= 0:
+        raise HTTPException(status_code=404, detail="Page size must be positive")
     tangle_col = orm.get_generic_collection()
-    pipeline = [
-        {"$match": {}},
-        {
-            "$facet": {
-                "metadata": [{"$count": "totalCount"}],
-                "data": [
-                    {"$skip": int(page_idx * page_size)},
-                    {"$limit": int(page_size)},
-                ],
-            }
-        },
-    ]
-    async for response in tangle_col.aggregate(pipeline):
-        return [
-            from_dict(data_class=orm.GenericTangDB, data=rat_tang)
-            for rat_tang in response["data"]
-        ]
+    if start_id is None:
+        tangle_page = (
+            await tangle_col.find({}).sort("_id", 1).limit(page_size).to_list(page_size)
+        )
+        for i in range(page_idx):
+            tangle_page = (
+                await tangle_col.find({"_id": {"$gt": tangle_page[-1]["_id"]}})
+                .sort("_id", 1)
+                .limit(page_size)
+                .to_list(page_size)
+            )
+    else:
+        tangle_page = (
+            await tangle_col.find({"_id": {"$gt": start_id}})
+            .sort("_id", 1)
+            .limit(page_size)
+            .to_list(page_size)
+        )
+    return [from_dict(data_class=orm.GenericTangDB, data=tang) for tang in tangle_page]
 
 
 async def _retrieve_generic_tangle(id: str):
@@ -71,7 +76,7 @@ async def retrieve_generic_tangles(
 
 @router.get("/tangle")
 async def retrieve_generic_tangle(
-    tangle: Annotated[List[orm.GenericTangDB], Depends(_retrieve_generic_tangle)]
+    tangle: Annotated[orm.GenericTangDB, Depends(_retrieve_generic_tangle)]
 ):
     """Return the next generic job.
 

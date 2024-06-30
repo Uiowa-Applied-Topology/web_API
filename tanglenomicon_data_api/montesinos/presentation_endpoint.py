@@ -1,6 +1,6 @@
 """Defines the public API endpoints to work/report on montesinos tangles."""
 
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, HTTPException
 from . import orm, job
 from ..internal import job_queue
 from typing import Annotated, List
@@ -20,27 +20,39 @@ router = APIRouter(
 
 
 async def _retrieve_montesinos_tangles(
+    start_id: str = None,
     page_idx: int = 0,
     page_size: int = 100,
 ):
+    if page_size <= 0:
+        raise HTTPException(status_code=404, detail="Page size must be positive")
     tangle_col = orm.get_montesinos_collection()
-    pipeline = [
-        {"$match": {"isMontesinos": True}},
-        {
-            "$facet": {
-                "metadata": [{"$count": "totalCount"}],
-                "data": [
-                    {"$skip": int(page_idx * page_size)},
-                    {"$limit": int(page_size)},
-                ],
-            }
-        },
+    if start_id is None:
+        tangle_page = (
+            await tangle_col.find({"isMontesinos": True})
+            .sort([("isMontesinos", 1), ("_id", 1)])
+            .limit(page_size)
+            .to_list(page_size)
+        )
+        for i in range(page_idx):
+            tangle_page = (
+                await tangle_col.find(
+                    {"_id": {"$gt": tangle_page[-1]["_id"]}, "isMontesinos": True}
+                )
+                .sort([("isMontesinos", 1), ("_id", 1)])
+                .limit(page_size)
+                .to_list(page_size)
+            )
+    else:
+        tangle_page = (
+            await tangle_col.find({"_id": {"$gt": start_id}, "isMontesinos": True})
+            .sort([("isMontesinos", 1), ("_id", 1)])
+            .limit(page_size)
+            .to_list(page_size)
+        )
+    return [
+        from_dict(data_class=orm.MontesinosTangleDB, data=tang) for tang in tangle_page
     ]
-    async for response in tangle_col.aggregate(pipeline):
-        return [
-            from_dict(data_class=orm.MontesinosTangleDB, data=rat_tang)
-            for rat_tang in response["data"]
-        ]
 
 
 @router.get("/tangles", response_model=List[orm.MontesinosTangleDB])
