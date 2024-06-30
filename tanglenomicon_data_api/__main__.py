@@ -26,14 +26,7 @@ job_defs = [
 
 
 app = typer.Typer()
-origins = [
-    "https://tanglenomicon.com",
-    "http://localhost",
-    "http://localhost:1313",
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://localhost:8080",
-]
+origins = ["https://tanglenomicon.com"]
 
 api.add_middleware(
     CORSMiddleware,
