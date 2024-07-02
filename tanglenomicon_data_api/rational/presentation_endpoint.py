@@ -29,7 +29,7 @@ async def _retrieve_rational_tangles(
     if start_id is None:
         tangle_page = (
             await tangle_col.find({"isRational": True})
-            .sort([("isRational", 1), ("_id", 1)])
+            .sort([("crossing_num", 1)])
             .limit(page_size)
             .to_list(page_size)
         )
@@ -38,14 +38,14 @@ async def _retrieve_rational_tangles(
                 await tangle_col.find(
                     {"_id": {"$gt": tangle_page[-1]["_id"]}, "isRational": True}
                 )
-                .sort([("isRational", 1), ("_id", 1)])
+                .sort([("crossing_num", 1)])
                 .limit(page_size)
                 .to_list(page_size)
             )
     else:
         tangle_page = (
             await tangle_col.find({"_id": {"$gt": start_id}, "isRational": True})
-            .sort([("isRational", 1), ("_id", 1)])
+            .sort([("crossing_num", 1)])
             .limit(page_size)
             .to_list(page_size)
         )

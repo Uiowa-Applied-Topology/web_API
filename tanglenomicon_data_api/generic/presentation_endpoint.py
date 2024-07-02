@@ -28,19 +28,22 @@ async def _retrieve_generic_tangles(
     tangle_col = orm.get_generic_collection()
     if start_id is None:
         tangle_page = (
-            await tangle_col.find({}).sort("_id", 1).limit(page_size).to_list(page_size)
+            await tangle_col.find({})
+            .sort([("crossing_num", 1)])
+            .limit(page_size)
+            .to_list(page_size)
         )
         for i in range(page_idx):
             tangle_page = (
                 await tangle_col.find({"_id": {"$gt": tangle_page[-1]["_id"]}})
-                .sort("_id", 1)
+                .sort([("crossing_num", 1)])
                 .limit(page_size)
                 .to_list(page_size)
             )
     else:
         tangle_page = (
             await tangle_col.find({"_id": {"$gt": start_id}})
-            .sort("_id", 1)
+            .sort([("crossing_num", 1)])
             .limit(page_size)
             .to_list(page_size)
         )
