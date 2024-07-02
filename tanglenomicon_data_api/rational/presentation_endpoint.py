@@ -20,6 +20,7 @@ router = APIRouter(
 
 async def _retrieve_rational_tangles(
     start_id: str = None,
+    crossing_num_min: int = 0,
     page_idx: int = 0,
     page_size: int = 100,
 ):
@@ -28,24 +29,46 @@ async def _retrieve_rational_tangles(
     tangle_col = orm.get_rational_collection()
     if start_id is None:
         tangle_page = (
-            await tangle_col.find({"isRational": True})
-            .sort([("crossing_num", 1)])
+            await tangle_col.find(
+                {"crossing_num": {"$gte": crossing_num_min}, "isRational": True}
+            )
+            .sort([("crossing_num", 1), ("_id", 1)])
             .limit(page_size)
             .to_list(page_size)
         )
         for i in range(page_idx):
             tangle_page = (
                 await tangle_col.find(
-                    {"_id": {"$gt": tangle_page[-1]["_id"]}, "isRational": True}
+                    {
+                        "isRational": True,
+                        "$or": [
+                            {"crossing_num": {"$gt": tangle_page[-1]["crossing_num"]}},
+                            {
+                                "crossing_num": tangle_page[-1]["crossing_num"],
+                                "_id": {"$gt": tangle_page[-1]["_id"]},
+                            },
+                        ],
+                    }
                 )
-                .sort([("crossing_num", 1)])
+                .sort([("crossing_num", 1), ("_id", 1)])
                 .limit(page_size)
                 .to_list(page_size)
             )
     else:
         tangle_page = (
-            await tangle_col.find({"_id": {"$gt": start_id}, "isRational": True})
-            .sort([("crossing_num", 1)])
+            await tangle_col.find(
+                {
+                    "isRational": True,
+                    "$or": [
+                        {"crossing_num": {"$gt": crossing_num_min}},
+                        {
+                            "crossing_num": crossing_num_min,
+                            "_id": {"$gt": start_id},
+                        },
+                    ],
+                }
+            )
+            .sort([("crossing_num", 1), ("_id", 1)])
             .limit(page_size)
             .to_list(page_size)
         )
