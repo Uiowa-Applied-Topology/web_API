@@ -37,3 +37,9 @@ pytest:
 
 test: flake sphinx pytest cloc
     echo "Done"
+
+live:
+    {{ python_dir }}/sphinx-autobuild docs docs/build/html --port 8081
+
+charm:
+    sh pycharm ./

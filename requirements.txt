@@ -40,3 +40,4 @@ dacite
 pygount
 # pytest-mock-resources[mongo]
 typer
+sphinx-autobuild
